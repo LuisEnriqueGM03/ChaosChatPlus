@@ -37,24 +37,24 @@ import net.minecraft.client.Minecraft;
  */
 public final class AnimePrefetch {
 
-	/** Categoría de nekos.best → cuántos GIFs guardar (100 en total). */
+	/** Categoría de nekos.best → cuántos GIFs guardar (300 en total). */
 	public static final Map<String, Integer> TARGETS = new LinkedHashMap<>();
 
 	static {
-		TARGETS.put("laugh", 10);
-		TARGETS.put("dance", 10);
-		TARGETS.put("happy", 8);
-		TARGETS.put("smile", 8);
-		TARGETS.put("hug", 8);
-		TARGETS.put("wave", 8);
-		TARGETS.put("thumbsup", 8);
-		TARGETS.put("cry", 8);
-		TARGETS.put("clap", 6);
-		TARGETS.put("kiss", 6);
-		TARGETS.put("angry", 6);
-		TARGETS.put("shocked", 6);
-		TARGETS.put("facepalm", 4);
-		TARGETS.put("sleep", 4);
+		TARGETS.put("laugh", 30);
+		TARGETS.put("dance", 30);
+		TARGETS.put("happy", 24);
+		TARGETS.put("smile", 24);
+		TARGETS.put("hug", 24);
+		TARGETS.put("wave", 24);
+		TARGETS.put("thumbsup", 20);
+		TARGETS.put("cry", 24);
+		TARGETS.put("clap", 18);
+		TARGETS.put("kiss", 18);
+		TARGETS.put("angry", 18);
+		TARGETS.put("shocked", 18);
+		TARGETS.put("facepalm", 14);
+		TARGETS.put("sleep", 14);
 	}
 
 	/** Un GIF ya guardado (o por guardar). */

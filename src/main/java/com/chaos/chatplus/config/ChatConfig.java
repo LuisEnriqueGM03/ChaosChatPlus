@@ -122,7 +122,7 @@ public final class ChatConfig {
 		/** GIFs de reacciones de anime de nekos.best (sin clave ni registro). */
 		public boolean nekosBest = false;
 		/**
-		 * Pestaña Anime: cada jugador guarda en su PC unos 100 GIFs de reacciones de nekos.best (se descargan de poco en
+		 * Pestaña Anime: cada jugador guarda en su PC unos 300 GIFs de reacciones de nekos.best (se descargan de poco en
 		 * poco, directamente de nekos.best; el servidor no los aloja).
 		 */
 		public boolean anime = true;

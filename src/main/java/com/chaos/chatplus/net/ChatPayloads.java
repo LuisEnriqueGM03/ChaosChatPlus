@@ -144,13 +144,14 @@ public final class ChatPayloads {
 	}
 
 	/** Cliente -> servidor: un trozo de la captura que se está enviando (part empieza en 0). */
-	public record ShotPart(int part, int parts, byte[] data) implements CustomPacketPayload {
+	public record ShotPart(int part, int parts, byte[] data, String target) implements CustomPacketPayload {
 
 		public static final Type<ShotPart> TYPE = new Type<>(ChaosChatPlus.id("shot_part"));
 		public static final StreamCodec<ByteBuf, ShotPart> CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT, ShotPart::part,
 				ByteBufCodecs.VAR_INT, ShotPart::parts,
 				ByteBufCodecs.byteArray(MAX_C2S), ShotPart::data,
+				ByteBufCodecs.stringUtf8(16), ShotPart::target,
 				ShotPart::new);
 
 		@Override

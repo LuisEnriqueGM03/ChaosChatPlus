@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.config.ChatConfig;
+import com.chaos.chatplus.gif.GifServer;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.chaos.chatplus.perm.Perms;
 
@@ -60,15 +61,19 @@ public final class Shots {
 	private static final int MAX_SIDE = 1280;
 	private static final DateTimeFormatter LOG_TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-	public record Shot(String id, UUID owner, String ownerName, byte[] jpeg, long created, Set<UUID> reporters) {}
+	/** {@code target} = destinatario si es privada (null = para todos). */
+	public record Shot(String id, UUID owner, String ownerName, byte[] jpeg, long created, Set<UUID> reporters,
+			@Nullable UUID target) {}
 
 	private static final class Upload {
 		final byte[][] parts;
+		final String target;
 		int received;
 		final long started = System.currentTimeMillis();
 
-		Upload(int count) {
+		Upload(int count, String target) {
 			parts = new byte[count][];
+			this.target = target;
 		}
 	}
 
@@ -110,7 +115,7 @@ public final class Shots {
 			if (PROCESSING.contains(id)) {
 				return;
 			}
-			UPLOADS.put(id, new Upload(part.parts()));
+			UPLOADS.put(id, new Upload(part.parts(), part.target()));
 		}
 		Upload up = UPLOADS.get(id);
 		if (up == null || up.parts.length != part.parts() || up.parts[part.part()] != null) {
@@ -131,6 +136,7 @@ public final class Shots {
 		MinecraftServer server = player.server;
 		String name = player.getGameProfile().getName();
 		byte[] raw = all.toByteArray();
+		String targetName = up.target;
 		CompletableFuture.supplyAsync(() -> reencode(raw, cfg.maxKilobytes * 1024), Util.backgroundExecutor())
 				.thenCompose(clean -> clean == null
 						? CompletableFuture.completedFuture(new Verdict(null, "shot.invalid"))
@@ -154,7 +160,7 @@ public final class Shots {
 						}
 						return;
 					}
-					publish(server, id, name, verdict.jpeg);
+					publish(server, id, name, verdict.jpeg, targetName);
 				}));
 	}
 
@@ -220,16 +226,52 @@ public final class Shots {
 		return bytes.toByteArray();
 	}
 
-	private static void publish(MinecraftServer server, UUID owner, String ownerName, byte[] jpeg) {
-		String id = newId();
-		SHOTS.put(id, new Shot(id, owner, ownerName, jpeg, System.currentTimeMillis(), ConcurrentHashMap.newKeySet()));
-		log("Captura " + id + " de " + ownerName + " (" + jpeg.length / 1024 + " KB)");
+	private static void publish(MinecraftServer server, UUID owner, String ownerName, byte[] jpeg, String targetName) {
 		ServerPlayer sender = server.getPlayerList().getPlayer(owner);
-		Component name = sender != null ? sender.getDisplayName() : Component.literal(ownerName);
-		for (ServerPlayer p : server.getPlayerList().getPlayers()) {
-			p.sendSystemMessage(message(p, id, name));
+		ServerPlayer target = targetName == null || targetName.isEmpty() ? null : server.getPlayerList().getPlayerByName(targetName);
+		if (target == null && targetName != null && !targetName.isEmpty()) {
+			if (sender != null) {
+				sender.sendSystemMessage(Lang.tr("dm.offline", targetName).withStyle(ChatFormatting.RED));
+			}
+			LAST_SHOT.remove(owner);
+			return;
 		}
-		ChaosChatPlus.LOGGER.info("[ChatPlus] {} envió una captura ({})", ownerName, id);
+		String id = newId();
+		SHOTS.put(id, new Shot(id, owner, ownerName, jpeg, System.currentTimeMillis(), ConcurrentHashMap.newKeySet(),
+				target == null ? null : target.getUUID()));
+		log("Captura " + id + " de " + ownerName + (target == null ? "" : " (privada para " + targetName + ")")
+				+ " (" + jpeg.length / 1024 + " KB)");
+		Component name = sender != null ? sender.getDisplayName() : Component.literal(ownerName);
+		if (target == null) {
+			for (ServerPlayer p : server.getPlayerList().getPlayers()) {
+				p.sendSystemMessage(message(p, id, name));
+			}
+		} else {
+			if (sender != null) {
+				sender.sendSystemMessage(privateMessage(sender, id, Lang.tr("dm.shot_out", target.getDisplayName()), target));
+			}
+			if (target != sender) {
+				target.sendSystemMessage(privateMessage(target, id, Lang.tr("dm.shot_in", name), sender));
+				if (sender != null) {
+					Mentions.ping(target, sender);
+				}
+			}
+		}
+		ChaosChatPlus.LOGGER.info("[ChatPlus] {} envió una captura ({}){}", ownerName, id,
+				target == null ? "" : " en privado a " + targetName);
+	}
+
+	/** «✉ Luis te envió una captura [Ver]» en morado (Mayús+clic responde por privado). */
+	private static Component privateMessage(ServerPlayer viewer, String id, Component text, @Nullable ServerPlayer other) {
+		MutableComponent view = Lang.tr("shot.view").withStyle(s -> s
+				.withColor(0x7AD7FF)
+				.withUnderlined(true)
+				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, VIEW_COMMAND + id))
+				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+						Lang.tr(ChatServer.isModded(viewer) ? "shot.hover" : "shot.hover_vanilla"))));
+		return Component.literal("✉ ").append(text).append(" ").append(view).withStyle(s -> s
+				.withColor(GifServer.PRIVATE_COLOR)
+				.withInsertion(other == null ? null : "/msg " + other.getGameProfile().getName() + " "));
 	}
 
 	/** "Luis 📷 envió una captura [Ver]" (el icono es el emoji si quien lo recibe puede verlo). */
@@ -269,7 +311,9 @@ public final class Shots {
 
 	public static void send(ServerPlayer player, String id) {
 		Shot shot = SHOTS.get(id);
-		if (shot == null || (HIDDEN.contains(id) && !player.hasPermissions(2))) {
+		boolean outsider = shot != null && shot.target() != null && !player.hasPermissions(2)
+				&& !shot.owner().equals(player.getUUID()) && !shot.target().equals(player.getUUID());
+		if (shot == null || outsider || (HIDDEN.contains(id) && !player.hasPermissions(2))) {
 			ServerPlayNetworking.send(player, new ChatPayloads.ShotData(id, "", new byte[0]));
 			return;
 		}

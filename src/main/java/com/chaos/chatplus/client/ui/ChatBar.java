@@ -68,7 +68,7 @@ public final class ChatBar {
 			buttons.add(new Button("btn_shot", "bar.shot", ShotCapture::start));
 		}
 		if (ClientState.serverMod()) {
-			buttons.add(new Button("btn_dm", "dm.button", () -> dmPicker = !dmPicker));
+			buttons.add(new Button("btn_dm", "dm.button", this::toggleDmPicker));
 		}
 		buttons.add(new Button("btn_send", "bar.send", this::send));
 		input.setFormatter(EmojiInput.wrap(((EditBoxAccessor) input).chaoschatplus$formatter()));
@@ -242,20 +242,82 @@ public final class ChatBar {
 	private static final int DM_ROW = 12;
 	private static final int DM_W = 120;
 
+	/** Cuántos se enseñan sin buscar (al azar) y como mucho al buscar. */
+	private static final int DM_RANDOM = 5;
+	private static final int DM_MAX = 8;
+	/** Alto de la cabecera (título + buscador). */
+	private static final int DM_HEAD = 30;
+	private String dmSearch = "";
+	/** Orden al azar, fijo mientras la lista está abierta. */
+	private List<String> dmShuffled = List.of();
+
+	private void toggleDmPicker() {
+		dmPicker = !dmPicker;
+		dmSearch = "";
+		List<String> all = new ArrayList<>(otherPlayers());
+		java.util.Collections.shuffle(all);
+		dmShuffled = all;
+	}
+
+	/** Sin buscar: 5 al azar (el elegido, si lo hay, primero). Buscando: los que coinciden. */
+	private List<String> visiblePlayers() {
+		List<String> online = otherPlayers();
+		List<String> out = new ArrayList<>();
+		if (dmSearch.isEmpty()) {
+			String target = ClientState.dmTarget();
+			if (target != null && online.contains(target)) {
+				out.add(target);
+			}
+			for (String name : dmShuffled) {
+				if (out.size() >= DM_RANDOM) {
+					break;
+				}
+				if (online.contains(name) && !out.contains(name)) {
+					out.add(name);
+				}
+			}
+			return out;
+		}
+		String q = dmSearch.toLowerCase(java.util.Locale.ROOT);
+		for (String name : online) {
+			if (name.toLowerCase(java.util.Locale.ROOT).contains(q) && out.size() < DM_MAX) {
+				out.add(name);
+			}
+		}
+		return out;
+	}
+
+	private int dmHeight(List<String> players) {
+		int extra = dmSearch.isEmpty() && otherPlayers().size() > players.size() ? DM_ROW : 0;
+		return DM_HEAD + Math.max(1, players.size()) * DM_ROW + extra + 4;
+	}
+
 	private void renderDmPicker(GuiGraphics g, Font font, int mouseX, int mouseY) {
-		List<String> players = otherPlayers();
-		int rows = Math.max(1, players.size());
-		int h = 16 + rows * DM_ROW + 4;
+		List<String> players = visiblePlayers();
+		int h = dmHeight(players);
 		dmX = screen.width - 4 - DM_W;
 		dmY = barTop - 3 - h;
 		Ui.roundBordered(g, dmX, dmY, dmX + DM_W, dmY + h, 5, Ui.POPUP, Ui.POPUP_BORDER);
 		g.drawString(font, Lang.tr("dm.pick"), dmX + 6, dmY + 5, Ui.MUTED, false);
+		// Buscador.
+		Ui.roundBordered(g, dmX + 4, dmY + 15, dmX + DM_W - 4, dmY + 27, 3, 0xFF15171C, 0xFF3A3E48);
+		if (dmSearch.isEmpty()) {
+			g.drawString(font, Lang.tr("dm.search"), dmX + 7, dmY + 17, 0xFF6C717B, false);
+		} else {
+			boolean caret = (Util.getMillis() / 500) % 2 == 0;
+			g.drawString(font, font.plainSubstrByWidth(dmSearch, DM_W - 16, true) + (caret ? "_" : ""), dmX + 7, dmY + 17,
+					Ui.TEXT, false);
+		}
 		if (players.isEmpty()) {
-			g.drawString(font, Lang.tr("dm.none"), dmX + 6, dmY + 18, Ui.MUTED, false);
+			g.drawString(font, Lang.tr("dm.none"), dmX + 6, dmY + DM_HEAD + 2, Ui.MUTED, false);
 			return;
 		}
+		int more = otherPlayers().size() - players.size();
+		if (dmSearch.isEmpty() && more > 0) {
+			g.drawString(font, Lang.tr("dm.more", more), dmX + 6, dmY + DM_HEAD + players.size() * DM_ROW + 2, Ui.MUTED, false);
+		}
 		for (int i = 0; i < players.size(); i++) {
-			int y = dmY + 16 + i * DM_ROW;
+			int y = dmY + DM_HEAD + i * DM_ROW;
 			String name = players.get(i);
 			boolean sel = name.equals(ClientState.dmTarget());
 			if (sel) {
@@ -268,13 +330,13 @@ public final class ChatBar {
 	}
 
 	private boolean clickDmPicker(double mx, double my) {
-		List<String> players = otherPlayers();
-		int h = 16 + Math.max(1, players.size()) * DM_ROW + 4;
+		List<String> players = visiblePlayers();
+		int h = dmHeight(players);
 		if (!Ui.inside(mx, my, dmX, dmY, dmX + DM_W, dmY + h)) {
 			return false;
 		}
 		for (int i = 0; i < players.size(); i++) {
-			int y = dmY + 16 + i * DM_ROW;
+			int y = dmY + DM_HEAD + i * DM_ROW;
 			if (Ui.inside(mx, my, dmX + 2, y, dmX + DM_W - 2, y + DM_ROW)) {
 				String name = players.get(i);
 				ClientState.setDmTarget(name.equals(ClientState.dmTarget()) ? null : name);
@@ -335,6 +397,19 @@ public final class ChatBar {
 			dmPicker = false;
 			return true;
 		}
+		if (dmPicker) {
+			// El buscador de la lista se queda las teclas.
+			if (key == 259 && !dmSearch.isEmpty()) {
+				dmSearch = dmSearch.substring(0, dmSearch.length() - 1);
+			} else if (key == 257 || key == 335) {
+				List<String> players = visiblePlayers();
+				if (!players.isEmpty()) {
+					ClientState.setDmTarget(players.get(0));
+					dmPicker = false;
+				}
+			}
+			return true;
+		}
 		if (picker != null && key == 256) {
 			picker = null;
 			return true;
@@ -350,6 +425,12 @@ public final class ChatBar {
 
 	/** Letras para el buscador de GIFs (si está abierto). true = no van al chat. */
 	public boolean charTypedPicker(char c) {
+		if (dmPicker) {
+			if (dmSearch.length() < 16 && (Character.isLetterOrDigit(c) || c == '_')) {
+				dmSearch += c;
+			}
+			return true;
+		}
 		return picker != null && picker.charTyped(c);
 	}
 
@@ -406,7 +487,7 @@ public final class ChatBar {
 	/** ¿El ratón está sobre un popup (selector o autocompletado)? Entonces el chat de debajo no debe reaccionar. */
 	public boolean blocksMouse(double mx, double my) {
 		if (dmPicker) {
-			int h = 16 + Math.max(1, otherPlayers().size()) * DM_ROW + 4;
+			int h = dmHeight(visiblePlayers());
 			return Ui.inside(mx, my, dmX, dmY, dmX + DM_W, dmY + h);
 		}
 		return (picker != null && picker.contains(mx, my)) || (picker == null && suggest.contains(mx, my));

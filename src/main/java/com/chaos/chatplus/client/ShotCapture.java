@@ -248,7 +248,7 @@ public final class ShotCapture {
 			int from = i * ChatPayloads.SHOT_PART;
 			int to = Math.min(jpeg.length, from + ChatPayloads.SHOT_PART);
 			byte[] chunk = java.util.Arrays.copyOfRange(jpeg, from, to);
-			ClientPlayNetworking.send(new ChatPayloads.ShotPart(i, parts, chunk));
+			ClientPlayNetworking.send(new ChatPayloads.ShotPart(i, parts, chunk, ClientState.dmTargetOrEmpty()));
 		}
 		if (mc.player != null) {
 			mc.player.displayClientMessage(Lang.tr("shot.sending").withStyle(ChatFormatting.GRAY), true);
