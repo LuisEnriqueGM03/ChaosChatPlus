@@ -1,5 +1,1045 @@
 [
 	{
+		"id": "t_gg",
+		"name": "GG",
+		"tags": [
+			"gg",
+			"good game",
+			"aplausos",
+			"ganar",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_ez",
+		"name": "EZ",
+		"tags": [
+			"ez",
+			"facil",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_lol",
+		"name": "LOL",
+		"tags": [
+			"lol",
+			"risa",
+			"laugh",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_xd",
+		"name": "XD",
+		"tags": [
+			"xd",
+			"risa",
+			"laugh",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_jajaja",
+		"name": "JAJAJA",
+		"tags": [
+			"jajaja",
+			"risa",
+			"laugh",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_f",
+		"name": "F",
+		"tags": [
+			"f",
+			"rip",
+			"llorar",
+			"cry",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_rip",
+		"name": "RIP",
+		"tags": [
+			"rip",
+			"llorar",
+			"cry",
+			"muerte",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_omg",
+		"name": "OMG",
+		"tags": [
+			"omg",
+			"sorpresa",
+			"wow",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_wow",
+		"name": "WOW",
+		"tags": [
+			"wow",
+			"sorpresa",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_nice",
+		"name": "NICE",
+		"tags": [
+			"nice",
+			"like",
+			"bien",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_pog",
+		"name": "POG",
+		"tags": [
+			"pog",
+			"sorpresa",
+			"hype",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_bruh",
+		"name": "BRUH",
+		"tags": [
+			"bruh",
+			"enojado",
+			"facepalm",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_nooo",
+		"name": "NOOO",
+		"tags": [
+			"nooo",
+			"llorar",
+			"no",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_siuu",
+		"name": "SIUU",
+		"tags": [
+			"siuu",
+			"baile",
+			"celebrar",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_hola",
+		"name": "HOLA",
+		"tags": [
+			"hola",
+			"saludo",
+			"hi",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_adios",
+		"name": "ADIOS",
+		"tags": [
+			"adios",
+			"saludo",
+			"bye",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_gracias",
+		"name": "GRACIAS",
+		"tags": [
+			"gracias",
+			"thanks",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_buenas",
+		"name": "BUENAS",
+		"tags": [
+			"buenas",
+			"hola",
+			"saludo",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_ok",
+		"name": "OK",
+		"tags": [
+			"ok",
+			"like",
+			"bien",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_si",
+		"name": "SI",
+		"tags": [
+			"si",
+			"yes",
+			"like",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_no",
+		"name": "NO",
+		"tags": [
+			"no",
+			"nope",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_lets_go",
+		"name": "LETS GO",
+		"tags": [
+			"lets go",
+			"vamos",
+			"hype",
+			"baile",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_vamos",
+		"name": "VAMOS",
+		"tags": [
+			"vamos",
+			"hype",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_lag",
+		"name": "LAG",
+		"tags": [
+			"lag",
+			"enojado",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_afk",
+		"name": "AFK",
+		"tags": [
+			"afk",
+			"dormir",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_brb",
+		"name": "BRB",
+		"tags": [
+			"brb",
+			"ahora vuelvo",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_gl_hf",
+		"name": "GL HF",
+		"tags": [
+			"gl hf",
+			"suerte",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_wp",
+		"name": "WP",
+		"tags": [
+			"wp",
+			"well played",
+			"aplausos",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_clutch",
+		"name": "CLUTCH",
+		"tags": [
+			"clutch",
+			"hype",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_noob",
+		"name": "NOOB",
+		"tags": [
+			"noob",
+			"risa",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_pro",
+		"name": "PRO",
+		"tags": [
+			"pro",
+			"like",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_epic",
+		"name": "EPIC",
+		"tags": [
+			"epic",
+			"epico",
+			"hype",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_win",
+		"name": "WIN",
+		"tags": [
+			"win",
+			"ganar",
+			"aplausos",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_oof",
+		"name": "OOF",
+		"tags": [
+			"oof",
+			"llorar",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_hype",
+		"name": "HYPE",
+		"tags": [
+			"hype",
+			"baile",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_tqm",
+		"name": "TQM",
+		"tags": [
+			"tqm",
+			"beso",
+			"amor",
+			"abrazo",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_love",
+		"name": "LOVE",
+		"tags": [
+			"love",
+			"amor",
+			"beso",
+			"abrazo",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_que",
+		"name": "QUE?",
+		"tags": [
+			"que",
+			"sorpresa",
+			"confundido",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_interrogacion",
+		"name": "???",
+		"tags": [
+			"que",
+			"confundido",
+			"sorpresa",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_exclamacion",
+		"name": "!!!",
+		"tags": [
+			"sorpresa",
+			"alerta",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_100",
+		"name": "100",
+		"tags": [
+			"100",
+			"like",
+			"perfecto",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_top_1",
+		"name": "TOP 1",
+		"tags": [
+			"top 1",
+			"ganar",
+			"aplausos",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_mvp",
+		"name": "MVP",
+		"tags": [
+			"mvp",
+			"aplausos",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_bueno",
+		"name": "BUENO",
+		"tags": [
+			"bueno",
+			"ok",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_ya",
+		"name": "YA",
+		"tags": [
+			"ya",
+			"ok",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_uwu",
+		"name": "UWU",
+		"tags": [
+			"uwu",
+			"beso",
+			"tierno",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_corazon",
+		"name": "<3",
+		"tags": [
+			"corazon",
+			"amor",
+			"beso",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_sos",
+		"name": "SOS",
+		"tags": [
+			"sos",
+			"ayuda",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_stop",
+		"name": "STOP",
+		"tags": [
+			"stop",
+			"enojado",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "t_hola2",
+		"name": "HOLA!",
+		"tags": [
+			"hola",
+			"saludo",
+			"texto",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_fuegos_rojos",
+		"name": "Fuegos artificiales rojos",
+		"tags": [
+			"fuegos",
+			"fiesta",
+			"celebrar",
+			"baile",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_fuegos_dorados",
+		"name": "Fuegos artificiales dorados",
+		"tags": [
+			"fuegos",
+			"fiesta",
+			"celebrar",
+			"baile",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_fuegos_azules",
+		"name": "Fuegos artificiales azules",
+		"tags": [
+			"fuegos",
+			"fiesta",
+			"celebrar",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_fuegos_verdes",
+		"name": "Fuegos artificiales verdes",
+		"tags": [
+			"fuegos",
+			"fiesta",
+			"celebrar",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_confeti",
+		"name": "Confeti",
+		"tags": [
+			"confeti",
+			"fiesta",
+			"baile",
+			"celebrar",
+			"aplausos",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_confeti2",
+		"name": "Más confeti",
+		"tags": [
+			"confeti",
+			"fiesta",
+			"celebrar",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_corazones",
+		"name": "Lluvia de corazones",
+		"tags": [
+			"corazones",
+			"amor",
+			"beso",
+			"abrazo",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_corazones_suben",
+		"name": "Corazones flotando",
+		"tags": [
+			"corazones",
+			"amor",
+			"abrazo",
+			"beso",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_dinero",
+		"name": "Lluvia de dinero",
+		"tags": [
+			"dinero",
+			"money",
+			"rico",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_billetes",
+		"name": "Lluvia de bolsas de dinero",
+		"tags": [
+			"dinero",
+			"money",
+			"rico",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_diamantes",
+		"name": "Lluvia de diamantes",
+		"tags": [
+			"diamantes",
+			"minecraft",
+			"rico",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_esmeraldas",
+		"name": "Lluvia de esmeraldas",
+		"tags": [
+			"esmeraldas",
+			"minecraft",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_estrellas",
+		"name": "Lluvia de estrellas",
+		"tags": [
+			"estrellas",
+			"like",
+			"genial",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_risa",
+		"name": "Lluvia de risas",
+		"tags": [
+			"risa",
+			"jaja",
+			"laugh",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_fuego",
+		"name": "Lluvia de fuego",
+		"tags": [
+			"fuego",
+			"hype",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_pulgares",
+		"name": "Lluvia de likes",
+		"tags": [
+			"like",
+			"bien",
+			"aplausos",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_tnt",
+		"name": "Lluvia de TNT",
+		"tags": [
+			"tnt",
+			"minecraft",
+			"explosion",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_pizza",
+		"name": "Lluvia de pizza",
+		"tags": [
+			"pizza",
+			"comida",
+			"hambre",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_lagrimas",
+		"name": "Lluvia de llanto",
+		"tags": [
+			"llorar",
+			"cry",
+			"triste",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_enojo",
+		"name": "Lluvia de enojo",
+		"tags": [
+			"enojado",
+			"angry",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_sorpresa",
+		"name": "Lluvia de sorpresa",
+		"tags": [
+			"sorpresa",
+			"wow",
+			"omg",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_besos",
+		"name": "Lluvia de besos",
+		"tags": [
+			"beso",
+			"kiss",
+			"amor",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_saludos_suben",
+		"name": "Saludos flotando",
+		"tags": [
+			"hola",
+			"saludo",
+			"adios",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_aplausos_suben",
+		"name": "Aplausos flotando",
+		"tags": [
+			"aplausos",
+			"bravo",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_xp",
+		"name": "Orbes de experiencia",
+		"tags": [
+			"xp",
+			"experiencia",
+			"minecraft",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_nieve",
+		"name": "Nieve",
+		"tags": [
+			"nieve",
+			"frio",
+			"invierno",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia",
+		"name": "Lluvia",
+		"tags": [
+			"lluvia",
+			"triste",
+			"llorar",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_carga_azul",
+		"name": "Cargando",
+		"tags": [
+			"cargando",
+			"loading",
+			"espera",
+			"lag",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_carga_verde",
+		"name": "Cargando verde",
+		"tags": [
+			"cargando",
+			"loading",
+			"espera",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_carga_rosa",
+		"name": "Cargando rosa",
+		"tags": [
+			"cargando",
+			"loading",
+			"espera",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_barra_carga",
+		"name": "Barra de carga",
+		"tags": [
+			"cargando",
+			"loading",
+			"espera",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_escribiendo",
+		"name": "Escribiendo...",
+		"tags": [
+			"escribiendo",
+			"typing",
+			"espera",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_sirena",
+		"name": "Sirena",
+		"tags": [
+			"sirena",
+			"alerta",
+			"policia",
+			"sorpresa",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_rayo",
+		"name": "Rayo",
+		"tags": [
+			"rayo",
+			"tormenta",
+			"sorpresa",
+			"enojado",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_explosion",
+		"name": "Explosión",
+		"tags": [
+			"explosion",
+			"boom",
+			"sorpresa",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_explosion_azul",
+		"name": "Explosión azul",
+		"tags": [
+			"explosion",
+			"boom",
+			"magia",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_burbujas",
+		"name": "Burbujas",
+		"tags": [
+			"burbujas",
+			"agua",
+			"relax",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_moneda_gira",
+		"name": "Moneda girando",
+		"tags": [
+			"moneda",
+			"dinero",
+			"coin",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_diamante_gira",
+		"name": "Diamante girando",
+		"tags": [
+			"diamante",
+			"minecraft",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_esmeralda_gira",
+		"name": "Esmeralda girando",
+		"tags": [
+			"esmeralda",
+			"minecraft",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_totem_gira",
+		"name": "Tótem girando",
+		"tags": [
+			"totem",
+			"minecraft",
+			"salvado",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_trofeo_brillo",
+		"name": "Trofeo brillando",
+		"tags": [
+			"trofeo",
+			"ganar",
+			"aplausos",
+			"win",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_corona_brillo",
+		"name": "Corona brillando",
+		"tags": [
+			"corona",
+			"rey",
+			"ganar",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_diamante_brillo",
+		"name": "Diamante brillando",
+		"tags": [
+			"diamante",
+			"minecraft",
+			"rico",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_espada_brillo",
+		"name": "Espada brillando",
+		"tags": [
+			"espada",
+			"minecraft",
+			"pvp",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_stonks",
+		"name": "Stonks",
+		"tags": [
+			"stonks",
+			"subir",
+			"dinero",
+			"ganar",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_not_stonks",
+		"name": "Not stonks",
+		"tags": [
+			"not stonks",
+			"bajar",
+			"perder",
+			"llorar",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_corazon_roto",
+		"name": "Corazón roto",
+		"tags": [
+			"corazon roto",
+			"triste",
+			"llorar",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_fogata",
+		"name": "Fogata",
+		"tags": [
+			"fogata",
+			"fuego",
+			"relax",
+			"destacado"
+		]
+	},
+	{
+		"id": "s_lluvia_creepers",
+		"name": "Lluvia de creepers",
+		"tags": [
+			"creeper",
+			"minecraft",
+			"destacado"
+		]
+	},
+	{
 		"id": "creeper_baile",
 		"name": "Creeper bailando",
 		"tags": [

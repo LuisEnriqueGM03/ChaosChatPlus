@@ -273,7 +273,13 @@ def main():
     for f in os.listdir(OUT):
         if f.endswith(".gif"):
             os.remove(os.path.join(OUT, f))
+    from gen_gifs_extra import all_extra
     index = []
+    # Primero los textos y efectos (sin anime ni emojis): salen antes en "Tendencias" y en las categorías.
+    for gid, name, fn, tags in all_extra():
+        frames, duration = fn()
+        save(gid, frames, duration)
+        index.append({"id": gid, "name": name, "tags": tags})
     for gid, name, fn, duration, tags in GIFS + emoji_gifs():
         save(gid, fn(), duration)
         index.append({"id": gid, "name": name, "tags": tags})

@@ -117,7 +117,7 @@ public final class GifRegistry {
 	}
 
 	/**
-	 * GIFs propios que encajan con la búsqueda (nombre, id o etiquetas). Vacío = solo los que puso el servidor;
+	 * GIFs propios que encajan con la búsqueda (nombre, id o etiquetas). Vacío = los del servidor y los destacados;
 	 * {@code all} = todos (también los de serie).
 	 */
 	public static List<GifInfo> search(String query, boolean all) {
@@ -129,7 +129,7 @@ public final class GifRegistry {
 			if (all) {
 				match = true;
 			} else if (q.isEmpty()) {
-				match = !e.builtin();
+				match = !e.builtin() || e.tags().contains("destacado");
 			} else {
 				String name = java.text.Normalizer.normalize(e.info().name().toLowerCase(Locale.ROOT), java.text.Normalizer.Form.NFD)
 						.replaceAll("\\p{M}", "");
