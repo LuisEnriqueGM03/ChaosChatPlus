@@ -53,6 +53,7 @@ public final class SelfTest {
 		mc.options.pauseOnLostFocus = false;
 		ticks++;
 		if (mc.player.getGameProfile().getName().equals("Luis")) {
+			record(mc);
 			luis(mc);
 		} else {
 			pepe(mc);
@@ -144,7 +145,9 @@ public final class SelfTest {
 			case 1180 -> shot("12e_gifs_anime");
 			case 1185 -> gifTab("custom");
 			case 1450 -> shot("12f_klipy_destacados");
-			case 1460 -> gifTab("custom:cat");
+			case 1460 -> gifTab("custom:c");
+			case 1470 -> gifTab("custom:ca");
+			case 1480 -> gifTab("custom:cat");
 			case 1720 -> shot("12g_klipy_busqueda");
 			case 1725 -> gifTab("send");
 			case 1745 -> mc.setScreen(new ChatScreen(""));
@@ -210,6 +213,22 @@ public final class SelfTest {
 			}
 		}
 		return null;
+	}
+
+	/** Tramos del guion que se graban como fotogramas (para hacer GIFs del mod en uso): desde, hasta, cada cuántos ticks. */
+	private static final int[][] RECORD = {
+			{215, 335, 3}, {375, 650, 3}, {975, 1190, 3}, {1185, 1810, 5}, {1895, 2045, 3}};
+
+	private static void record(Minecraft mc) {
+		if (!Boolean.getBoolean("chaoschatplus.record")) {
+			return;
+		}
+		for (int[] r : RECORD) {
+			if (ticks >= r[0] && ticks <= r[1] && (ticks - r[0]) % r[2] == 0) {
+				Screenshot.grab(mc.gameDirectory, String.format("frame_%05d.png", ticks), mc.getMainRenderTarget(), msg -> { });
+				return;
+			}
+		}
 	}
 
 	private static void gifTab(String which) {
