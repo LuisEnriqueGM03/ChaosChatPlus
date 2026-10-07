@@ -22,6 +22,13 @@ loom {
 			programArgs "--username", "Luis", "--quickPlayMultiplayer", "localhost:25565"
 			vmArg "-Dchaoschatplus.selftest=" + (project.findProperty("selftest") ?: "false")
 		}
+		// Segundo jugador ("Pepe") con el mod: ./gradlew runJoinServer2
+		joinServer2 {
+			client()
+			name "Join Server (Pepe)"
+			runDir "run2"
+			programArgs "--username", "Pepe", "--quickPlayMultiplayer", "localhost:25565"
+		}
 		// Segundo jugador ("Pepe"), que se porta como un cliente sin el mod: ./gradlew runJoinVanilla
 		joinVanilla {
 			client()

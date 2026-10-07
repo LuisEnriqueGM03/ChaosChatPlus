@@ -40,6 +40,7 @@ public class ChaosChatPlusClient implements ClientModInitializer {
 			EmojiTextures.clear();
 			ShotCache.clear();
 		}));
+		ClientTickEvents.START_CLIENT_TICK.register(ShotCapture::startTick);
 		ClientTickEvents.END_CLIENT_TICK.register(ShotCapture::tick);
 	}
 }

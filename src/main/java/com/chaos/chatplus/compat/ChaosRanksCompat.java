@@ -19,7 +19,10 @@ import com.chaos.chatplus.ChaosChatPlus;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ServerScoreboard;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.scores.PlayerTeam;
 
 /**
  * Integración opcional con Chaos Ranks (sin depender de él al compilar): rango de cada jugador, su etiqueta y su
@@ -69,6 +72,24 @@ public final class ChaosRanksCompat {
 
 	public static boolean present() {
 		return present;
+	}
+
+	/**
+	 * Sin Chaos Ranks: borra los equipos "chaosrank_*" que dejó guardados en el mundo, para que sus etiquetas no salgan
+	 * como cuadros vacíos en los nombres.
+	 */
+	public static void cleanOrphanTeams(MinecraftServer server) {
+		if (present || FabricLoader.getInstance().isModLoaded("chaosranks")) {
+			return;
+		}
+		ServerScoreboard board = server.getScoreboard();
+		List<PlayerTeam> orphans = board.getPlayerTeams().stream()
+				.filter(t -> t.getName().startsWith("chaosrank_")).toList();
+		orphans.forEach(board::removePlayerTeam);
+		if (!orphans.isEmpty()) {
+			ChaosChatPlus.LOGGER.info("Chaos Ranks no está instalado: borrados {} equipos chaosrank_* que quedaban en el mundo",
+					orphans.size());
+		}
 	}
 
 	/**

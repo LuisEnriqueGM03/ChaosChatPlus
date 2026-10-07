@@ -51,6 +51,7 @@ public final class ClientState {
 	private static List<String> specialMentions = List.of();
 	private static List<ClientEmoji> emojis = List.of();
 	private static Map<String, ClientEmoji> byName = Map.of();
+	private static Map<Integer, ClientEmoji> byCodepoint = Map.of();
 	@Nullable private static Component prefix;
 	@Nullable private static Component prefixFallback;
 
@@ -74,6 +75,7 @@ public final class ClientState {
 			specialMentions = List.copyOf(special);
 			List<ClientEmoji> list = new ArrayList<>();
 			Map<String, ClientEmoji> names = new HashMap<>();
+			Map<Integer, ClientEmoji> cps = new HashMap<>();
 			if (o.has("emojis")) {
 				for (JsonElement el : o.getAsJsonArray("emojis")) {
 					JsonObject j = el.getAsJsonObject();
@@ -83,10 +85,12 @@ public final class ClientState {
 							j.get("p").getAsInt(), j.get("b").getAsBoolean());
 					list.add(e);
 					names.put(e.name(), e);
+					cps.put(e.codepoint(), e);
 				}
 			}
 			emojis = List.copyOf(list);
 			byName = names;
+			byCodepoint = cps;
 			serverMod = true;
 		} catch (Exception e) {
 			ChaosChatPlus.LOGGER.warn("Información del servidor no válida", e);
@@ -109,6 +113,7 @@ public final class ClientState {
 		specialMentions = List.of();
 		emojis = List.of();
 		byName = Map.of();
+		byCodepoint = Map.of();
 		prefix = prefixFallback = null;
 	}
 
@@ -159,6 +164,11 @@ public final class ClientState {
 	@Nullable
 	public static ClientEmoji emoji(String name) {
 		return byName.get(name.toLowerCase(Locale.ROOT));
+	}
+
+	@Nullable
+	public static ClientEmoji emojiByCodepoint(int codepoint) {
+		return byCodepoint.get(codepoint);
 	}
 
 	/** Prefijo para la barra de escribir: con las fuentes de Chaos Ranks si están, si no el de texto plano. */

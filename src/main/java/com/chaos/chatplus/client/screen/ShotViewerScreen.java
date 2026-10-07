@@ -19,34 +19,56 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 
-/** Visor de una captura del chat: [Guardar], [Reportar], [Cerrar]. Si el servidor lo pide, empieza difuminada. */
+/**
+ * Visor de una captura del chat: [Guardar], [Reportar], [Cerrar]. Si el servidor lo pide, empieza difuminada.
+ * En modo moderación (OP revisando un reporte): [Borrar] y [Cancelar].
+ */
 public class ShotViewerScreen extends Screen {
 
 	private final String id;
 	private final Screen parent;
+	private final boolean moderation;
 	private boolean revealed;
 	private boolean reported;
 	private FlatButton save;
 	private FlatButton report;
 
-	public ShotViewerScreen(String id, Screen parent) {
-		super(Lang.tr("shot.viewer_title"));
+	public ShotViewerScreen(String id, Screen parent, boolean moderation) {
+		super(Lang.tr(moderation ? "shot.review_title" : "shot.viewer_title"));
 		this.id = id;
 		this.parent = parent;
-		this.revealed = !ClientState.blurShots();
+		this.moderation = moderation;
+		this.revealed = moderation || !ClientState.blurShots();
 	}
 
 	@Override
 	protected void init() {
 		int y = height - 26;
 		int bw = 76;
+		if (moderation) {
+			report = addRenderableWidget(new FlatButton(width / 2 - bw - 4, y, bw, 16, Lang.tr("shot.delete"), false, b -> delete()).danger());
+			save = addRenderableWidget(new FlatButton(width / 2 + 4, y, bw, 16, Lang.tr("button.cancel"), false, b -> onClose()));
+			return;
+		}
 		save = addRenderableWidget(new FlatButton(width / 2 - bw * 3 / 2 - 6, y, bw, 16, Lang.tr("shot.save"), true, b -> save()));
 		report = addRenderableWidget(new FlatButton(width / 2 - bw / 2, y, bw, 16, Lang.tr("shot.report"), false, b -> report()).danger());
 		addRenderableWidget(new FlatButton(width / 2 + bw / 2 + 6, y, bw, 16, Lang.tr("button.close"), false, b -> onClose()));
 	}
 
+	private void delete() {
+		if (minecraft != null && minecraft.player != null) {
+			minecraft.player.connection.sendCommand("chatplus shot delete " + id);
+		}
+		if (minecraft != null) {
+			minecraft.setScreen(null);
+		}
+	}
+
 	@Override
 	public void tick() {
+		if (moderation) {
+			return;
+		}
 		ShotCache.Shot shot = ShotCache.get(id);
 		save.active = shot != null;
 		boolean mine = shot != null && minecraft != null && minecraft.player != null
@@ -79,7 +101,8 @@ public class ShotViewerScreen extends Screen {
 			Ui.round(g, width / 2 - tw / 2, y + h / 2 - 9, width / 2 + tw / 2, y + h / 2 + 9, 5, 0xCC111318);
 			g.drawCenteredString(font, show, width / 2, y + h / 2 - 4, Ui.TEXT);
 		}
-		g.drawCenteredString(font, Lang.tr("shot.by", shot.owner()), width / 2, 6, Ui.TEXT);
+		Component top = moderation ? title.copy().append(" · ").append(Lang.tr("shot.by", shot.owner())) : Lang.tr("shot.by", shot.owner());
+		g.drawCenteredString(font, top, width / 2, 6, moderation ? Ui.WARN : Ui.TEXT);
 	}
 
 	@Override

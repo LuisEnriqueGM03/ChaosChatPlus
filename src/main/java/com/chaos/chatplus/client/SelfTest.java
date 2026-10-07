@@ -86,6 +86,8 @@ public final class SelfTest {
 				mc.setScreen(null);
 			}
 			case 380 -> ShotCapture.start();
+			case 400 -> shot("06a_modo_camara");
+			case 410 -> ShotCapture.shoot();
 			case 430 -> shot("06_enviar_captura");
 			case 440 -> {
 				if (mc.screen instanceof ShotSendScreen s) {
@@ -98,12 +100,21 @@ public final class SelfTest {
 				String id = lastShotId(mc);
 				ChaosChatPlus.LOGGER.info("[SelfTest] última captura: {}", id);
 				if (id != null) {
-					mc.setScreen(new ShotViewerScreen(id, new ChatScreen("")));
+					mc.setScreen(new ShotViewerScreen(id, new ChatScreen(""), false));
 				}
 			}
 			case 640 -> shot("08_visor_captura");
-			case 660 -> mc.setScreen(new ChatScreen("/emoji"));
-			case 700 -> shot("09_comando");
+			case 660 -> mc.setScreen(new ChatScreen("hola :diablo: que tal :fuego: "));
+			case 700 -> shot("09_emoji_en_barra");
+			case 720 -> mc.setScreen(new ChatScreen("a".repeat(256)));
+			case 740 -> shot("09b_limite");
+			case 760 -> {
+				String id = lastShotId(mc);
+				if (id != null) {
+					mc.setScreen(new ShotViewerScreen(id, new ChatScreen(""), true));
+				}
+			}
+			case 800 -> shot("09c_revision");
 			case 1300 -> mc.setScreen(new ChatScreen(""));
 			case 1340 -> shot("10_mencion_recibida");
 			case 1400 -> mc.stop();

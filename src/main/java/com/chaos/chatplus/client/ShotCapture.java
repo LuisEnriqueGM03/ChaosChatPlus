@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.client.screen.ShotSendScreen;
+import com.chaos.chatplus.client.ui.Ui;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.chaos.chatplus.server.Shots;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -21,6 +22,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -36,31 +38,113 @@ public final class ShotCapture {
 	public static final String SEND_FILE_COMMAND = "/chatplus-local sendshot ";
 	private static final int MAX_WIDTH = 960;
 
+	private static boolean cameraMode;
 	private static int countdown = -1;
-	private static boolean hadHiddenGui;
 
 	private ShotCapture() {}
 
-	/** Botón de la cámara: cierra el chat y hace la captura dentro de un par de ticks, sin la interfaz. */
+	/**
+	 * Botón de la cámara: cierra el chat y entra en modo cámara. Sin interfaz, con un visor; el jugador se puede mover
+	 * y girar. Clic izquierdo o Enter captura, Esc cancela.
+	 */
 	public static void start() {
 		Minecraft mc = Minecraft.getInstance();
 		mc.setScreen(null);
-		hadHiddenGui = mc.options.hideGui;
-		mc.options.hideGui = true;
-		countdown = 3;
+		cameraMode = true;
+		countdown = -1;
+	}
+
+	public static boolean cameraMode() {
+		return cameraMode;
+	}
+
+	/** El HUD de vanilla no se pinta mientras dura el modo cámara. */
+	public static boolean hideHud() {
+		return cameraMode;
+	}
+
+	/** Pulsar capturar: el visor se oculta y se captura un par de frames después. */
+	public static void shoot() {
+		if (cameraMode && countdown < 0) {
+			countdown = 2;
+		}
+	}
+
+	public static void cancel() {
+		cameraMode = false;
+		countdown = -1;
+	}
+
+	/** Inicio del tick: los clics del modo cámara no pegan ni rompen bloques. */
+	public static void startTick(Minecraft mc) {
+		if (!cameraMode) {
+			return;
+		}
+		if (mc.screen != null || mc.player == null) {
+			cancel();
+			return;
+		}
+		boolean clicked = false;
+		while (mc.options.keyAttack.consumeClick()) {
+			clicked = true;
+		}
+		while (mc.options.keyUse.consumeClick()) {
+			// nada: con la cámara no se usan ítems
+		}
+		if (clicked) {
+			shoot();
+		}
 	}
 
 	public static void tick(Minecraft mc) {
-		if (countdown < 0) {
+		if (!cameraMode || countdown < 0) {
 			return;
 		}
 		if (--countdown > 0) {
 			return;
 		}
-		countdown = -1;
 		NativeImage image = Screenshot.takeScreenshot(mc.getMainRenderTarget());
-		mc.options.hideGui = hadHiddenGui;
+		cancel();
 		mc.setScreen(new ShotSendScreen(image));
+	}
+
+	/** Visor del modo cámara (esquinas, título y ayuda). No se pinta en el frame que se captura. */
+	public static void renderViewfinder(GuiGraphics g) {
+		if (!cameraMode || countdown >= 0) {
+			return;
+		}
+		Minecraft mc = Minecraft.getInstance();
+		int w = g.guiWidth();
+		int h = g.guiHeight();
+		int m = 12;
+		int len = 14;
+		int c = 0xEEFFFFFF;
+		int sh = 0x66000000;
+		for (int[] corner : new int[][] {{m, m, 1, 1}, {w - m, m, -1, 1}, {m, h - m, 1, -1}, {w - m, h - m, -1, -1}}) {
+			int x = corner[0];
+			int y = corner[1];
+			int dx = corner[2];
+			int dy = corner[3];
+			fillLine(g, x + 1, y + 1, x + dx * len + 1, y + dy * 2 + 1, sh);
+			fillLine(g, x + 1, y + 1, x + dx * 2 + 1, y + dy * len + 1, sh);
+			fillLine(g, x, y, x + dx * len, y + dy * 2, c);
+			fillLine(g, x, y, x + dx * 2, y + dy * len, c);
+		}
+		// Punto central.
+		g.fill(w / 2 - 1, h / 2 - 1, w / 2 + 1, h / 2 + 1, 0x99FFFFFF);
+		Component title = Lang.tr("camera.title");
+		int tw = mc.font.width(title) + 22;
+		Ui.round(g, w / 2 - tw / 2, m + 2, w / 2 + tw / 2, m + 16, 5, 0xAA111318);
+		g.blit(ChaosChatPlus.id("textures/gui/btn_shot.png"), w / 2 - tw / 2 + 5, m + 5, 8, 8, 0, 0, 16, 16, 16, 16);
+		g.drawString(mc.font, title, w / 2 - tw / 2 + 16, m + 5, 0xFFFFFFFF, false);
+		Component hint = Lang.tr("camera.hint");
+		int hw = mc.font.width(hint) + 16;
+		Ui.round(g, w / 2 - hw / 2, h - m - 18, w / 2 + hw / 2, h - m - 4, 5, 0xAA111318);
+		g.drawString(mc.font, hint, w / 2 - hw / 2 + 8, h - m - 15, 0xFFE6E8EE, false);
+	}
+
+	private static void fillLine(GuiGraphics g, int x0, int y0, int x1, int y1, int color) {
+		g.fill(Math.min(x0, x1), Math.min(y0, y1), Math.max(x0, x1), Math.max(y0, y1), color);
 	}
 
 	/** Abre la pantalla de enviar con una captura hecha con F2 (solo de la carpeta screenshots del juego). */

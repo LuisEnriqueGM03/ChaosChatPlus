@@ -809,6 +809,969 @@
 			"chars": [
 				"\ue059"
 			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/timido.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue05a"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/guino_sonrisa.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue05b"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/nervioso.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue05c"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/bostezo.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue05d"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/zombi.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue05e"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/robot.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue05f"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/alien.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue060"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/payaso.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue061"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/gato_feliz.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue062"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/sin_boca.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue063"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/mascarilla.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue064"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/uwu.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue065"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/al_reves.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue066"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/vaquero.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue067"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/explota.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue068"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/gato.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue069"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/perro.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue06a"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/cerdo.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue06b"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/vaca.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue06c"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/gallina.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue06d"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/rana.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue06e"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/abeja.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue06f"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/pez.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue070"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/oso.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue071"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/zorro.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue072"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/panda.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue073"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/pinguino.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue074"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/pan.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue075"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/galleta.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue076"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/sandia.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue077"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/zanahoria.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue078"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/huevo.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue079"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/hamburguesa.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue07a"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/papas.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue07b"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/helado.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue07c"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/dona.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue07d"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/manzana_dorada.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue07e"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/sol.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue07f"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/luna.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue080"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/nube.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue081"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/lluvia.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue082"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/nieve.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue083"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/arcoiris.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue084"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/arbol.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue085"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/flor.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue086"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/hoja.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue087"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/seta.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue088"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/cactus.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue089"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/bomba.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue08a"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/llave.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue08b"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/candado.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue08c"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/campana.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue08d"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/libro.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue08e"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/lapiz.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue08f"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/bombilla.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue090"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/reloj.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue091"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/bolsa_dinero.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue092"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/moneda.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue093"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/escudo.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue094"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/arco.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue095"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/flecha.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue096"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/pocion.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue097"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/mapa.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue098"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/brujula.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue099"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/antorcha.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue09a"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/arriba.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue09b"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/abajo.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue09c"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/izquierda.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue09d"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/derecha.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue09e"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/mas.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue09f"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/menos.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a0"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n0.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a1"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n1.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a2"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n2.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a3"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n3.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a4"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n4.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a5"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n5.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a6"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n6.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a7"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n7.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a8"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n8.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0a9"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n9.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0aa"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/n10.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0ab"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/new.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0ac"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/ok_simbolo.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0ad"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/sos.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0ae"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/stop.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0af"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/prohibido.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b0"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/slime.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b1"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/zombie.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b2"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/esqueleto.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b3"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/enderman.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b4"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/perla.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b5"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/ojo_ender.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b6"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/estrella_nether.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b7"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/totem.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b8"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/cubo.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0b9"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/cofre.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0ba"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/mesa_crafteo.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0bb"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/cesped.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0bc"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/obsidiana.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0bd"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/lava.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0be"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/agua.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0bf"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/hierro.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0c0"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/netherita.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0c1"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/redstone.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0c2"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/orbe_xp.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0c3"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "chaoschatplus:emoji/spawner.png",
+			"height": 8,
+			"ascent": 7,
+			"chars": [
+				"\ue0c4"
+			]
 		}
 	]
 }

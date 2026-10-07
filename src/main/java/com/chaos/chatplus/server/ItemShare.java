@@ -74,7 +74,10 @@ public final class ItemShare {
 			return;
 		}
 		markUsed(player);
-		Component message = Lang.tr("item.shared", player.getDisplayName(), component(stack));
-		player.server.getPlayerList().broadcastSystemMessage(message, false);
+		Component item = component(stack);
+		player.server.sendSystemMessage(Lang.tr("item.shared", player.getDisplayName(), "", item));
+		for (ServerPlayer viewer : player.server.getPlayerList().getPlayers()) {
+			viewer.sendSystemMessage(Lang.tr("item.shared", player.getDisplayName(), ChatTransform.icon(viewer, "espada"), item));
+		}
 	}
 }

@@ -1449,6 +1449,12 @@ EMOJIS = [
 
 
 def main():
+    from gen_emojis_extra import EXTRA, gui_icons
+    all_emojis = EMOJIS + EXTRA
+    gui_dir = os.path.join(ASSETS, "textures", "gui")
+    os.makedirs(gui_dir, exist_ok=True)
+    for name, img in gui_icons().items():
+        img.save(os.path.join(gui_dir, name + ".png"))
     tex_dir = os.path.join(ASSETS, "textures", "emoji")
     os.makedirs(tex_dir, exist_ok=True)
     os.makedirs(os.path.join(ASSETS, "font"), exist_ok=True)
@@ -1460,7 +1466,7 @@ def main():
     providers = []
     images = []
     seen = set()
-    for n, (name, fn, aliases, category, unicode) in enumerate(EMOJIS):
+    for n, (name, fn, aliases, category, unicode) in enumerate(all_emojis):
         assert name not in seen, name
         seen.add(name)
         img = fn()

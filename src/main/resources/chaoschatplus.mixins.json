@@ -12,7 +12,10 @@
 	"client": [
 		"client.ChatComponentAccessor",
 		"client.ChatComponentMixin",
-		"client.ChatScreenMixin"
+		"client.ChatScreenMixin",
+		"client.EditBoxAccessor",
+		"client.GuiMixin",
+		"client.KeyboardHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

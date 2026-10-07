@@ -24,6 +24,15 @@ public final class ChatTransform {
 
 	private ChatTransform() {}
 
+	/** " 📷" (espacio + emoji) si quien lo recibe puede ver ese emoji; si no, nada. */
+	public static Component icon(ServerPlayer viewer, String emojiName) {
+		Emoji emoji = EmojiRegistry.byName(emojiName);
+		if (emoji == null || !(PackHost.hasPack(viewer) || (ChatServer.isModded(viewer) && emoji.builtin()))) {
+			return Component.empty();
+		}
+		return Component.literal(" ").append(ChatMarks.emoji(emoji));
+	}
+
 	public static Component forRecipient(ServerPlayer viewer, Component message) {
 		if (!ChatMarks.any(message, c -> ChatMarks.isEmoji(c.getStyle()) || ChatMarks.mentionToken(c) != null)) {
 			return message;

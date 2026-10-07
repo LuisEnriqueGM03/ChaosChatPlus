@@ -49,10 +49,16 @@ public final class ChatClicks {
 		Minecraft mc = Minecraft.getInstance();
 		String id = shotId(style);
 		if (id != null && ClientState.serverMod()) {
-			mc.setScreen(new ShotViewerScreen(id, screen));
+			mc.setScreen(new ShotViewerScreen(id, screen, false));
 			return true;
 		}
 		ClickEvent click = style.getClickEvent();
+		if (click != null && click.getAction() == ClickEvent.Action.RUN_COMMAND && ClientState.serverMod()
+				&& click.getValue().startsWith(Shots.REVIEW_COMMAND)) {
+			String reviewId = click.getValue().substring(Shots.REVIEW_COMMAND.length()).strip();
+			mc.setScreen(new ShotViewerScreen(reviewId, screen, true));
+			return true;
+		}
 		if (click != null && click.getAction() == ClickEvent.Action.RUN_COMMAND
 				&& click.getValue().startsWith(ShotCapture.SEND_FILE_COMMAND)) {
 			ShotCapture.openFile(click.getValue().substring(ShotCapture.SEND_FILE_COMMAND.length()));

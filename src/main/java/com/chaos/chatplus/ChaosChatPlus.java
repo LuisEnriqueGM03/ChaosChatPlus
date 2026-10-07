@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.chaos.chatplus.command.ChatPlusCommand;
+import com.chaos.chatplus.compat.ChaosRanksCompat;
 import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.EmojiRegistry;
 import com.chaos.chatplus.net.ChatPayloads;
@@ -51,6 +52,7 @@ public class ChaosChatPlus implements ModInitializer {
 			ChatConfig.load();
 			EmojiRegistry.load();
 			PackHost.start(server);
+			ChaosRanksCompat.cleanOrphanTeams(server);
 		});
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
 			PackHost.stop();

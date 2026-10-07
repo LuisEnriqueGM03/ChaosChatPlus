@@ -9,10 +9,12 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.chaos.chatplus.client.ChatClicks;
+import com.chaos.chatplus.client.EmojiInput;
 import com.chaos.chatplus.client.SelfTest;
 import com.chaos.chatplus.client.ui.ChatBar;
 import com.chaos.chatplus.client.ui.ModernChat;
@@ -117,6 +119,19 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
 		if (chaoschatplus$bar != null && chaoschatplus$bar.mouseScrolled(mx, my, v)) {
 			cir.setReturnValue(true);
 		}
+	}
+
+	@ModifyVariable(method = "handleChatInput", at = @At("HEAD"), argsOnly = true)
+	private String chaoschatplus$codes(String message) {
+		return EmojiInput.toCodes(message);
+	}
+
+	@Override
+	public boolean charTyped(char c, int modifiers) {
+		if (chaoschatplus$bar != null) {
+			chaoschatplus$bar.charTyped();
+		}
+		return super.charTyped(c, modifiers);
 	}
 
 	@Override

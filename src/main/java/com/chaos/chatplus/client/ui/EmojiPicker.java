@@ -24,7 +24,7 @@ import net.minecraft.util.Mth;
  */
 public final class EmojiPicker {
 
-	private static final int COLS = 9;
+	private static final int COLS = 12;
 	private static final int ROWS = 6;
 	private static final int CELL = 13;
 	private static final int TAB = 12;
@@ -39,6 +39,9 @@ public final class EmojiPicker {
 
 	static {
 		CATEGORY_ICONS.put("caras", "sonrisa");
+		CATEGORY_ICONS.put("animales", "gato");
+		CATEGORY_ICONS.put("comida", "hamburguesa");
+		CATEGORY_ICONS.put("naturaleza", "arbol");
 		CATEGORY_ICONS.put("corazones", "corazon");
 		CATEGORY_ICONS.put("gestos", "pulgar_arriba");
 		CATEGORY_ICONS.put("simbolos", "fuego");

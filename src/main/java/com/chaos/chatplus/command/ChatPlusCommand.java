@@ -56,6 +56,12 @@ public final class ChatPlusCommand {
 									Shots.view(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "id"));
 									return 1;
 								})))
+						.then(Commands.literal("review").requires(s -> s.hasPermission(2))
+								.then(Commands.argument("id", StringArgumentType.word()).suggests(SHOTS)
+										.executes(ctx -> {
+											Shots.review(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "id"));
+											return 1;
+										})))
 						.then(Commands.literal("delete").requires(s -> s.hasPermission(2))
 								.then(Commands.argument("id", StringArgumentType.word()).suggests(SHOTS)
 										.executes(ChatPlusCommand::deleteShot)))

@@ -33,12 +33,8 @@ import org.jetbrains.annotations.Nullable;
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.config.ChatConfig;
-import com.chaos.chatplus.emoji.Emoji;
-import com.chaos.chatplus.emoji.EmojiRegistry;
 import com.chaos.chatplus.net.ChatPayloads;
-import com.chaos.chatplus.pack.PackHost;
 import com.chaos.chatplus.perm.Perms;
-import com.chaos.chatplus.text.ChatMarks;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.ChatFormatting;
@@ -59,6 +55,8 @@ public final class Shots {
 
 	/** Comando que abre una captura (el cliente con el mod lo intercepta y abre el visor). */
 	public static final String VIEW_COMMAND = "/chatplus shot view ";
+	/** Comando de los OPs para revisar una captura reportada (con el mod se abre la vista previa con [Borrar]). */
+	public static final String REVIEW_COMMAND = "/chatplus shot review ";
 	private static final int MAX_SIDE = 1280;
 	private static final DateTimeFormatter LOG_TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -234,20 +232,15 @@ public final class Shots {
 		ChaosChatPlus.LOGGER.info("[ChatPlus] {} envió una captura ({})", ownerName, id);
 	}
 
-	/** "📷 Luis envió una captura [Ver]" (el icono es el emoji si quien lo recibe puede verlo). */
+	/** "Luis 📷 envió una captura [Ver]" (el icono es el emoji si quien lo recibe puede verlo). */
 	private static Component message(ServerPlayer viewer, String id, Component name) {
-		MutableComponent out = Component.empty();
-		Emoji camera = EmojiRegistry.byName("camara");
-		if (camera != null && (PackHost.hasPack(viewer) || ChatServer.isModded(viewer))) {
-			out.append(ChatMarks.emoji(camera)).append(" ");
-		}
 		MutableComponent view = Lang.tr("shot.view").withStyle(s -> s
 				.withColor(0x7AD7FF)
 				.withUnderlined(true)
 				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, VIEW_COMMAND + id))
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 						Lang.tr(ChatServer.isModded(viewer) ? "shot.hover" : "shot.hover_vanilla"))));
-		return out.append(Lang.tr("shot.sent", name)).append(" ").append(view);
+		return Component.empty().append(Lang.tr("shot.sent", name, ChatTransform.icon(viewer, "camara"))).append(" ").append(view);
 	}
 
 	private static String newId() {
@@ -276,11 +269,27 @@ public final class Shots {
 
 	public static void send(ServerPlayer player, String id) {
 		Shot shot = SHOTS.get(id);
-		if (shot == null || HIDDEN.contains(id)) {
+		if (shot == null || (HIDDEN.contains(id) && !player.hasPermissions(2))) {
 			ServerPlayNetworking.send(player, new ChatPayloads.ShotData(id, "", new byte[0]));
 			return;
 		}
 		ServerPlayNetworking.send(player, new ChatPayloads.ShotData(id, shot.ownerName(), shot.jpeg()));
+	}
+
+	/** /chatplus shot review (OP): sin el mod, texto con [Borrar]; con el mod lo intercepta el cliente. */
+	public static void review(ServerPlayer player, String id) {
+		Shot shot = SHOTS.get(id);
+		if (shot == null) {
+			player.sendSystemMessage(Lang.tr("shot.not_found", id).withStyle(ChatFormatting.RED));
+			return;
+		}
+		if (ChatServer.isModded(player)) {
+			send(player, id);
+		}
+		player.sendSystemMessage(Lang.tr("shot.review_text", id, shot.ownerName(), shot.reporters().size())
+				.withStyle(ChatFormatting.GOLD).append(" ")
+				.append(Lang.tr("shot.delete_button").withStyle(s -> s.withColor(ChatFormatting.RED)
+						.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chatplus shot delete " + id)))));
 	}
 
 	public static void report(ServerPlayer reporter, String id) {
@@ -293,7 +302,7 @@ public final class Shots {
 		reporter.sendSystemMessage(Lang.tr("shot.reported").withStyle(ChatFormatting.GREEN));
 		MutableComponent note = Lang.tr("shot.report_staff", who, shot.ownerName(), id).withStyle(s -> s
 				.withColor(ChatFormatting.GOLD)
-				.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/chatplus shot delete " + id)));
+				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, REVIEW_COMMAND + id)));
 		for (ServerPlayer p : reporter.server.getPlayerList().getPlayers()) {
 			if (p.hasPermissions(2)) {
 				p.sendSystemMessage(note);

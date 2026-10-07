@@ -1054,5 +1054,1115 @@
 		"category": "minecraft",
 		"unicode": [],
 		"codepoint": 57433
+	},
+	{
+		"name": "timido",
+		"aliases": [
+			"shy"
+		],
+		"category": "caras",
+		"unicode": [],
+		"codepoint": 57434
+	},
+	{
+		"name": "guino_sonrisa",
+		"aliases": [
+			"wink_smile"
+		],
+		"category": "caras",
+		"unicode": [],
+		"codepoint": 57435
+	},
+	{
+		"name": "nervioso",
+		"aliases": [
+			"grimacing",
+			"nervous"
+		],
+		"category": "caras",
+		"unicode": [
+			"😬"
+		],
+		"codepoint": 57436
+	},
+	{
+		"name": "bostezo",
+		"aliases": [
+			"yawn"
+		],
+		"category": "caras",
+		"unicode": [
+			"🥱"
+		],
+		"codepoint": 57437
+	},
+	{
+		"name": "zombi",
+		"aliases": [
+			"zombie_face"
+		],
+		"category": "caras",
+		"unicode": [
+			"🧟"
+		],
+		"codepoint": 57438
+	},
+	{
+		"name": "robot",
+		"aliases": [
+			"bot"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤖"
+		],
+		"codepoint": 57439
+	},
+	{
+		"name": "alien",
+		"aliases": [
+			"alien_face"
+		],
+		"category": "caras",
+		"unicode": [
+			"👽"
+		],
+		"codepoint": 57440
+	},
+	{
+		"name": "payaso",
+		"aliases": [
+			"clown"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤡"
+		],
+		"codepoint": 57441
+	},
+	{
+		"name": "gato_feliz",
+		"aliases": [
+			"smiley_cat"
+		],
+		"category": "caras",
+		"unicode": [
+			"😺",
+			"😸"
+		],
+		"codepoint": 57442
+	},
+	{
+		"name": "sin_boca",
+		"aliases": [
+			"no_mouth"
+		],
+		"category": "caras",
+		"unicode": [
+			"😶"
+		],
+		"codepoint": 57443
+	},
+	{
+		"name": "mascarilla",
+		"aliases": [
+			"mask"
+		],
+		"category": "caras",
+		"unicode": [
+			"😷"
+		],
+		"codepoint": 57444
+	},
+	{
+		"name": "uwu",
+		"aliases": [
+			"owo"
+		],
+		"category": "caras",
+		"unicode": [],
+		"codepoint": 57445
+	},
+	{
+		"name": "al_reves",
+		"aliases": [
+			"upside_down"
+		],
+		"category": "caras",
+		"unicode": [
+			"🙃"
+		],
+		"codepoint": 57446
+	},
+	{
+		"name": "vaquero",
+		"aliases": [
+			"cowboy"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤠"
+		],
+		"codepoint": 57447
+	},
+	{
+		"name": "explota",
+		"aliases": [
+			"exploding_head",
+			"mind_blown"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤯"
+		],
+		"codepoint": 57448
+	},
+	{
+		"name": "gato",
+		"aliases": [
+			"cat"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐱"
+		],
+		"codepoint": 57449
+	},
+	{
+		"name": "perro",
+		"aliases": [
+			"dog"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐶"
+		],
+		"codepoint": 57450
+	},
+	{
+		"name": "cerdo",
+		"aliases": [
+			"pig"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐷"
+		],
+		"codepoint": 57451
+	},
+	{
+		"name": "vaca",
+		"aliases": [
+			"cow"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐮"
+		],
+		"codepoint": 57452
+	},
+	{
+		"name": "gallina",
+		"aliases": [
+			"chicken"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐔"
+		],
+		"codepoint": 57453
+	},
+	{
+		"name": "rana",
+		"aliases": [
+			"frog"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐸"
+		],
+		"codepoint": 57454
+	},
+	{
+		"name": "abeja",
+		"aliases": [
+			"bee"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐝"
+		],
+		"codepoint": 57455
+	},
+	{
+		"name": "pez",
+		"aliases": [
+			"fish"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐟",
+			"🐠"
+		],
+		"codepoint": 57456
+	},
+	{
+		"name": "oso",
+		"aliases": [
+			"bear"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐻"
+		],
+		"codepoint": 57457
+	},
+	{
+		"name": "zorro",
+		"aliases": [
+			"fox"
+		],
+		"category": "animales",
+		"unicode": [
+			"🦊"
+		],
+		"codepoint": 57458
+	},
+	{
+		"name": "panda",
+		"aliases": [],
+		"category": "animales",
+		"unicode": [
+			"🐼"
+		],
+		"codepoint": 57459
+	},
+	{
+		"name": "pinguino",
+		"aliases": [
+			"penguin"
+		],
+		"category": "animales",
+		"unicode": [
+			"🐧"
+		],
+		"codepoint": 57460
+	},
+	{
+		"name": "pan",
+		"aliases": [
+			"bread"
+		],
+		"category": "comida",
+		"unicode": [
+			"🍞"
+		],
+		"codepoint": 57461
+	},
+	{
+		"name": "galleta",
+		"aliases": [
+			"cookie"
+		],
+		"category": "comida",
+		"unicode": [
+			"🍪"
+		],
+		"codepoint": 57462
+	},
+	{
+		"name": "sandia",
+		"aliases": [
+			"watermelon"
+		],
+		"category": "comida",
+		"unicode": [
+			"🍉"
+		],
+		"codepoint": 57463
+	},
+	{
+		"name": "zanahoria",
+		"aliases": [
+			"carrot"
+		],
+		"category": "comida",
+		"unicode": [
+			"🥕"
+		],
+		"codepoint": 57464
+	},
+	{
+		"name": "huevo",
+		"aliases": [
+			"egg"
+		],
+		"category": "comida",
+		"unicode": [
+			"🥚",
+			"🍳"
+		],
+		"codepoint": 57465
+	},
+	{
+		"name": "hamburguesa",
+		"aliases": [
+			"burger",
+			"hamburger"
+		],
+		"category": "comida",
+		"unicode": [
+			"🍔"
+		],
+		"codepoint": 57466
+	},
+	{
+		"name": "papas",
+		"aliases": [
+			"fries",
+			"patatas"
+		],
+		"category": "comida",
+		"unicode": [
+			"🍟"
+		],
+		"codepoint": 57467
+	},
+	{
+		"name": "helado",
+		"aliases": [
+			"ice_cream"
+		],
+		"category": "comida",
+		"unicode": [
+			"🍦"
+		],
+		"codepoint": 57468
+	},
+	{
+		"name": "dona",
+		"aliases": [
+			"donut"
+		],
+		"category": "comida",
+		"unicode": [
+			"🍩"
+		],
+		"codepoint": 57469
+	},
+	{
+		"name": "manzana_dorada",
+		"aliases": [
+			"golden_apple"
+		],
+		"category": "comida",
+		"unicode": [],
+		"codepoint": 57470
+	},
+	{
+		"name": "sol",
+		"aliases": [
+			"sun",
+			"sunny"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"☀",
+			"🌞"
+		],
+		"codepoint": 57471
+	},
+	{
+		"name": "luna",
+		"aliases": [
+			"moon"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"🌙"
+		],
+		"codepoint": 57472
+	},
+	{
+		"name": "nube",
+		"aliases": [
+			"cloud"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"☁"
+		],
+		"codepoint": 57473
+	},
+	{
+		"name": "lluvia",
+		"aliases": [
+			"rain"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"🌧"
+		],
+		"codepoint": 57474
+	},
+	{
+		"name": "nieve",
+		"aliases": [
+			"snowflake",
+			"snow"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"❄"
+		],
+		"codepoint": 57475
+	},
+	{
+		"name": "arcoiris",
+		"aliases": [
+			"rainbow"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"🌈"
+		],
+		"codepoint": 57476
+	},
+	{
+		"name": "arbol",
+		"aliases": [
+			"tree"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"🌳"
+		],
+		"codepoint": 57477
+	},
+	{
+		"name": "flor",
+		"aliases": [
+			"flower"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"🌸",
+			"🌺"
+		],
+		"codepoint": 57478
+	},
+	{
+		"name": "hoja",
+		"aliases": [
+			"leaf"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"🍃",
+			"🌿"
+		],
+		"codepoint": 57479
+	},
+	{
+		"name": "seta",
+		"aliases": [
+			"mushroom"
+		],
+		"category": "naturaleza",
+		"unicode": [
+			"🍄"
+		],
+		"codepoint": 57480
+	},
+	{
+		"name": "cactus",
+		"aliases": [],
+		"category": "naturaleza",
+		"unicode": [
+			"🌵"
+		],
+		"codepoint": 57481
+	},
+	{
+		"name": "bomba",
+		"aliases": [
+			"bomb"
+		],
+		"category": "objetos",
+		"unicode": [
+			"💣"
+		],
+		"codepoint": 57482
+	},
+	{
+		"name": "llave",
+		"aliases": [
+			"key"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🔑"
+		],
+		"codepoint": 57483
+	},
+	{
+		"name": "candado",
+		"aliases": [
+			"lock"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🔒"
+		],
+		"codepoint": 57484
+	},
+	{
+		"name": "campana",
+		"aliases": [
+			"bell"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🔔"
+		],
+		"codepoint": 57485
+	},
+	{
+		"name": "libro",
+		"aliases": [
+			"book"
+		],
+		"category": "objetos",
+		"unicode": [
+			"📕",
+			"📖"
+		],
+		"codepoint": 57486
+	},
+	{
+		"name": "lapiz",
+		"aliases": [
+			"pencil"
+		],
+		"category": "objetos",
+		"unicode": [
+			"✏"
+		],
+		"codepoint": 57487
+	},
+	{
+		"name": "bombilla",
+		"aliases": [
+			"bulb",
+			"idea"
+		],
+		"category": "objetos",
+		"unicode": [
+			"💡"
+		],
+		"codepoint": 57488
+	},
+	{
+		"name": "reloj",
+		"aliases": [
+			"clock"
+		],
+		"category": "objetos",
+		"unicode": [
+			"⏰",
+			"🕒"
+		],
+		"codepoint": 57489
+	},
+	{
+		"name": "bolsa_dinero",
+		"aliases": [
+			"moneybag"
+		],
+		"category": "objetos",
+		"unicode": [
+			"💰"
+		],
+		"codepoint": 57490
+	},
+	{
+		"name": "moneda",
+		"aliases": [
+			"coin"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🪙"
+		],
+		"codepoint": 57491
+	},
+	{
+		"name": "escudo",
+		"aliases": [
+			"shield"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🛡"
+		],
+		"codepoint": 57492
+	},
+	{
+		"name": "arco",
+		"aliases": [
+			"bow"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🏹"
+		],
+		"codepoint": 57493
+	},
+	{
+		"name": "flecha",
+		"aliases": [
+			"arrow"
+		],
+		"category": "objetos",
+		"unicode": [],
+		"codepoint": 57494
+	},
+	{
+		"name": "pocion",
+		"aliases": [
+			"potion"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🧪"
+		],
+		"codepoint": 57495
+	},
+	{
+		"name": "mapa",
+		"aliases": [
+			"map"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🗺"
+		],
+		"codepoint": 57496
+	},
+	{
+		"name": "brujula",
+		"aliases": [
+			"compass"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🧭"
+		],
+		"codepoint": 57497
+	},
+	{
+		"name": "antorcha",
+		"aliases": [
+			"torch"
+		],
+		"category": "objetos",
+		"unicode": [],
+		"codepoint": 57498
+	},
+	{
+		"name": "arriba",
+		"aliases": [
+			"up"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"⬆"
+		],
+		"codepoint": 57499
+	},
+	{
+		"name": "abajo",
+		"aliases": [
+			"down"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"⬇"
+		],
+		"codepoint": 57500
+	},
+	{
+		"name": "izquierda",
+		"aliases": [
+			"left"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"⬅"
+		],
+		"codepoint": 57501
+	},
+	{
+		"name": "derecha",
+		"aliases": [
+			"right"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"➡"
+		],
+		"codepoint": 57502
+	},
+	{
+		"name": "mas",
+		"aliases": [
+			"plus"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"➕"
+		],
+		"codepoint": 57503
+	},
+	{
+		"name": "menos",
+		"aliases": [
+			"minus"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"➖"
+		],
+		"codepoint": 57504
+	},
+	{
+		"name": "n0",
+		"aliases": [
+			"num0"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57505
+	},
+	{
+		"name": "n1",
+		"aliases": [
+			"num1"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57506
+	},
+	{
+		"name": "n2",
+		"aliases": [
+			"num2"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57507
+	},
+	{
+		"name": "n3",
+		"aliases": [
+			"num3"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57508
+	},
+	{
+		"name": "n4",
+		"aliases": [
+			"num4"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57509
+	},
+	{
+		"name": "n5",
+		"aliases": [
+			"num5"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57510
+	},
+	{
+		"name": "n6",
+		"aliases": [
+			"num6"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57511
+	},
+	{
+		"name": "n7",
+		"aliases": [
+			"num7"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57512
+	},
+	{
+		"name": "n8",
+		"aliases": [
+			"num8"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57513
+	},
+	{
+		"name": "n9",
+		"aliases": [
+			"num9"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57514
+	},
+	{
+		"name": "n10",
+		"aliases": [
+			"num10"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57515
+	},
+	{
+		"name": "new",
+		"aliases": [
+			"nuevo"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"🆕"
+		],
+		"codepoint": 57516
+	},
+	{
+		"name": "ok_simbolo",
+		"aliases": [
+			"ok_button"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"🆗"
+		],
+		"codepoint": 57517
+	},
+	{
+		"name": "sos",
+		"aliases": [],
+		"category": "simbolos",
+		"unicode": [
+			"🆘"
+		],
+		"codepoint": 57518
+	},
+	{
+		"name": "stop",
+		"aliases": [
+			"alto"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"🛑"
+		],
+		"codepoint": 57519
+	},
+	{
+		"name": "prohibido",
+		"aliases": [
+			"no_entry",
+			"forbidden"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"🚫",
+			"⛔"
+		],
+		"codepoint": 57520
+	},
+	{
+		"name": "slime",
+		"aliases": [],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57521
+	},
+	{
+		"name": "zombie",
+		"aliases": [],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57522
+	},
+	{
+		"name": "esqueleto",
+		"aliases": [
+			"skeleton"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57523
+	},
+	{
+		"name": "enderman",
+		"aliases": [],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57524
+	},
+	{
+		"name": "perla",
+		"aliases": [
+			"ender_pearl"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57525
+	},
+	{
+		"name": "ojo_ender",
+		"aliases": [
+			"eye_of_ender"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57526
+	},
+	{
+		"name": "estrella_nether",
+		"aliases": [
+			"nether_star"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57527
+	},
+	{
+		"name": "totem",
+		"aliases": [],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57528
+	},
+	{
+		"name": "cubo",
+		"aliases": [
+			"bucket"
+		],
+		"category": "minecraft",
+		"unicode": [
+			"🪣"
+		],
+		"codepoint": 57529
+	},
+	{
+		"name": "cofre",
+		"aliases": [
+			"chest"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57530
+	},
+	{
+		"name": "mesa_crafteo",
+		"aliases": [
+			"crafting_table"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57531
+	},
+	{
+		"name": "cesped",
+		"aliases": [
+			"grass_block",
+			"grass"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57532
+	},
+	{
+		"name": "obsidiana",
+		"aliases": [
+			"obsidian"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57533
+	},
+	{
+		"name": "lava",
+		"aliases": [],
+		"category": "minecraft",
+		"unicode": [
+			"🌋"
+		],
+		"codepoint": 57534
+	},
+	{
+		"name": "agua",
+		"aliases": [
+			"water"
+		],
+		"category": "minecraft",
+		"unicode": [
+			"💧",
+			"🌊"
+		],
+		"codepoint": 57535
+	},
+	{
+		"name": "hierro",
+		"aliases": [
+			"iron",
+			"iron_ingot"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57536
+	},
+	{
+		"name": "netherita",
+		"aliases": [
+			"netherite"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57537
+	},
+	{
+		"name": "redstone",
+		"aliases": [],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57538
+	},
+	{
+		"name": "orbe_xp",
+		"aliases": [
+			"xp",
+			"exp"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57539
+	},
+	{
+		"name": "spawner",
+		"aliases": [],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57540
 	}
 ]
