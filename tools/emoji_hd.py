@@ -41,7 +41,11 @@ class Canvas:
         attr = object.__getattribute__(self, name)
         if name in DRAW_METHODS and not object.__getattribute__(self, "direct"):
             def wrapped(*args, **kwargs):
-                if any(isinstance(v, tuple) and len(v) == 4 and v[3] < 255 for v in list(args) + list(kwargs.values())):
+                vals = list(args) + list(kwargs.values())
+                # En pixel art no van los brillos (manchas blancas semitransparentes): le dan volumen "3D".
+                if PIXEL and any(isinstance(v, tuple) and len(v) == 4 and v[3] < 255 and min(v[:3]) > 200 for v in vals):
+                    return None
+                if any(isinstance(v, tuple) and len(v) == 4 and v[3] < 255 for v in vals):
                     tmp = Canvas(direct=True)
                     getattr(tmp, name)(*args, **kwargs)
                     object.__getattribute__(self, "img").alpha_composite(tmp.img)
@@ -115,7 +119,44 @@ class Canvas:
         self.img.alpha_composite(layer.img)
 
     def done(self):
-        return bleed(self.img.resize((OUT, OUT), Image.LANCZOS))
+        return pixelate(self.img)
+
+
+PIXEL = True
+
+
+def pixelate(big, colors=14, outline=True):
+    """Pasa el dibujo grande a pixel art de 32x32: bordes duros, paleta corta sin degradados y contorno oscuro de 1 px
+    (como los ítems de Minecraft)."""
+    import numpy as np
+    if not PIXEL:
+        return bleed(big.resize((OUT, OUT), Image.LANCZOS))
+    small = big.resize((OUT, OUT), Image.BOX)
+    a = np.asarray(small).copy()
+    solid = a[..., 3] >= 110
+    rgb_img = Image.fromarray(a[..., :3])
+    q = np.asarray(rgb_img.quantize(colors=colors, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+                   .convert("RGB"))
+    out = np.zeros((OUT, OUT, 4), np.uint8)
+    out[solid, :3] = q[solid]
+    out[solid, 3] = 255
+    if outline:
+        edge = np.zeros_like(solid)
+        col = np.zeros((OUT, OUT, 3), np.float32)
+        cnt = np.zeros((OUT, OUT), np.float32)
+        for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            sh = np.roll(np.roll(solid, dy, 0), dx, 1)
+            shc = np.roll(np.roll(out[..., :3].astype(np.float32), dy, 0), dx, 1)
+            m = sh & ~solid
+            col[m] += shc[m]
+            cnt[m] += 1
+            edge |= m
+        # No envolver por los bordes del lienzo.
+        edge[0, :] &= solid[1, :]; edge[-1, :] &= solid[-2, :]; edge[:, 0] &= solid[:, 1]; edge[:, -1] &= solid[:, -2]
+        dark = (col / np.maximum(cnt, 1)[..., None]) * 0.42
+        out[edge, :3] = dark[edge].astype(np.uint8)
+        out[edge, 3] = 255
+    return Image.fromarray(out, "RGBA")
 
 
 def bleed(img):
@@ -189,6 +230,8 @@ def face_base(c, color="yellow", cx=16, cy=16, r=14.6):
     base, dark, light = SKIN[color]
     c.circle(cx, cy, r, dark)
     c.circle(cx, cy - 0.5, r - 1.0, base)
+    if PIXEL:
+        return
     # brillo suave arriba a la izquierda
     hl = c.layer()
     hl.ellipse(cx - r * 0.75, cy - r * 0.9, cx + r * 0.3, cy - r * 0.15, alpha(light, 140))
