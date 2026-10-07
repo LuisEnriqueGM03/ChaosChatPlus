@@ -1266,6 +1266,14 @@ def gui_icons():
                 px(i, x, y, w)
     icons["btn_send"] = i
 
+    i = new()
+    rect(i, 1, 3, 14, 12, w)
+    rect(i, 2, 4, 13, 11, (0, 0, 0, 0))
+    for k in range(6):
+        px(i, 2 + k, 4 + k, w)
+        px(i, 13 - k, 4 + k, w)
+    icons["btn_dm"] = i
+
     out = {}
     for name, img in icons.items():
         shadow = new()

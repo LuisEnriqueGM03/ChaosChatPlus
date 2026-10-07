@@ -1,0 +1,19 @@
+{
+  "chat": {
+    "translation_key": "✉ %s » %s",
+    "parameters": [
+      "sender",
+      "content"
+    ],
+    "style": {
+      "color": "#D6B4FF"
+    }
+  },
+  "narration": {
+    "translation_key": "commands.message.display.incoming",
+    "parameters": [
+      "sender",
+      "content"
+    ]
+  }
+}

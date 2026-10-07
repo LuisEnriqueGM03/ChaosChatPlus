@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.config.ChatConfig;
+import com.chaos.chatplus.gif.GifServer;
 import com.chaos.chatplus.perm.Perms;
 
 import net.minecraft.ChatFormatting;
@@ -76,7 +77,7 @@ public final class ItemShare {
 	}
 
 	/** Botón "Mostrar ítem" del chat: comparte el ítem de ese hueco con todos. */
-	public static void shareSlot(ServerPlayer player, int slot) {
+	public static void shareSlot(ServerPlayer player, int slot, String targetName) {
 		if (!Perms.canItems(player)) {
 			player.sendSystemMessage(Lang.tr("item.no_permission").withStyle(ChatFormatting.RED));
 			return;
@@ -92,8 +93,28 @@ public final class ItemShare {
 		if (stack.isEmpty()) {
 			return;
 		}
+		ServerPlayer target = null;
+		if (!targetName.isEmpty()) {
+			target = player.server.getPlayerList().getPlayerByName(targetName);
+			if (target == null) {
+				player.sendSystemMessage(Lang.tr("dm.offline", targetName).withStyle(ChatFormatting.RED));
+				return;
+			}
+		}
 		markUsed(player);
 		Component item = component(stack);
+		if (target != null) {
+			ServerPlayer to = target;
+			player.sendSystemMessage(Component.literal("✉ ").append(Lang.tr("dm.item_out", to.getDisplayName(), item))
+					.withStyle(st -> st.withColor(GifServer.PRIVATE_COLOR)));
+			if (to != player) {
+				to.sendSystemMessage(Component.literal("✉ ").append(Lang.tr("dm.item_in", player.getDisplayName(), item))
+						.withStyle(st -> st.withColor(GifServer.PRIVATE_COLOR)
+								.withInsertion("/msg " + player.getGameProfile().getName() + " ")));
+				Mentions.ping(to, player);
+			}
+			return;
+		}
 		player.server.sendSystemMessage(Lang.tr("item.shared", player.getDisplayName(), "", item));
 		for (ServerPlayer viewer : player.server.getPlayerList().getPlayers()) {
 			viewer.sendSystemMessage(Lang.tr("item.shared", player.getDisplayName(), ChatTransform.icon(viewer, "espada"), item));

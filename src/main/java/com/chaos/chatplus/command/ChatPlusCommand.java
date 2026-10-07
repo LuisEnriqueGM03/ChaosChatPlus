@@ -52,6 +52,15 @@ public final class ChatPlusCommand {
 					ctx.getSource().sendSuccess(() -> Lang.tr("item.view_hint").withStyle(ChatFormatting.GRAY), false);
 					return 1;
 				})))
+				.then(Commands.literal("restore").requires(s -> s.hasPermission(2)).executes(ctx -> {
+					int emojis = EmojiRegistry.export(true);
+					int gifs = GifRegistry.export(true);
+					EmojiRegistry.load();
+					GifRegistry.load();
+					ChatServer.resyncAll(ctx.getSource().getServer());
+					ctx.getSource().sendSuccess(() -> Lang.tr("restored", emojis, gifs).withStyle(ChatFormatting.GREEN), true);
+					return 1;
+				}))
 				.then(Commands.literal("reload").requires(s -> s.hasPermission(2)).executes(ChatPlusCommand::reload))
 				.then(Commands.literal("pack").requires(s -> s.hasPermission(2))
 						.then(Commands.literal("export").executes(ChatPlusCommand::export)))

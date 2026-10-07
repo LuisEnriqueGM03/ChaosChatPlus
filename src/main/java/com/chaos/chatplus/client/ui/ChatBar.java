@@ -43,6 +43,10 @@ public final class ChatBar {
 	@Nullable private EmojiPicker picker;
 	private final List<Button> buttons = new ArrayList<>();
 	private boolean converting;
+	/** Lista de jugadores para elegir con quién hablar en privado. */
+	private boolean dmPicker;
+	private int dmX;
+	private int dmY;
 	private long limitAt;
 
 	private int barTop;
@@ -62,6 +66,9 @@ public final class ChatBar {
 		}
 		if (ClientState.shots()) {
 			buttons.add(new Button("btn_shot", "bar.shot", ShotCapture::start));
+		}
+		if (ClientState.serverMod()) {
+			buttons.add(new Button("btn_dm", "dm.button", () -> dmPicker = !dmPicker));
 		}
 		buttons.add(new Button("btn_send", "bar.send", this::send));
 		input.setFormatter(EmojiInput.wrap(((EditBoxAccessor) input).chaoschatplus$formatter()));
@@ -92,6 +99,31 @@ public final class ChatBar {
 		return input.getValue().startsWith("/");
 	}
 
+	/** Chip del modo privado: «✉ Pepe ✕» (null si no hay). */
+	@Nullable
+	private Component dmChip() {
+		String target = ClientState.dmTarget();
+		return target == null || commandMode() ? null
+				: Component.literal("✉ " + target + "  ✕").withColor(GIF_PRIVATE);
+	}
+
+	private static final int GIF_PRIVATE = 0xD6B4FF;
+
+	private List<String> otherPlayers() {
+		List<String> out = new ArrayList<>();
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.getConnection() != null && mc.player != null) {
+			for (var info : mc.getConnection().getOnlinePlayers()) {
+				String name = info.getProfile().getName();
+				if (!name.equals(mc.player.getGameProfile().getName())) {
+					out.add(name);
+				}
+			}
+		}
+		out.sort(String.CASE_INSENSITIVE_ORDER);
+		return out;
+	}
+
 	@Nullable
 	private Component prefix() {
 		if (commandMode()) {
@@ -107,6 +139,10 @@ public final class ChatBar {
 	private int prefixWidth(Font font) {
 		if (commandMode()) {
 			return font.width("/") + 8;
+		}
+		Component chip = dmChip();
+		if (chip != null) {
+			return font.width(chip) + 12;
 		}
 		Component p = prefix();
 		return p == null ? 0 : font.width(p) + 5;
@@ -132,6 +168,11 @@ public final class ChatBar {
 			int w = font.width("/") + 6;
 			Ui.round(g, 5, barTop + 2, 5 + w, barBottom - 2, 3, 0x447AA2FF);
 			g.drawString(font, "/", 8, textY, Ui.ACCENT, false);
+		} else if (dmChip() != null) {
+			Component chip = dmChip();
+			int w = font.width(chip) + 8;
+			Ui.round(g, 5, barTop + 2, 5 + w, barBottom - 2, 4, 0x55734A9E);
+			g.drawString(font, chip, 9, textY, 0xFFFFFFFF, false);
 		} else {
 			Component p = prefix();
 			if (p != null) {
@@ -139,7 +180,9 @@ public final class ChatBar {
 			}
 		}
 		if (input.getValue().isEmpty()) {
-			g.drawString(font, Lang.tr("bar.placeholder"), input.getX(), textY, 0xFF6C717B, false);
+			Component hint = ClientState.dmTarget() != null && !commandMode()
+					? Lang.tr("dm.placeholder", ClientState.dmTarget()) : Lang.tr("bar.placeholder");
+			g.drawString(font, hint, input.getX(), textY, 0xFF6C717B, false);
 		}
 
 		Button hovered = null;
@@ -148,7 +191,8 @@ public final class ChatBar {
 			Button b = buttons.get(i);
 			int x = buttonX(i);
 			boolean hover = Ui.inside(mouseX, mouseY, x, by, x + BOX, by + BOX);
-			boolean active = b.icon().equals("btn_emoji") && picker != null;
+			boolean active = (b.icon().equals("btn_emoji") && picker != null)
+					|| (b.icon().equals("btn_dm") && (dmPicker || ClientState.dmTarget() != null));
 			int border = hover || active ? 0xFFA8ADB8 : 0xFF4A4F5A;
 			int fill = active ? 0x447AA2FF : hover ? 0x33FFFFFF : 0x22000000;
 			Ui.roundBordered(g, x, by, x + BOX, by + BOX, 3, fill, border);
@@ -184,13 +228,60 @@ public final class ChatBar {
 			Ui.round(g, x, y, x + w, y + 13, 4, Ui.alpha(0x3A1E22, (int) (230 * a)));
 			g.drawString(font, text, x + 6, y + 3, Ui.alpha(0xFF8A8A, Math.max(4, (int) (255 * a))), false);
 		}
-		if (picker != null) {
+		if (dmPicker) {
+			renderDmPicker(g, font, mouseX, mouseY);
+		} else if (picker != null) {
 			picker.place(screen.width - 4, barTop - 3);
 			picker.render(g, font, mouseX, mouseY);
 		} else {
 			suggest.render(g, font, barTop, mouseX, mouseY);
 		}
 		g.pose().popPose();
+	}
+
+	private static final int DM_ROW = 12;
+	private static final int DM_W = 120;
+
+	private void renderDmPicker(GuiGraphics g, Font font, int mouseX, int mouseY) {
+		List<String> players = otherPlayers();
+		int rows = Math.max(1, players.size());
+		int h = 16 + rows * DM_ROW + 4;
+		dmX = screen.width - 4 - DM_W;
+		dmY = barTop - 3 - h;
+		Ui.roundBordered(g, dmX, dmY, dmX + DM_W, dmY + h, 5, Ui.POPUP, Ui.POPUP_BORDER);
+		g.drawString(font, Lang.tr("dm.pick"), dmX + 6, dmY + 5, Ui.MUTED, false);
+		if (players.isEmpty()) {
+			g.drawString(font, Lang.tr("dm.none"), dmX + 6, dmY + 18, Ui.MUTED, false);
+			return;
+		}
+		for (int i = 0; i < players.size(); i++) {
+			int y = dmY + 16 + i * DM_ROW;
+			String name = players.get(i);
+			boolean sel = name.equals(ClientState.dmTarget());
+			if (sel) {
+				Ui.round(g, dmX + 2, y, dmX + DM_W - 2, y + DM_ROW, 3, 0x55734A9E);
+			} else if (Ui.inside(mouseX, mouseY, dmX + 2, y, dmX + DM_W - 2, y + DM_ROW)) {
+				Ui.round(g, dmX + 2, y, dmX + DM_W - 2, y + DM_ROW, 3, Ui.HOVER);
+			}
+			g.drawString(font, "✉ " + name, dmX + 6, y + 2, sel ? 0xFFFFFFFF : 0xFFD6B4FF, false);
+		}
+	}
+
+	private boolean clickDmPicker(double mx, double my) {
+		List<String> players = otherPlayers();
+		int h = 16 + Math.max(1, players.size()) * DM_ROW + 4;
+		if (!Ui.inside(mx, my, dmX, dmY, dmX + DM_W, dmY + h)) {
+			return false;
+		}
+		for (int i = 0; i < players.size(); i++) {
+			int y = dmY + 16 + i * DM_ROW;
+			if (Ui.inside(mx, my, dmX + 2, y, dmX + DM_W - 2, y + DM_ROW)) {
+				String name = players.get(i);
+				ClientState.setDmTarget(name.equals(ClientState.dmTarget()) ? null : name);
+				dmPicker = false;
+			}
+		}
+		return true;
 	}
 
 	public void onEdited() {
@@ -240,6 +331,10 @@ public final class ChatBar {
 	}
 
 	public boolean keyPressed(int key) {
+		if (dmPicker && key == 256) {
+			dmPicker = false;
+			return true;
+		}
 		if (picker != null && key == 256) {
 			picker = null;
 			return true;
@@ -267,6 +362,17 @@ public final class ChatBar {
 	}
 
 	public boolean mouseClicked(double mx, double my, int button) {
+		if (dmPicker) {
+			if (clickDmPicker(mx, my)) {
+				return true;
+			}
+		}
+		// Clic en el chip «✉ Pepe ✕»: se sale del modo privado.
+		Component chip = dmChip();
+		if (chip != null && Ui.inside(mx, my, 5, barTop + 2, 5 + Minecraft.getInstance().font.width(chip) + 8, barBottom - 2)) {
+			ClientState.setDmTarget(null);
+			return true;
+		}
 		if (picker != null && picker.mouseClicked(mx, my, button)) {
 			return true;
 		}
@@ -281,6 +387,11 @@ public final class ChatBar {
 				if (!b.icon().equals("btn_emoji")) {
 					picker = null;
 				}
+				if (!b.icon().equals("btn_dm")) {
+					dmPicker = false;
+				} else {
+					picker = null;
+				}
 				b.action().run();
 				return true;
 			}
@@ -288,11 +399,16 @@ public final class ChatBar {
 		if (picker != null) {
 			picker = null; // clic fuera: se cierra
 		}
+		dmPicker = false;
 		return false;
 	}
 
 	/** ¿El ratón está sobre un popup (selector o autocompletado)? Entonces el chat de debajo no debe reaccionar. */
 	public boolean blocksMouse(double mx, double my) {
+		if (dmPicker) {
+			int h = 16 + Math.max(1, otherPlayers().size()) * DM_ROW + 4;
+			return Ui.inside(mx, my, dmX, dmY, dmX + DM_W, dmY + h);
+		}
 		return (picker != null && picker.contains(mx, my)) || (picker == null && suggest.contains(mx, my));
 	}
 

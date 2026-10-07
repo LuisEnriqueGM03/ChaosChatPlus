@@ -6,12 +6,15 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.chaos.chatplus.perm.Perms;
 import com.chaos.chatplus.server.ChatServer;
+import com.chaos.chatplus.server.Mentions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -25,15 +28,16 @@ import net.minecraft.server.level.ServerPlayer;
 
 /**
  * GIFs en el chat. A los clientes con el mod les llega una línea con una marca (inserción "chaoschatplus:gif:...")
- * y 3 líneas vacías que reservan el hueco donde el cliente dibuja el GIF animado. A los vanilla, un texto con enlace.
+ * y 3 líneas vacías que reservan el hueco donde el cliente dibuja el GIF animado. A los vanilla, un texto.
+ * Con destinatario (modo privado) solo lo ven el que lo manda y ese jugador.
  */
 public final class GifServer {
 
 	public static final String MARK = "chaoschatplus:gif:";
-	/** Búsqueda especial: todos los GIFs propios (los de serie del mod y los del servidor). */
-	public static final String OWN = "@propios";
 	/** Líneas que ocupa el GIF en el chat (la de la marca + 3 vacías). */
 	public static final int LINES = 4;
+	/** Color de los mensajes privados. */
+	public static final int PRIVATE_COLOR = 0xD6B4FF;
 
 	private static final Map<UUID, Long> LAST = new ConcurrentHashMap<>();
 
@@ -47,12 +51,14 @@ public final class GifServer {
 		if (!canUse(player)) {
 			return;
 		}
-		boolean own = query.equals(OWN);
-		String onlineQuery = own ? null : query;
-		List<GifInfo> local = GifRegistry.search(own ? "" : query, own || (query.isEmpty() && !OnlineGifs.enabled()));
+		List<GifInfo> local = GifRegistry.search(query);
+		boolean category = query.startsWith(GifRegistry.CATEGORY_QUERY);
 		MinecraftServer server = player.server;
 		UUID id = player.getUUID();
-		(onlineQuery == null ? CompletableFuture.completedFuture(List.<GifInfo>of()) : OnlineGifs.search(onlineQuery)).thenAccept(online -> server.execute(() -> {
+		CompletableFuture<List<GifInfo>> online = category || !OnlineGifs.enabled()
+				? CompletableFuture.completedFuture(List.of())
+				: OnlineGifs.search(query);
+		online.thenAccept(results -> server.execute(() -> {
 			ServerPlayer p = server.getPlayerList().getPlayer(id);
 			if (p == null) {
 				return;
@@ -60,8 +66,11 @@ public final class GifServer {
 			JsonObject o = new JsonObject();
 			o.addProperty("query", query);
 			o.addProperty("source", OnlineGifs.sourceName());
+			JsonArray cats = new JsonArray();
+			GifRegistry.categories().forEach(cats::add);
+			o.add("categories", cats);
 			o.add("local", array(local));
-			o.add("results", array(online));
+			o.add("results", array(results));
 			ServerPlayNetworking.send(p, new ChatPayloads.GifResults(ChatPayloads.gzip(o.toString())));
 		}));
 	}
@@ -77,7 +86,7 @@ public final class GifServer {
 		ServerPlayNetworking.send(player, new ChatPayloads.GifData(id, data == null ? new byte[0] : data));
 	}
 
-	public static void send(ServerPlayer player, String id) {
+	public static void send(ServerPlayer player, String id, String targetName) {
 		if (!canUse(player)) {
 			player.sendSystemMessage(Lang.tr("gif.no_permission").withStyle(ChatFormatting.RED));
 			return;
@@ -94,16 +103,44 @@ public final class GifServer {
 			player.sendSystemMessage(Lang.tr("gif.not_found").withStyle(ChatFormatting.RED));
 			return;
 		}
+		ServerPlayer target = null;
+		if (!targetName.isEmpty()) {
+			target = player.server.getPlayerList().getPlayerByName(targetName);
+			if (target == null) {
+				player.sendSystemMessage(Lang.tr("dm.offline", targetName).withStyle(ChatFormatting.RED));
+				return;
+			}
+		}
 		LAST.put(player.getUUID(), System.currentTimeMillis());
-		ChaosChatPlus.LOGGER.info("[ChatPlus] {} envió el GIF {} ({})", player.getGameProfile().getName(), info.name(), info.id());
-		for (ServerPlayer viewer : player.server.getPlayerList().getPlayers()) {
-			viewer.sendSystemMessage(message(viewer, player, info));
+		ChaosChatPlus.LOGGER.info("[ChatPlus] {} envió el GIF {} ({}){}", player.getGameProfile().getName(), info.name(), info.id(),
+				target == null ? "" : " en privado a " + target.getGameProfile().getName());
+		if (target == null) {
+			for (ServerPlayer viewer : player.server.getPlayerList().getPlayers()) {
+				viewer.sendSystemMessage(message(viewer, player, null, info));
+			}
+		} else {
+			player.sendSystemMessage(message(player, player, target, info));
+			if (target != player) {
+				target.sendSystemMessage(message(target, player, target, info));
+				Mentions.ping(target, player);
+			}
 		}
 	}
 
-	private static Component message(ServerPlayer viewer, ServerPlayer sender, GifInfo info) {
+	private static Component header(ServerPlayer viewer, ServerPlayer sender, @Nullable ServerPlayer target) {
+		if (target == null) {
+			return Lang.tr("gif.sent", sender.getDisplayName()).withStyle(ChatFormatting.GRAY);
+		}
+		MutableComponent h = viewer == sender
+				? Lang.tr("dm.gif_out", target.getDisplayName())
+				: Lang.tr("dm.gif_in", sender.getDisplayName());
+		return Component.literal("✉ ").append(h).withStyle(s -> s.withColor(PRIVATE_COLOR)
+				.withInsertion("/msg " + (viewer == sender ? target : sender).getGameProfile().getName() + " "));
+	}
+
+	private static Component message(ServerPlayer viewer, ServerPlayer sender, @Nullable ServerPlayer target, GifInfo info) {
 		if (ChatServer.isModded(viewer)) {
-			MutableComponent m = Component.empty().append(Lang.tr("gif.sent", sender.getDisplayName()).withStyle(ChatFormatting.GRAY));
+			MutableComponent m = Component.empty().append(header(viewer, sender, target));
 			m.append("\n").append(Component.literal(" ").withStyle(s -> s.withInsertion(MARK + info.encode())));
 			for (int i = 1; i < LINES; i++) {
 				m.append("\n ");
@@ -113,6 +150,10 @@ public final class GifServer {
 		MutableComponent name = Component.literal(info.name()).withStyle(ChatFormatting.AQUA);
 		if (!info.local() && !info.page().isEmpty()) {
 			name = name.withStyle(s -> s.withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, info.page())));
+		}
+		if (target != null) {
+			return Component.literal("✉ ").append(Lang.tr("dm.gif_vanilla", sender.getDisplayName(), name))
+					.withStyle(s -> s.withColor(PRIVATE_COLOR));
 		}
 		return Lang.tr("gif.sent_vanilla", sender.getDisplayName(), name).withStyle(ChatFormatting.GRAY);
 	}

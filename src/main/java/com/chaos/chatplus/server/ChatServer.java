@@ -12,6 +12,7 @@ import com.chaos.chatplus.compat.ChaosRanksCompat;
 import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.Emoji;
 import com.chaos.chatplus.emoji.EmojiRegistry;
+import com.chaos.chatplus.gif.GifRegistry;
 import com.chaos.chatplus.gif.GifServer;
 import com.chaos.chatplus.gif.OnlineGifs;
 import com.chaos.chatplus.net.ChatPayloads;
@@ -40,7 +41,7 @@ public final class ChatServer {
 
 	public static void registerReceivers() {
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.ShareItem.TYPE, (payload, context) ->
-				context.server().execute(() -> ItemShare.shareSlot(context.player(), payload.slot())));
+				context.server().execute(() -> ItemShare.shareSlot(context.player(), payload.slot(), payload.target())));
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.ShotPart.TYPE, (payload, context) ->
 				context.server().execute(() -> Shots.onPart(context.player(), payload)));
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.RequestShot.TYPE, (payload, context) ->
@@ -52,7 +53,7 @@ public final class ChatServer {
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.GifRequest.TYPE, (payload, context) ->
 				context.server().execute(() -> GifServer.request(context.player(), payload.id())));
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.SendGif.TYPE, (payload, context) ->
-				context.server().execute(() -> GifServer.send(context.player(), payload.id())));
+				context.server().execute(() -> GifServer.send(context.player(), payload.id(), payload.target())));
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.UploadEmoji.TYPE, (payload, context) ->
 				context.server().execute(() -> upload(context.player(), payload)));
 	}
@@ -92,6 +93,16 @@ public final class ChatServer {
 			}
 		}
 		Shots.tick(server);
+		// Las carpetas mandan: si se añadió, cambió o borró un emoji o GIF, se recarga solo.
+		if (ticks % 100 == 0) {
+			if (GifRegistry.changed()) {
+				GifRegistry.load();
+			}
+			if (EmojiRegistry.changed()) {
+				EmojiRegistry.load();
+				resyncAll(server);
+			}
+		}
 	}
 
 	/** Tras recargar o cambiar emojis: vuelve a mandar todo y el pack. */
@@ -144,6 +155,7 @@ public final class ChatServer {
 		o.addProperty("pack", PackHost.hasPack(player));
 		o.addProperty("gifs", GifServer.canUse(player));
 		o.addProperty("gifSource", OnlineGifs.sourceName());
+		o.addProperty("anime", cfg.gifs.anime);
 		JsonArray special = new JsonArray();
 		ChatDecorator.specialMentions(player).forEach(special::add);
 		if (Perms.canMentionRanks(player)) {

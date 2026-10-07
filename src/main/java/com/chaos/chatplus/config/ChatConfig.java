@@ -120,13 +120,18 @@ public final class ChatConfig {
 		public Access access = new Access(0);
 		public int cooldownSeconds = 5;
 		/** GIFs de reacciones de anime de nekos.best (sin clave ni registro). */
-		public boolean nekosBest = true;
+		public boolean nekosBest = false;
+		/**
+		 * Pestaña Anime: cada jugador guarda en su PC unos 100 GIFs de reacciones de nekos.best (se descargan de poco en
+		 * poco, directamente de nekos.best; el servidor no los aloja).
+		 */
+		public boolean anime = true;
 		/** Clave gratuita de Klipy (klipy.com, el sucesor de Tenor). Si está, se busca en Klipy en lugar de nekos.best. */
 		public String klipyKey = "";
 		/** Filtro de contenido de Klipy: off, low, medium o high. */
 		public String contentFilter = "high";
-		/** Tope de los GIFs propios (como mucho 1000: un paquete no puede pasar de 1 MB). */
-		public int maxKilobytes = 1000;
+		/** Tope del archivo original de un GIF de la carpeta (se reduce solo a ≤ 300 KB para el chat). */
+		public int maxKilobytes = 10240;
 	}
 
 	/** Idioma de los mensajes para clientes sin el mod (es_es, en_us...). */
@@ -214,7 +219,7 @@ public final class ChatConfig {
 		if (gifs.klipyKey == null) gifs.klipyKey = "";
 		if (gifs.contentFilter == null) gifs.contentFilter = "high";
 		gifs.cooldownSeconds = Math.max(0, gifs.cooldownSeconds);
-		gifs.maxKilobytes = Math.max(64, Math.min(1000, gifs.maxKilobytes));
+		gifs.maxKilobytes = Math.max(64, Math.min(51200, gifs.maxKilobytes));
 	}
 
 	public static int parseColor(String s, int fallback) {

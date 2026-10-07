@@ -48,6 +48,7 @@ public final class ClientState {
 	private static boolean blurShots;
 	private static boolean gifs;
 	private static String gifSource = "";
+	private static boolean anime;
 	private static int mentionColor = 0x7AA2FF;
 	private static int maxShotKb = 512;
 	private static List<String> specialMentions = List.of();
@@ -55,6 +56,8 @@ public final class ClientState {
 	private static Map<String, ClientEmoji> byName = Map.of();
 	private static Map<Integer, ClientEmoji> byCodepoint = Map.of();
 	@Nullable private static Component prefix;
+	/** Modo privado: a quién van los mensajes, GIFs e ítems (null = a todos). */
+	@Nullable private static String dmTarget;
 	@Nullable private static Component prefixFallback;
 
 	private ClientState() {}
@@ -70,6 +73,10 @@ public final class ClientState {
 			blurShots = bool(o, "blurShots");
 			gifs = bool(o, "gifs");
 			gifSource = o.has("gifSource") ? o.get("gifSource").getAsString() : "";
+			anime = bool(o, "anime");
+			if (anime && gifs) {
+				AnimePrefetch.start();
+			}
 			mentionColor = o.has("mentionColor") ? o.get("mentionColor").getAsInt() : 0x7AA2FF;
 			maxShotKb = o.has("maxShotKb") ? o.get("maxShotKb").getAsInt() : 512;
 			List<String> special = new ArrayList<>();
@@ -114,12 +121,15 @@ public final class ClientState {
 		serverMod = false;
 		items = shots = upload = pack = blurShots = gifs = false;
 		gifSource = "";
+		anime = false;
+		AnimePrefetch.stop();
 		mentions = true;
 		specialMentions = List.of();
 		emojis = List.of();
 		byName = Map.of();
 		byCodepoint = Map.of();
 		prefix = prefixFallback = null;
+		dmTarget = null;
 	}
 
 	public static boolean serverMod() {
@@ -155,6 +165,11 @@ public final class ClientState {
 		return gifSource;
 	}
 
+	/** ¿El servidor permite los GIFs de anime (nekos.best, guardados en cada PC)? */
+	public static boolean anime() {
+		return serverMod && gifs && anime;
+	}
+
 	public static boolean blurShots() {
 		return blurShots;
 	}
@@ -178,6 +193,20 @@ public final class ClientState {
 	@Nullable
 	public static ClientEmoji emoji(String name) {
 		return byName.get(name.toLowerCase(Locale.ROOT));
+	}
+
+	@Nullable
+	public static String dmTarget() {
+		return dmTarget;
+	}
+
+	public static void setDmTarget(@Nullable String name) {
+		dmTarget = name;
+	}
+
+	/** "" si no hay modo privado (para los paquetes). */
+	public static String dmTargetOrEmpty() {
+		return dmTarget == null ? "" : dmTarget;
 	}
 
 	@Nullable

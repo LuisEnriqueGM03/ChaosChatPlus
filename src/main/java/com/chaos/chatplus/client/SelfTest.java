@@ -82,7 +82,7 @@ public final class SelfTest {
 			case 280 -> mc.setScreen(new ItemPickerScreen(new ChatScreen("")));
 			case 320 -> shot("05_mostrar_item");
 			case 330 -> {
-				ClientPlayNetworking.send(new ChatPayloads.ShareItem(0));
+				ClientPlayNetworking.send(new ChatPayloads.ShareItem(0, ""));
 				mc.setScreen(null);
 			}
 			case 380 -> ShotCapture.start();
@@ -123,7 +123,7 @@ public final class SelfTest {
 				mc.player.respawn();
 				mc.setScreen(null);
 			}
-			case 870 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:creeper_baile"));
+			case 870 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/animados/creeper_baile", ""));
 			case 920 -> mc.setScreen(new ChatScreen(""));
 			case 960 -> shot("11_muerte_y_gif");
 			case 980 -> {
@@ -133,6 +133,17 @@ public final class SelfTest {
 			}
 			case 1040 -> shot("12_pestana_gifs");
 			case 1060 -> mc.setScreen(null);
+			case 1100 -> mc.player.connection.sendCommand("msg Pepe hola en privado :fuego: :corazon:");
+			case 1130 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/troll/x_rickrolled", "Pepe"));
+			case 1160 -> {
+				ClientState.setDmTarget("Pepe");
+				mc.setScreen(new ChatScreen(""));
+			}
+			case 1200 -> shot("13_modo_privado");
+			case 1220 -> {
+				ClientState.setDmTarget(null);
+				mc.setScreen(null);
+			}
 			case 1300 -> mc.setScreen(new ChatScreen(""));
 			case 1340 -> shot("10_mencion_recibida");
 			case 1400 -> mc.stop();
@@ -144,9 +155,9 @@ public final class SelfTest {
 		switch (ticks) {
 			case 200 -> mc.player.connection.sendChat("@Luis mira esto :corazon: :fuego: (desde vanilla)");
 			case 260 -> mc.player.connection.sendChat("@everyone esto no debería sonar");
-			case 500 -> mc.setScreen(new ChatScreen(""));
-			case 540 -> shot("pepe_chat");
-			case 600 -> mc.stop();
+			case 900 -> mc.setScreen(new ChatScreen(""));
+			case 940 -> shot("pepe_chat");
+			case 1000 -> mc.stop();
 			default -> { }
 		}
 	}

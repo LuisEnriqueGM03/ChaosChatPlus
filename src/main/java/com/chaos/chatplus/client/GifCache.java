@@ -1,12 +1,18 @@
 package com.chaos.chatplus.client;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.gif.GifDecoder;
 import com.chaos.chatplus.gif.GifInfo;
+import com.chaos.chatplus.gif.GifRegistry;
 import com.chaos.chatplus.gif.OnlineGifs;
 import com.chaos.chatplus.net.ChatPayloads;
 
@@ -28,13 +35,21 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * GIFs animados en el cliente: los propios se piden al servidor y los de internet se descargan de su web (nekos.best o Klipy).
- * Se decodifican en otro hilo y cada frame se sube como textura.
+ * GIFs animados en el cliente. De dónde salen, en este orden:
+ * <ol>
+ * <li>"jar:id": los de serie, del propio jar del mod (no se descarga nada).</li>
+ * <li>"sha1:...": los que puso el servidor; se guardan en .minecraft/chaoschatplus/cache/gifs/ y solo se piden al
+ * servidor la primera vez (uno a uno, para no saturar la conexión).</li>
+ * <li>URL (si el servidor activó una API): también con caché en disco, como mucho 2 descargas por segundo y respetando
+ * el "Retry-After" si la web pide esperar.</li>
+ * </ol>
  */
 public final class GifCache {
 
-	private static final int MAX_SIZE = 160;
+	private static final int MAX_SIZE = 128;
 	private static final int MAX_BYTES = 4 * 1024 * 1024;
+	private static final long CACHE_LIMIT = 150L * 1024 * 1024;
+	private static final long MIN_GAP_MS = 500;
 	private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(8))
 			.followRedirects(HttpClient.Redirect.NORMAL).build();
 
@@ -46,47 +61,135 @@ public final class GifCache {
 		int height;
 		boolean ready;
 		boolean failed;
+		boolean queued;
 	}
 
 	private static final Map<String, Gif> GIFS = new HashMap<>();
+	/** GIFs esperando su turno (servidor o internet), del más reciente al más antiguo: primero lo que se ve ahora. */
+	private static final Deque<GifInfo> QUEUE = new ArrayDeque<>();
+	private static boolean busy;
+	private static long busySince;
+	private static long lastRequest;
+	private static long pausedUntil;
 	private static int counter;
 
 	private GifCache() {}
+
+	private static Path cacheDir() {
+		return Minecraft.getInstance().gameDirectory.toPath().resolve("chaoschatplus").resolve("cache").resolve("gifs");
+	}
 
 	/** El GIF (empieza a cargarse la primera vez que se pide). */
 	public static Gif get(GifInfo info) {
 		Gif gif = GIFS.get(info.id());
 		if (gif != null) {
+			if (gif.queued && !gif.ready) {
+				// Se está viendo: pasa al principio de la cola.
+				QUEUE.remove(info);
+				QUEUE.addFirst(info);
+			}
 			return gif;
 		}
 		Gif created = new Gif();
 		created.width = info.width();
 		created.height = info.height();
 		GIFS.put(info.id(), created);
-		if (info.local()) {
-			if (ClientPlayNetworking.canSend(ChatPayloads.GifRequest.TYPE)) {
-				ClientPlayNetworking.send(new ChatPayloads.GifRequest(info.id()));
-			} else {
-				created.failed = true;
+		String url = info.url();
+		if (url.startsWith("jar:")) {
+			byte[] data = jar(url.substring(4));
+			if (data != null) {
+				decode(created, data);
+				return created;
 			}
-		} else if (OnlineGifs.allowedUrl(info.url())) {
-			HttpRequest request = HttpRequest.newBuilder(URI.create(info.url())).timeout(Duration.ofSeconds(15))
-					.header("User-Agent", "ChaosChatPlus/1.1 (Minecraft mod)").GET().build();
-			HTTP.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray()).whenComplete((response, error) -> {
-				if (error != null || response.statusCode() != 200 || response.body().length > MAX_BYTES) {
-					Minecraft.getInstance().execute(() -> created.failed = true);
-					return;
-				}
-				decode(created, response.body());
-			});
-		} else {
-			created.failed = true;
 		}
+		Path cached = cacheFile(info);
+		if (cached != null && Files.exists(cached)) {
+			try {
+				decode(created, Files.readAllBytes(cached));
+				return created;
+			} catch (Exception ignored) {
+				// se vuelve a descargar
+			}
+		}
+		created.queued = true;
+		QUEUE.addFirst(info);
 		return created;
 	}
 
-	/** Bytes de un GIF propio que llegan del servidor. */
+	@Nullable
+	private static byte[] jar(String id) {
+		try (InputStream in = GifCache.class.getResourceAsStream("/assets/chaoschatplus/gifs/" + id + ".gif")) {
+			return in == null ? null : in.readAllBytes();
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Nullable
+	private static Path cacheFile(GifInfo info) {
+		String url = info.url();
+		if (url.startsWith("sha1:")) {
+			return cacheDir().resolve(url.substring(5) + ".gif");
+		}
+		if (url.startsWith("jar:")) {
+			return null;
+		}
+		return cacheDir().resolve(GifRegistry.sha1(url.getBytes(StandardCharsets.UTF_8)) + ".gif");
+	}
+
+	/** Cada tick: lanza la siguiente descarga si toca. */
+	public static void tick() {
+		long now = Util.getMillis();
+		if (busy && now - busySince > 15_000) {
+			busy = false; // el servidor no contestó: se sigue con el siguiente
+		}
+		if (busy || QUEUE.isEmpty() || now < pausedUntil || now - lastRequest < MIN_GAP_MS) {
+			return;
+		}
+		GifInfo info = QUEUE.pollFirst();
+		Gif gif = GIFS.get(info.id());
+		if (gif == null || gif.ready) {
+			return;
+		}
+		lastRequest = now;
+		if (info.local()) {
+			if (!ClientPlayNetworking.canSend(ChatPayloads.GifRequest.TYPE)) {
+				gif.failed = true;
+				return;
+			}
+			busy = true;
+			busySince = now;
+			ClientPlayNetworking.send(new ChatPayloads.GifRequest(info.id()));
+		} else if (OnlineGifs.allowedUrl(info.url())) {
+			busy = true;
+			busySince = now;
+			HttpRequest request = HttpRequest.newBuilder(URI.create(info.url())).timeout(Duration.ofSeconds(15))
+					.header("User-Agent", "ChaosChatPlus/1.2 (Minecraft mod)").GET().build();
+			HTTP.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray()).whenComplete((response, error) ->
+					Minecraft.getInstance().execute(() -> {
+						busy = false;
+						if (error == null && response.statusCode() == 429) {
+							// La web pide esperar: se pausa y el GIF vuelve a la cola (no se marca como fallido).
+							long wait = response.headers().firstValueAsLong("Retry-After").orElse(60);
+							pausedUntil = Util.getMillis() + Math.min(wait, 3600) * 1000;
+							QUEUE.addLast(info);
+							return;
+						}
+						if (error != null || response.statusCode() != 200 || response.body().length > MAX_BYTES) {
+							gif.failed = true;
+							return;
+						}
+						save(info, response.body());
+						decode(gif, response.body());
+					}));
+		} else {
+			gif.failed = true;
+		}
+	}
+
+	/** Bytes de un GIF del servidor (respuesta a GifRequest). */
 	public static void accept(ChatPayloads.GifData data) {
+		busy = false;
 		Gif gif = GIFS.get(data.id());
 		if (gif == null) {
 			return;
@@ -95,7 +198,61 @@ public final class GifCache {
 			gif.failed = true;
 			return;
 		}
+		saveBySha(data.data());
 		decode(gif, data.data());
+	}
+
+	private static void save(GifInfo info, byte[] data) {
+		Path file = cacheFile(info);
+		if (file == null) {
+			return;
+		}
+		write(file, data);
+	}
+
+	private static void saveBySha(byte[] data) {
+		write(cacheDir().resolve(GifRegistry.sha1(data) + ".gif"), data);
+	}
+
+	private static void write(Path file, byte[] data) {
+		CompletableFuture.runAsync(() -> {
+			try {
+				Files.createDirectories(file.getParent());
+				Files.write(file, data);
+				trim();
+			} catch (Exception e) {
+				ChaosChatPlus.LOGGER.debug("No se pudo guardar el GIF en caché", e);
+			}
+		}, Util.ioPool());
+	}
+
+	/** Si la caché pasa de 150 MB, se borran los más antiguos. */
+	private static void trim() throws Exception {
+		List<Path> files;
+		try (var walk = Files.list(cacheDir())) {
+			files = new ArrayList<>(walk.toList());
+		}
+		long total = 0;
+		for (Path p : files) {
+			total += Files.size(p);
+		}
+		if (total <= CACHE_LIMIT) {
+			return;
+		}
+		files.sort((a, b) -> {
+			try {
+				return Files.getLastModifiedTime(a).compareTo(Files.getLastModifiedTime(b));
+			} catch (Exception e) {
+				return 0;
+			}
+		});
+		for (Path p : files) {
+			if (total <= CACHE_LIMIT * 8 / 10) {
+				break;
+			}
+			total -= Files.size(p);
+			Files.deleteIfExists(p);
+		}
 	}
 
 	private static void decode(Gif gif, byte[] bytes) {
@@ -110,6 +267,7 @@ public final class GifCache {
 	}
 
 	private static void upload(Gif gif, @Nullable GifDecoder.Frames frames) {
+		gif.queued = false;
 		if (frames == null || frames.images().isEmpty()) {
 			gif.failed = true;
 			return;
@@ -130,6 +288,11 @@ public final class GifCache {
 		gif.width = frames.images().get(0).getWidth();
 		gif.height = frames.images().get(0).getHeight();
 		gif.ready = true;
+	}
+
+	/** ¿Hay una web pidiendo esperar? (segundos que faltan, o 0) */
+	public static long pausedSeconds() {
+		return Math.max(0, (pausedUntil - Util.getMillis()) / 1000);
 	}
 
 	/** Frame que toca ahora (animación con los retardos del GIF). */
@@ -172,5 +335,7 @@ public final class GifCache {
 			gif.frames.forEach(Minecraft.getInstance().getTextureManager()::release);
 		}
 		GIFS.clear();
+		QUEUE.clear();
+		busy = false;
 	}
 }

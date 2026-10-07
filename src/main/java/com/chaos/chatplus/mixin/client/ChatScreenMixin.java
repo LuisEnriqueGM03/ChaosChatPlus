@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.chaos.chatplus.client.ChatClicks;
+import com.chaos.chatplus.client.ClientState;
 import com.chaos.chatplus.client.EmojiInput;
 import com.chaos.chatplus.client.SelfTest;
 import com.chaos.chatplus.client.ui.ChatBar;
@@ -151,7 +152,12 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
 
 	@ModifyVariable(method = "handleChatInput", at = @At("HEAD"), argsOnly = true)
 	private String chaoschatplus$codes(String message) {
-		return EmojiInput.toCodes(message);
+		String text = EmojiInput.toCodes(message);
+		String target = ClientState.dmTarget();
+		if (target != null && !text.isBlank() && !text.startsWith("/")) {
+			return "/msg " + target + " " + text;
+		}
+		return text;
 	}
 
 	@Override

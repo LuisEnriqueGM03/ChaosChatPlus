@@ -3,6 +3,7 @@ package com.chaos.chatplus.client.screen;
 import org.jetbrains.annotations.Nullable;
 
 import com.chaos.chatplus.Lang;
+import com.chaos.chatplus.client.ClientState;
 import com.chaos.chatplus.client.ui.Ui;
 import com.chaos.chatplus.net.ChatPayloads;
 
@@ -104,7 +105,7 @@ public class ItemPickerScreen extends Screen {
 			for (int slot = 0; slot <= Inventory.SLOT_OFFHAND; slot++) {
 				int[] p = slotPos(slot);
 				if (p != null && Ui.inside(mx, my, p[0], p[1], p[0] + SLOT - 1, p[1] + SLOT - 1) && !inv.getItem(slot).isEmpty()) {
-					ClientPlayNetworking.send(new ChatPayloads.ShareItem(slot));
+					ClientPlayNetworking.send(new ChatPayloads.ShareItem(slot, ClientState.dmTargetOrEmpty()));
 					minecraft.setScreen(null);
 					return true;
 				}

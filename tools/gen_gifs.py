@@ -42,9 +42,20 @@ def to_p(rgba):
 
 
 def save(name, frames, duration):
+    path = os.path.join(OUT, name + ".gif")
     ps = [to_p(f) for f in frames]
-    ps[0].save(os.path.join(OUT, name + ".gif"), save_all=True, append_images=ps[1:], duration=duration, loop=0,
+    ps[0].save(path, save_all=True, append_images=ps[1:], duration=duration, loop=0,
                transparency=255, disposal=2, optimize=False)
+    # Pillow junta los frames repetidos y a veces deja bloques que el lector de GIF de Java no entiende:
+    # se vuelve a guardar a partir de los frames ya juntados, que sí se lee bien.
+    im = Image.open(path)
+    merged, durations = [], []
+    for k in range(im.n_frames):
+        im.seek(k)
+        merged.append(to_p(im.convert("RGBA")))
+        durations.append(im.info.get("duration", duration))
+    merged[0].save(path, save_all=True, append_images=merged[1:], duration=durations, loop=0,
+                   transparency=255, disposal=2, optimize=False)
 
 
 def creeper_baile():

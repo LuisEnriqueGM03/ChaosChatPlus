@@ -85,6 +85,13 @@ public final class EmojiRegistry {
 	private static Map<String, Emoji> byUnicode = Map.of();
 	private static int maxUnicodeLength;
 	private static Map<String, byte[]> customPng = Map.of();
+	/** Categoría (subcarpeta) y archivo de cada emoji propio. */
+	private static Map<String, String> customCategory = Map.of();
+	private static Map<String, Path> customFile = Map.of();
+	/** Emojis de serie que están en emojis/default/ (con su PNG, por si el dueño lo cambió). Null = nunca se exportaron. */
+	@Nullable private static Map<String, byte[]> builtinFiles;
+	private static String snapshot = "";
+	private static final String EXPORTED = ".exportado";
 	private static int version;
 
 	private EmojiRegistry() {}
@@ -135,14 +142,22 @@ public final class EmojiRegistry {
 		return version;
 	}
 
-	/** PNG del emoji (de serie: del jar; propio: de la carpeta). */
+	/** PNG del emoji (de serie: el de emojis/default/ si está, si no el del jar; propio: el de su carpeta). */
 	@Nullable
 	public static byte[] png(Emoji emoji) {
 		if (!emoji.builtin()) {
 			return customPng.get(emoji.name());
 		}
+		if (builtinFiles != null && builtinFiles.containsKey(emoji.name())) {
+			return builtinFiles.get(emoji.name());
+		}
+		return jarPng(emoji.name());
+	}
+
+	@Nullable
+	private static byte[] jarPng(String name) {
 		try (InputStream in = EmojiRegistry.class.getResourceAsStream(
-				"/assets/chaoschatplus/textures/emoji/" + emoji.name() + ".png")) {
+				"/assets/chaoschatplus/textures/emoji/" + name + ".png")) {
 			return in == null ? null : in.readAllBytes();
 		} catch (IOException e) {
 			return null;
@@ -171,28 +186,47 @@ public final class EmojiRegistry {
 		if (store.pending == null) store.pending = new ArrayList<>();
 		if (store.builtinRanks == null) store.builtinRanks = new LinkedHashMap<>();
 
-		// Los PNG de la carpeta mandan: se añaden los nuevos y se olvidan los que ya no están.
+		// Las carpetas mandan: emojis/default/<categoría>/ = los de serie (borrar uno lo quita), y cualquier otra
+		// subcarpeta (o la raíz) = emojis propios, con la subcarpeta como categoría.
+		export(false);
 		Map<String, byte[]> images = new LinkedHashMap<>();
-		try {
-			Files.createDirectories(dir().resolve("pending"));
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir(), "*.png")) {
-				for (Path p : stream) {
-					String name = fileName(p);
-					if (!NAME.matcher(name).matches()) {
-						ChaosChatPlus.LOGGER.warn("Emoji {} ignorado: el nombre debe ser [a-z0-9_] de 2 a 32 letras", p.getFileName());
-						continue;
+		Map<String, String> cats = new HashMap<>();
+		Map<String, Path> paths = new HashMap<>();
+		Map<String, byte[]> defaults = Files.isDirectory(dir().resolve("default")) ? new HashMap<>() : null;
+		List<Path> files = pngFiles();
+		for (Path p : files) {
+			Path rel = dir().relativize(p);
+			String first = rel.getNameCount() > 1 ? rel.getName(0).toString() : "";
+			String name = fileName(p);
+			try {
+				if (first.equals("default")) {
+					if (defaults != null && BUILTIN.stream().anyMatch(b -> b.name().equals(name))) {
+						byte[] png = Files.readAllBytes(p);
+						defaults.put(name, normalize(png) != null ? png : jarPng(name));
 					}
-					byte[] png = normalize(Files.readAllBytes(p));
-					if (png == null) {
-						ChaosChatPlus.LOGGER.warn("Emoji {} ignorado: no es una imagen PNG válida", p.getFileName());
-						continue;
-					}
-					images.put(name, png);
+					continue;
 				}
+				if (!NAME.matcher(name).matches()) {
+					ChaosChatPlus.LOGGER.warn("Emoji {} ignorado: el nombre debe ser [a-z0-9_] de 2 a 32 letras", rel);
+					continue;
+				}
+				byte[] png = normalize(Files.readAllBytes(p));
+				if (png == null) {
+					ChaosChatPlus.LOGGER.warn("Emoji {} ignorado: no es una imagen PNG válida", rel);
+					continue;
+				}
+				images.put(name, png);
+				paths.put(name, p);
+				cats.put(name, rel.getNameCount() > 1 ? rel.getName(rel.getNameCount() - 2).toString().toLowerCase(Locale.ROOT)
+						: Emoji.CUSTOM_CATEGORY);
+			} catch (IOException e) {
+				ChaosChatPlus.LOGGER.warn("No se pudo leer el emoji {}", rel, e);
 			}
-		} catch (IOException e) {
-			ChaosChatPlus.LOGGER.error("No se pudieron leer los emojis de {}", dir(), e);
 		}
+		builtinFiles = defaults;
+		customCategory = cats;
+		customFile = paths;
+		snapshot = snapshot(files);
 		store.custom.removeIf(c -> c == null || c.name == null || !images.containsKey(c.name));
 		Set<String> known = new HashSet<>();
 		store.custom.forEach(c -> known.add(c.name));
@@ -208,8 +242,72 @@ public final class EmojiRegistry {
 		customPng = images;
 		rebuild();
 		save();
-		ChaosChatPlus.LOGGER.info("Emojis: {} de serie, {} propios, {} pendientes de aprobar",
-				BUILTIN.size() - store.disabled.size(), store.custom.size(), store.pending.size());
+		ChaosChatPlus.LOGGER.info("Emojis: {} activos ({} propios), {} pendientes de aprobar",
+				all.size(), store.custom.size(), store.pending.size());
+	}
+
+	/** Copia los emojis de serie a emojis/default/&lt;categoría&gt;/ (solo los que nunca se copiaron). */
+	public static int export(boolean restoreAll) {
+		Path marker = dir().resolve(EXPORTED);
+		Set<String> done = new java.util.LinkedHashSet<>();
+		int copied = 0;
+		try {
+			if (Files.exists(marker) && !restoreAll) {
+				done.addAll(Files.readAllLines(marker, StandardCharsets.UTF_8));
+			}
+			for (Emoji b : BUILTIN) {
+				if (done.contains(b.name()) && !restoreAll) {
+					continue;
+				}
+				Path target = dir().resolve("default").resolve(b.category()).resolve(b.name() + ".png");
+				if (!Files.exists(target)) {
+					byte[] png = jarPng(b.name());
+					if (png != null) {
+						Files.createDirectories(target.getParent());
+						Files.write(target, png);
+						copied++;
+					}
+				}
+				done.add(b.name());
+			}
+			Files.createDirectories(dir());
+			Files.write(marker, done, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			ChaosChatPlus.LOGGER.error("No se pudieron copiar los emojis de serie a {}", dir(), e);
+		}
+		return copied;
+	}
+
+	/** ¿Cambió algo en la carpeta de emojis desde la última carga? */
+	public static boolean changed() {
+		return !snapshot(pngFiles()).equals(snapshot);
+	}
+
+	private static List<Path> pngFiles() {
+		try {
+			Files.createDirectories(dir().resolve("pending"));
+			try (java.util.stream.Stream<Path> walk = Files.walk(dir())) {
+				return walk.filter(Files::isRegularFile)
+						.filter(p -> p.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".png"))
+						.filter(p -> !dir().relativize(p).toString().startsWith("pending"))
+						.sorted()
+						.toList();
+			}
+		} catch (IOException e) {
+			return List.of();
+		}
+	}
+
+	private static String snapshot(List<Path> files) {
+		StringBuilder sb = new StringBuilder();
+		for (Path p : files) {
+			try {
+				sb.append(p).append('|').append(Files.size(p)).append('|').append(Files.getLastModifiedTime(p).toMillis()).append('\n');
+			} catch (IOException ignored) {
+				// se borró mientras se miraba
+			}
+		}
+		return sb.toString();
 	}
 
 	private static void rebuild() {
@@ -227,7 +325,7 @@ public final class EmojiRegistry {
 		Map<String, Emoji> unicode = new HashMap<>();
 		int maxLen = 0;
 		for (Emoji b : BUILTIN) {
-			if (store.disabled.contains(b.name())) {
+			if (store.disabled.contains(b.name()) || (builtinFiles != null && !builtinFiles.containsKey(b.name()))) {
 				continue;
 			}
 			List<String> ranks = store.builtinRanks.getOrDefault(b.name(), List.of());
@@ -257,7 +355,7 @@ public final class EmojiRegistry {
 			}
 			if (c.aliases == null) c.aliases = new ArrayList<>();
 			if (c.ranks == null) c.ranks = new ArrayList<>();
-			Emoji e = new Emoji(c.name, List.copyOf(c.aliases), Emoji.CUSTOM_CATEGORY, c.codepoint, false,
+			Emoji e = new Emoji(c.name, List.copyOf(c.aliases), customCategory.getOrDefault(c.name, Emoji.CUSTOM_CATEGORY), c.codepoint, false,
 					List.copyOf(c.ranks), List.of());
 			list.add(e);
 			cps.put(e.codepoint(), e);
@@ -411,7 +509,7 @@ public final class EmojiRegistry {
 			store.disabled.add(e.name());
 		} else {
 			try {
-				Files.deleteIfExists(dir().resolve(e.name() + ".png"));
+				Files.deleteIfExists(customFile.getOrDefault(e.name(), dir().resolve(e.name() + ".png")));
 			} catch (IOException ex) {
 				ChaosChatPlus.LOGGER.warn("No se pudo borrar el emoji {}", e.name(), ex);
 			}

@@ -49,5 +49,7 @@ public class ChaosChatPlusClient implements ClientModInitializer {
 		}));
 		ClientTickEvents.START_CLIENT_TICK.register(ShotCapture::startTick);
 		ClientTickEvents.END_CLIENT_TICK.register(ShotCapture::tick);
+		ClientTickEvents.END_CLIENT_TICK.register(client -> GifCache.tick());
+		ClientTickEvents.END_CLIENT_TICK.register(client -> AnimePrefetch.tick());
 	}
 }

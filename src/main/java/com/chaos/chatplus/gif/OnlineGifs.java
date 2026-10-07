@@ -144,8 +144,21 @@ public final class OnlineGifs {
 
 	@Nullable
 	public static GifInfo known(String id) {
-		return KNOWN.get(id);
+		GifInfo known = KNOWN.get(id);
+		if (known != null) {
+			return known;
+		}
+		// GIF de la pestaña Anime ("nekos:categoría/archivo.gif"): se rehace su URL de nekos.best.
+		java.util.regex.Matcher m = NEKOS_ID.matcher(id);
+		if (m.matches() && ChatConfig.get().gifs.anime) {
+			String url = "https://nekos.best/api/v2/" + m.group(1) + "/" + m.group(2);
+			return new GifInfo(id, m.group(1) + " · nekos.best", url, 498, 280, url);
+		}
+		return null;
 	}
+
+	private static final java.util.regex.Pattern NEKOS_ID =
+			java.util.regex.Pattern.compile("nekos:([a-z]{2,16})/([a-f0-9-]{8,64}\\.gif)");
 
 	/** ¿Se puede descargar el GIF de esta URL? (solo de las fuentes conocidas) */
 	public static boolean allowedUrl(String url) {
@@ -220,7 +233,7 @@ public final class OnlineGifs {
 		if (q.isEmpty()) {
 			List<CompletableFuture<List<GifInfo>>> parts = new ArrayList<>();
 			for (String category : FEATURED) {
-				parts.add(nekosCategory(category, 12));
+				parts.add(nekosCategory(category, 3));
 			}
 			return CompletableFuture.allOf(parts.toArray(CompletableFuture[]::new)).thenApply(v -> {
 				List<GifInfo> out = new ArrayList<>();
@@ -244,7 +257,7 @@ public final class OnlineGifs {
 			String url = "https://nekos.best/api/v2/search?type=2&amount=20&query=" + URLEncoder.encode(q, StandardCharsets.UTF_8);
 			return get(url).thenApply(OnlineGifs::parseNekos);
 		}
-		int each = Math.max(20, 160 / categories.size());
+		int each = Math.max(10, 40 / categories.size());
 		List<CompletableFuture<List<GifInfo>>> parts = new ArrayList<>();
 		for (String c : categories) {
 			parts.add(nekosCategory(c, each));

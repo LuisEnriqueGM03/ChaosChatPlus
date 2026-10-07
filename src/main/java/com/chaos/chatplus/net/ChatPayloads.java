@@ -128,12 +128,14 @@ public final class ChatPayloads {
 		}
 	}
 
-	/** Cliente -> servidor: mostrar en el chat el ítem de ese hueco del inventario. */
-	public record ShareItem(int slot) implements CustomPacketPayload {
+	/** Cliente -> servidor: mostrar en el chat el ítem de ese hueco del inventario (target = jugador, "" = todos). */
+	public record ShareItem(int slot, String target) implements CustomPacketPayload {
 
 		public static final Type<ShareItem> TYPE = new Type<>(ChaosChatPlus.id("share_item"));
-		public static final StreamCodec<ByteBuf, ShareItem> CODEC =
-				ByteBufCodecs.VAR_INT.map(ShareItem::new, ShareItem::slot);
+		public static final StreamCodec<ByteBuf, ShareItem> CODEC = StreamCodec.composite(
+				ByteBufCodecs.VAR_INT, ShareItem::slot,
+				ByteBufCodecs.stringUtf8(16), ShareItem::target,
+				ShareItem::new);
 
 		@Override
 		public Type<? extends CustomPacketPayload> type() {
@@ -188,7 +190,7 @@ public final class ChatPayloads {
 
 		public static final Type<GifData> TYPE = new Type<>(ChaosChatPlus.id("gif_data"));
 		public static final StreamCodec<ByteBuf, GifData> CODEC = StreamCodec.composite(
-				ByteBufCodecs.stringUtf8(128), GifData::id,
+				ByteBufCodecs.stringUtf8(256), GifData::id,
 				ByteBufCodecs.byteArray(MAX_S2C), GifData::data,
 				GifData::new);
 
@@ -216,7 +218,7 @@ public final class ChatPayloads {
 
 		public static final Type<GifRequest> TYPE = new Type<>(ChaosChatPlus.id("gif_request"));
 		public static final StreamCodec<ByteBuf, GifRequest> CODEC =
-				ByteBufCodecs.stringUtf8(128).map(GifRequest::new, GifRequest::id);
+				ByteBufCodecs.stringUtf8(256).map(GifRequest::new, GifRequest::id);
 
 		@Override
 		public Type<? extends CustomPacketPayload> type() {
@@ -224,12 +226,14 @@ public final class ChatPayloads {
 		}
 	}
 
-	/** Cliente -> servidor: mandar un GIF al chat. */
-	public record SendGif(String id) implements CustomPacketPayload {
+	/** Cliente -> servidor: mandar un GIF al chat (target = jugador para mandarlo en privado, "" = todos). */
+	public record SendGif(String id, String target) implements CustomPacketPayload {
 
 		public static final Type<SendGif> TYPE = new Type<>(ChaosChatPlus.id("send_gif"));
-		public static final StreamCodec<ByteBuf, SendGif> CODEC =
-				ByteBufCodecs.stringUtf8(128).map(SendGif::new, SendGif::id);
+		public static final StreamCodec<ByteBuf, SendGif> CODEC = StreamCodec.composite(
+				ByteBufCodecs.stringUtf8(256), SendGif::id,
+				ByteBufCodecs.stringUtf8(16), SendGif::target,
+				SendGif::new);
 
 		@Override
 		public Type<? extends CustomPacketPayload> type() {

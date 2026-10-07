@@ -34,7 +34,13 @@ public final class GifDecoder {
 			ImageReader reader = readers.next();
 			try {
 				reader.setInput(in, false);
-				int count = Math.min(MAX_FRAMES, reader.getNumImages(true));
+				// Algunos GIFs hacen fallar al lector de Java al contar o leer frames: se usa lo que se pudo leer.
+				int count;
+				try {
+					count = Math.min(MAX_FRAMES, reader.getNumImages(true));
+				} catch (Exception e) {
+					count = MAX_FRAMES;
+				}
 				int width = reader.getWidth(0);
 				int height = reader.getHeight(0);
 				IIOMetadata stream = reader.getStreamMetadata();
@@ -49,8 +55,19 @@ public final class GifDecoder {
 				List<BufferedImage> frames = new ArrayList<>();
 				int[] delays = new int[count];
 				for (int i = 0; i < count; i++) {
-					BufferedImage frame = reader.read(i);
-					Node tree = reader.getImageMetadata(i).getAsTree("javax_imageio_gif_image_1.0");
+					BufferedImage frame;
+					javax.imageio.metadata.IIOMetadata frameMeta;
+					try {
+						frame = reader.read(i);
+						frameMeta = reader.getImageMetadata(i);
+					} catch (Exception e) {
+						if (frames.isEmpty()) {
+							throw e;
+						}
+						delays = java.util.Arrays.copyOf(delays, frames.size());
+						break;
+					}
+					Node tree = frameMeta.getAsTree("javax_imageio_gif_image_1.0");
 					Node desc = child(tree, "ImageDescriptor");
 					Node gce = child(tree, "GraphicControlExtension");
 					int x = desc == null ? 0 : attr(desc, "imageLeftPosition", 0);

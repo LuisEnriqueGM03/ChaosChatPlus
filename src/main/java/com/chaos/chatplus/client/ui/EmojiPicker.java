@@ -65,7 +65,7 @@ public final class EmojiPicker {
 
 	public EmojiPicker(Consumer<ClientState.ClientEmoji> onPick, Runnable onGifSent) {
 		this.onPick = onPick;
-		this.gifs = ClientState.gifs() ? new GifPanel(onGifSent) : null;
+		this.gifs = ClientState.gifs() ? new GifPanel(onGifSent, ClientState::dmTargetOrEmpty) : null;
 		tabs.add(new Tab("recent", "◷", "picker.recent"));
 		tabs.add(new Tab("favorites", "★", "picker.favorites"));
 		for (Map.Entry<String, String> e : CATEGORY_ICONS.entrySet()) {
