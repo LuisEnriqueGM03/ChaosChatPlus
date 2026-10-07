@@ -62,6 +62,7 @@ public final class GifRegistry {
 		if (id.startsWith("s_")) return "efectos";
 		if (id.startsWith("x_")) return "troll";
 		if (id.startsWith("e_")) return "emojis";
+		if (id.startsWith("a_")) return "anime";
 		return "animados";
 	}
 

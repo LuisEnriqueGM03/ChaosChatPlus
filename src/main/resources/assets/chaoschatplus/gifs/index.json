@@ -1253,6 +1253,1692 @@
 		]
 	},
 	{
+		"id": "a_risa_rosa",
+		"name": "Risa (rosa)",
+		"tags": [
+			"risa",
+			"laugh",
+			"jaja",
+			"lol",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_llorar_rosa",
+		"name": "Llorando (rosa)",
+		"tags": [
+			"llorar",
+			"cry",
+			"triste",
+			"sad",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_lagrimita_rosa",
+		"name": "Lagrimita (rosa)",
+		"tags": [
+			"llorar",
+			"triste",
+			"sad",
+			"cry",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_enojo_rosa",
+		"name": "Enojada (rosa)",
+		"tags": [
+			"enojo",
+			"angry",
+			"rabia",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_sonrojo_rosa",
+		"name": "Sonrojada (rosa)",
+		"tags": [
+			"sonrojo",
+			"blush",
+			"verguenza",
+			"uwu",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_amor_rosa",
+		"name": "Enamorada (rosa)",
+		"tags": [
+			"amor",
+			"love",
+			"corazon",
+			"beso",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_beso_rosa",
+		"name": "Beso (rosa)",
+		"tags": [
+			"beso",
+			"kiss",
+			"amor",
+			"mua",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_guino_rosa",
+		"name": "Guiño (rosa)",
+		"tags": [
+			"guiño",
+			"wink",
+			"ok",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_dormir_rosa",
+		"name": "Durmiendo (rosa)",
+		"tags": [
+			"dormir",
+			"sleep",
+			"sueño",
+			"zzz",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_sorpresa_rosa",
+		"name": "Sorpresa (rosa)",
+		"tags": [
+			"sorpresa",
+			"shock",
+			"wow",
+			"omg",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_brillos_rosa",
+		"name": "Ojos brillantes (rosa)",
+		"tags": [
+			"wow",
+			"emocion",
+			"estrella",
+			"feliz",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_saludo_rosa",
+		"name": "Saludo (rosa)",
+		"tags": [
+			"saludo",
+			"hola",
+			"wave",
+			"hi",
+			"adios",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_pulgar_rosa",
+		"name": "Pulgar arriba (rosa)",
+		"tags": [
+			"pulgar",
+			"ok",
+			"bien",
+			"thumbsup",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_aplausos_rosa",
+		"name": "Aplausos (rosa)",
+		"tags": [
+			"aplausos",
+			"clap",
+			"bravo",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_baile_rosa",
+		"name": "Bailando (rosa)",
+		"tags": [
+			"baile",
+			"dance",
+			"fiesta",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_nervios_rosa",
+		"name": "Nerviosa (rosa)",
+		"tags": [
+			"nervios",
+			"sudor",
+			"awkward",
+			"uh",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_mareada_rosa",
+		"name": "Mareada (rosa)",
+		"tags": [
+			"mareo",
+			"confusa",
+			"dizzy",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_presumida_rosa",
+		"name": "Presumida (rosa)",
+		"tags": [
+			"smug",
+			"presumida",
+			"jeje",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_muerta_rosa",
+		"name": "Ko (rosa)",
+		"tags": [
+			"muerto",
+			"ko",
+			"dead",
+			"rip",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_neko_rosa",
+		"name": "Neko feliz (rosa)",
+		"tags": [
+			"neko",
+			"gato",
+			"nya",
+			"feliz",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_neko_enojo_rosa",
+		"name": "Neko enojada (rosa)",
+		"tags": [
+			"neko",
+			"gato",
+			"enojo",
+			"angry",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_serio_rosa",
+		"name": "Mirada seria (rosa)",
+		"tags": [
+			"serio",
+			"mirada",
+			"hmm",
+			"pensar",
+			"anime",
+			"chibi",
+			"rosa"
+		]
+	},
+	{
+		"id": "a_risa_azul",
+		"name": "Risa (azul)",
+		"tags": [
+			"risa",
+			"laugh",
+			"jaja",
+			"lol",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_llorar_azul",
+		"name": "Llorando (azul)",
+		"tags": [
+			"llorar",
+			"cry",
+			"triste",
+			"sad",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_lagrimita_azul",
+		"name": "Lagrimita (azul)",
+		"tags": [
+			"llorar",
+			"triste",
+			"sad",
+			"cry",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_enojo_azul",
+		"name": "Enojada (azul)",
+		"tags": [
+			"enojo",
+			"angry",
+			"rabia",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_sonrojo_azul",
+		"name": "Sonrojada (azul)",
+		"tags": [
+			"sonrojo",
+			"blush",
+			"verguenza",
+			"uwu",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_amor_azul",
+		"name": "Enamorada (azul)",
+		"tags": [
+			"amor",
+			"love",
+			"corazon",
+			"beso",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_beso_azul",
+		"name": "Beso (azul)",
+		"tags": [
+			"beso",
+			"kiss",
+			"amor",
+			"mua",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_guino_azul",
+		"name": "Guiño (azul)",
+		"tags": [
+			"guiño",
+			"wink",
+			"ok",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_dormir_azul",
+		"name": "Durmiendo (azul)",
+		"tags": [
+			"dormir",
+			"sleep",
+			"sueño",
+			"zzz",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_sorpresa_azul",
+		"name": "Sorpresa (azul)",
+		"tags": [
+			"sorpresa",
+			"shock",
+			"wow",
+			"omg",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_brillos_azul",
+		"name": "Ojos brillantes (azul)",
+		"tags": [
+			"wow",
+			"emocion",
+			"estrella",
+			"feliz",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_saludo_azul",
+		"name": "Saludo (azul)",
+		"tags": [
+			"saludo",
+			"hola",
+			"wave",
+			"hi",
+			"adios",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_pulgar_azul",
+		"name": "Pulgar arriba (azul)",
+		"tags": [
+			"pulgar",
+			"ok",
+			"bien",
+			"thumbsup",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_aplausos_azul",
+		"name": "Aplausos (azul)",
+		"tags": [
+			"aplausos",
+			"clap",
+			"bravo",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_baile_azul",
+		"name": "Bailando (azul)",
+		"tags": [
+			"baile",
+			"dance",
+			"fiesta",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_nervios_azul",
+		"name": "Nerviosa (azul)",
+		"tags": [
+			"nervios",
+			"sudor",
+			"awkward",
+			"uh",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_mareada_azul",
+		"name": "Mareada (azul)",
+		"tags": [
+			"mareo",
+			"confusa",
+			"dizzy",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_presumida_azul",
+		"name": "Presumida (azul)",
+		"tags": [
+			"smug",
+			"presumida",
+			"jeje",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_muerta_azul",
+		"name": "Ko (azul)",
+		"tags": [
+			"muerto",
+			"ko",
+			"dead",
+			"rip",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_neko_azul",
+		"name": "Neko feliz (azul)",
+		"tags": [
+			"neko",
+			"gato",
+			"nya",
+			"feliz",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_neko_enojo_azul",
+		"name": "Neko enojada (azul)",
+		"tags": [
+			"neko",
+			"gato",
+			"enojo",
+			"angry",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_serio_azul",
+		"name": "Mirada seria (azul)",
+		"tags": [
+			"serio",
+			"mirada",
+			"hmm",
+			"pensar",
+			"anime",
+			"chibi",
+			"azul"
+		]
+	},
+	{
+		"id": "a_risa_rubio",
+		"name": "Risa (rubio)",
+		"tags": [
+			"risa",
+			"laugh",
+			"jaja",
+			"lol",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_llorar_rubio",
+		"name": "Llorando (rubio)",
+		"tags": [
+			"llorar",
+			"cry",
+			"triste",
+			"sad",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_lagrimita_rubio",
+		"name": "Lagrimita (rubio)",
+		"tags": [
+			"llorar",
+			"triste",
+			"sad",
+			"cry",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_enojo_rubio",
+		"name": "Enojada (rubio)",
+		"tags": [
+			"enojo",
+			"angry",
+			"rabia",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_sonrojo_rubio",
+		"name": "Sonrojada (rubio)",
+		"tags": [
+			"sonrojo",
+			"blush",
+			"verguenza",
+			"uwu",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_amor_rubio",
+		"name": "Enamorada (rubio)",
+		"tags": [
+			"amor",
+			"love",
+			"corazon",
+			"beso",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_beso_rubio",
+		"name": "Beso (rubio)",
+		"tags": [
+			"beso",
+			"kiss",
+			"amor",
+			"mua",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_guino_rubio",
+		"name": "Guiño (rubio)",
+		"tags": [
+			"guiño",
+			"wink",
+			"ok",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_dormir_rubio",
+		"name": "Durmiendo (rubio)",
+		"tags": [
+			"dormir",
+			"sleep",
+			"sueño",
+			"zzz",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_sorpresa_rubio",
+		"name": "Sorpresa (rubio)",
+		"tags": [
+			"sorpresa",
+			"shock",
+			"wow",
+			"omg",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_brillos_rubio",
+		"name": "Ojos brillantes (rubio)",
+		"tags": [
+			"wow",
+			"emocion",
+			"estrella",
+			"feliz",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_saludo_rubio",
+		"name": "Saludo (rubio)",
+		"tags": [
+			"saludo",
+			"hola",
+			"wave",
+			"hi",
+			"adios",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_pulgar_rubio",
+		"name": "Pulgar arriba (rubio)",
+		"tags": [
+			"pulgar",
+			"ok",
+			"bien",
+			"thumbsup",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_aplausos_rubio",
+		"name": "Aplausos (rubio)",
+		"tags": [
+			"aplausos",
+			"clap",
+			"bravo",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_baile_rubio",
+		"name": "Bailando (rubio)",
+		"tags": [
+			"baile",
+			"dance",
+			"fiesta",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_nervios_rubio",
+		"name": "Nerviosa (rubio)",
+		"tags": [
+			"nervios",
+			"sudor",
+			"awkward",
+			"uh",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_mareada_rubio",
+		"name": "Mareada (rubio)",
+		"tags": [
+			"mareo",
+			"confusa",
+			"dizzy",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_presumida_rubio",
+		"name": "Presumida (rubio)",
+		"tags": [
+			"smug",
+			"presumida",
+			"jeje",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_muerta_rubio",
+		"name": "Ko (rubio)",
+		"tags": [
+			"muerto",
+			"ko",
+			"dead",
+			"rip",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_neko_rubio",
+		"name": "Neko feliz (rubio)",
+		"tags": [
+			"neko",
+			"gato",
+			"nya",
+			"feliz",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_neko_enojo_rubio",
+		"name": "Neko enojada (rubio)",
+		"tags": [
+			"neko",
+			"gato",
+			"enojo",
+			"angry",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_serio_rubio",
+		"name": "Mirada seria (rubio)",
+		"tags": [
+			"serio",
+			"mirada",
+			"hmm",
+			"pensar",
+			"anime",
+			"chibi",
+			"rubio"
+		]
+	},
+	{
+		"id": "a_risa_negro",
+		"name": "Risa (negro)",
+		"tags": [
+			"risa",
+			"laugh",
+			"jaja",
+			"lol",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_llorar_negro",
+		"name": "Llorando (negro)",
+		"tags": [
+			"llorar",
+			"cry",
+			"triste",
+			"sad",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_lagrimita_negro",
+		"name": "Lagrimita (negro)",
+		"tags": [
+			"llorar",
+			"triste",
+			"sad",
+			"cry",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_enojo_negro",
+		"name": "Enojada (negro)",
+		"tags": [
+			"enojo",
+			"angry",
+			"rabia",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_sonrojo_negro",
+		"name": "Sonrojada (negro)",
+		"tags": [
+			"sonrojo",
+			"blush",
+			"verguenza",
+			"uwu",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_amor_negro",
+		"name": "Enamorada (negro)",
+		"tags": [
+			"amor",
+			"love",
+			"corazon",
+			"beso",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_beso_negro",
+		"name": "Beso (negro)",
+		"tags": [
+			"beso",
+			"kiss",
+			"amor",
+			"mua",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_guino_negro",
+		"name": "Guiño (negro)",
+		"tags": [
+			"guiño",
+			"wink",
+			"ok",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_dormir_negro",
+		"name": "Durmiendo (negro)",
+		"tags": [
+			"dormir",
+			"sleep",
+			"sueño",
+			"zzz",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_sorpresa_negro",
+		"name": "Sorpresa (negro)",
+		"tags": [
+			"sorpresa",
+			"shock",
+			"wow",
+			"omg",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_brillos_negro",
+		"name": "Ojos brillantes (negro)",
+		"tags": [
+			"wow",
+			"emocion",
+			"estrella",
+			"feliz",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_saludo_negro",
+		"name": "Saludo (negro)",
+		"tags": [
+			"saludo",
+			"hola",
+			"wave",
+			"hi",
+			"adios",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_pulgar_negro",
+		"name": "Pulgar arriba (negro)",
+		"tags": [
+			"pulgar",
+			"ok",
+			"bien",
+			"thumbsup",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_aplausos_negro",
+		"name": "Aplausos (negro)",
+		"tags": [
+			"aplausos",
+			"clap",
+			"bravo",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_baile_negro",
+		"name": "Bailando (negro)",
+		"tags": [
+			"baile",
+			"dance",
+			"fiesta",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_nervios_negro",
+		"name": "Nerviosa (negro)",
+		"tags": [
+			"nervios",
+			"sudor",
+			"awkward",
+			"uh",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_mareada_negro",
+		"name": "Mareada (negro)",
+		"tags": [
+			"mareo",
+			"confusa",
+			"dizzy",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_presumida_negro",
+		"name": "Presumida (negro)",
+		"tags": [
+			"smug",
+			"presumida",
+			"jeje",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_muerta_negro",
+		"name": "Ko (negro)",
+		"tags": [
+			"muerto",
+			"ko",
+			"dead",
+			"rip",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_neko_negro",
+		"name": "Neko feliz (negro)",
+		"tags": [
+			"neko",
+			"gato",
+			"nya",
+			"feliz",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_neko_enojo_negro",
+		"name": "Neko enojada (negro)",
+		"tags": [
+			"neko",
+			"gato",
+			"enojo",
+			"angry",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_serio_negro",
+		"name": "Mirada seria (negro)",
+		"tags": [
+			"serio",
+			"mirada",
+			"hmm",
+			"pensar",
+			"anime",
+			"chibi",
+			"negro"
+		]
+	},
+	{
+		"id": "a_risa_rojo",
+		"name": "Risa (rojo)",
+		"tags": [
+			"risa",
+			"laugh",
+			"jaja",
+			"lol",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_llorar_rojo",
+		"name": "Llorando (rojo)",
+		"tags": [
+			"llorar",
+			"cry",
+			"triste",
+			"sad",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_lagrimita_rojo",
+		"name": "Lagrimita (rojo)",
+		"tags": [
+			"llorar",
+			"triste",
+			"sad",
+			"cry",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_enojo_rojo",
+		"name": "Enojada (rojo)",
+		"tags": [
+			"enojo",
+			"angry",
+			"rabia",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_sonrojo_rojo",
+		"name": "Sonrojada (rojo)",
+		"tags": [
+			"sonrojo",
+			"blush",
+			"verguenza",
+			"uwu",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_amor_rojo",
+		"name": "Enamorada (rojo)",
+		"tags": [
+			"amor",
+			"love",
+			"corazon",
+			"beso",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_beso_rojo",
+		"name": "Beso (rojo)",
+		"tags": [
+			"beso",
+			"kiss",
+			"amor",
+			"mua",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_guino_rojo",
+		"name": "Guiño (rojo)",
+		"tags": [
+			"guiño",
+			"wink",
+			"ok",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_dormir_rojo",
+		"name": "Durmiendo (rojo)",
+		"tags": [
+			"dormir",
+			"sleep",
+			"sueño",
+			"zzz",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_sorpresa_rojo",
+		"name": "Sorpresa (rojo)",
+		"tags": [
+			"sorpresa",
+			"shock",
+			"wow",
+			"omg",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_brillos_rojo",
+		"name": "Ojos brillantes (rojo)",
+		"tags": [
+			"wow",
+			"emocion",
+			"estrella",
+			"feliz",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_saludo_rojo",
+		"name": "Saludo (rojo)",
+		"tags": [
+			"saludo",
+			"hola",
+			"wave",
+			"hi",
+			"adios",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_pulgar_rojo",
+		"name": "Pulgar arriba (rojo)",
+		"tags": [
+			"pulgar",
+			"ok",
+			"bien",
+			"thumbsup",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_aplausos_rojo",
+		"name": "Aplausos (rojo)",
+		"tags": [
+			"aplausos",
+			"clap",
+			"bravo",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_baile_rojo",
+		"name": "Bailando (rojo)",
+		"tags": [
+			"baile",
+			"dance",
+			"fiesta",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_nervios_rojo",
+		"name": "Nerviosa (rojo)",
+		"tags": [
+			"nervios",
+			"sudor",
+			"awkward",
+			"uh",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_mareada_rojo",
+		"name": "Mareada (rojo)",
+		"tags": [
+			"mareo",
+			"confusa",
+			"dizzy",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_presumida_rojo",
+		"name": "Presumida (rojo)",
+		"tags": [
+			"smug",
+			"presumida",
+			"jeje",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_muerta_rojo",
+		"name": "Ko (rojo)",
+		"tags": [
+			"muerto",
+			"ko",
+			"dead",
+			"rip",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_neko_rojo",
+		"name": "Neko feliz (rojo)",
+		"tags": [
+			"neko",
+			"gato",
+			"nya",
+			"feliz",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_neko_enojo_rojo",
+		"name": "Neko enojada (rojo)",
+		"tags": [
+			"neko",
+			"gato",
+			"enojo",
+			"angry",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_serio_rojo",
+		"name": "Mirada seria (rojo)",
+		"tags": [
+			"serio",
+			"mirada",
+			"hmm",
+			"pensar",
+			"anime",
+			"chibi",
+			"rojo"
+		]
+	},
+	{
+		"id": "a_risa_plata",
+		"name": "Risa (plata)",
+		"tags": [
+			"risa",
+			"laugh",
+			"jaja",
+			"lol",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_llorar_plata",
+		"name": "Llorando (plata)",
+		"tags": [
+			"llorar",
+			"cry",
+			"triste",
+			"sad",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_lagrimita_plata",
+		"name": "Lagrimita (plata)",
+		"tags": [
+			"llorar",
+			"triste",
+			"sad",
+			"cry",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_enojo_plata",
+		"name": "Enojada (plata)",
+		"tags": [
+			"enojo",
+			"angry",
+			"rabia",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_sonrojo_plata",
+		"name": "Sonrojada (plata)",
+		"tags": [
+			"sonrojo",
+			"blush",
+			"verguenza",
+			"uwu",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_amor_plata",
+		"name": "Enamorada (plata)",
+		"tags": [
+			"amor",
+			"love",
+			"corazon",
+			"beso",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_beso_plata",
+		"name": "Beso (plata)",
+		"tags": [
+			"beso",
+			"kiss",
+			"amor",
+			"mua",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_guino_plata",
+		"name": "Guiño (plata)",
+		"tags": [
+			"guiño",
+			"wink",
+			"ok",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_dormir_plata",
+		"name": "Durmiendo (plata)",
+		"tags": [
+			"dormir",
+			"sleep",
+			"sueño",
+			"zzz",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_sorpresa_plata",
+		"name": "Sorpresa (plata)",
+		"tags": [
+			"sorpresa",
+			"shock",
+			"wow",
+			"omg",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_brillos_plata",
+		"name": "Ojos brillantes (plata)",
+		"tags": [
+			"wow",
+			"emocion",
+			"estrella",
+			"feliz",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_saludo_plata",
+		"name": "Saludo (plata)",
+		"tags": [
+			"saludo",
+			"hola",
+			"wave",
+			"hi",
+			"adios",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_pulgar_plata",
+		"name": "Pulgar arriba (plata)",
+		"tags": [
+			"pulgar",
+			"ok",
+			"bien",
+			"thumbsup",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_aplausos_plata",
+		"name": "Aplausos (plata)",
+		"tags": [
+			"aplausos",
+			"clap",
+			"bravo",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_baile_plata",
+		"name": "Bailando (plata)",
+		"tags": [
+			"baile",
+			"dance",
+			"fiesta",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_nervios_plata",
+		"name": "Nerviosa (plata)",
+		"tags": [
+			"nervios",
+			"sudor",
+			"awkward",
+			"uh",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_mareada_plata",
+		"name": "Mareada (plata)",
+		"tags": [
+			"mareo",
+			"confusa",
+			"dizzy",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_presumida_plata",
+		"name": "Presumida (plata)",
+		"tags": [
+			"smug",
+			"presumida",
+			"jeje",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_muerta_plata",
+		"name": "Ko (plata)",
+		"tags": [
+			"muerto",
+			"ko",
+			"dead",
+			"rip",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_neko_plata",
+		"name": "Neko feliz (plata)",
+		"tags": [
+			"neko",
+			"gato",
+			"nya",
+			"feliz",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_neko_enojo_plata",
+		"name": "Neko enojada (plata)",
+		"tags": [
+			"neko",
+			"gato",
+			"enojo",
+			"angry",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
+		"id": "a_serio_plata",
+		"name": "Mirada seria (plata)",
+		"tags": [
+			"serio",
+			"mirada",
+			"hmm",
+			"pensar",
+			"anime",
+			"chibi",
+			"plata"
+		]
+	},
+	{
 		"id": "creeper_baile",
 		"name": "Creeper bailando",
 		"tags": [

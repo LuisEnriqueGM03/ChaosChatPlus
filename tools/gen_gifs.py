@@ -297,6 +297,11 @@ def main():
         frames, duration = fn()
         save(gid, frames, duration)
         index.append({"id": gid, "name": name, "tags": tags})
+    from gen_gifs_anime import anime_gifs
+    for gid, name, fn, tags in anime_gifs():
+        frames, duration = fn()
+        save(gid, frames, duration)
+        index.append({"id": gid, "name": name, "tags": tags})
     for gid, name, fn, duration, tags in GIFS + emoji_gifs():
         save(gid, fn(), duration)
         index.append({"id": gid, "name": name, "tags": tags})
