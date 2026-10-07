@@ -44,6 +44,8 @@ TEXTS = {
     "join.left": ("%s salió", "%s left"),
     "picker.tab_emojis": ("Emojis", "Emojis"),
     "picker.tab_gifs": ("GIFs", "GIFs"),
+    "mod.required": ("Este servidor necesita el mod Chaos ChatPlus %s (Fabric) en tu juego. Instálalo y vuelve a entrar.",
+                     "This server requires the Chaos ChatPlus %s mod (Fabric) on your game. Install it and join again."),
     "gif.search": ("Buscar GIFs…", "Search GIFs…"),
     "gif.server": ("Del servidor", "Server"),
     "gif.trending": ("Tendencias", "Trending"),
@@ -147,9 +149,6 @@ TEXTS = {
     "emoji.error.limit": ("Se alcanzó el máximo de emojis del servidor.", "The server emoji limit was reached."),
     "emoji.error.not_found": ("Ese emoji no existe.", "That emoji doesn't exist."),
 
-    "pack.required": ("Este servidor necesita el pack de emojis del chat.", "This server requires the chat emoji pack."),
-    "pack.exported": ("Pack guardado en %s (sha1 %s). Súbelo y pon su URL en resourcePack.externalUrl.",
-                      "Pack saved to %s (sha1 %s). Upload it and set its URL in resourcePack.externalUrl."),
 
     "shot.sent": ("%s%s envió una captura", "%s%s sent a screenshot"),
     "shot.view": ("[Ver]", "[View]"),

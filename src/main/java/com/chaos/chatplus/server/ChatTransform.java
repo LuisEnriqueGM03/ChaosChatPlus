@@ -5,7 +5,6 @@ import java.util.Locale;
 import com.chaos.chatplus.compat.ChaosRanksCompat;
 import com.chaos.chatplus.emoji.Emoji;
 import com.chaos.chatplus.emoji.EmojiRegistry;
-import com.chaos.chatplus.pack.PackHost;
 import com.chaos.chatplus.text.ChatMarks;
 
 import net.minecraft.network.chat.Component;
@@ -27,7 +26,7 @@ public final class ChatTransform {
 	/** " 📷" (espacio + emoji) si quien lo recibe puede ver ese emoji; si no, nada. */
 	public static Component icon(ServerPlayer viewer, String emojiName) {
 		Emoji emoji = EmojiRegistry.byName(emojiName);
-		if (emoji == null || !(PackHost.hasPack(viewer) || (ChatServer.isModded(viewer) && emoji.builtin()))) {
+		if (emoji == null || !(ChatServer.isModded(viewer) || (ChatServer.isModded(viewer) && emoji.builtin()))) {
 			return Component.empty();
 		}
 		return Component.literal(" ").append(ChatMarks.icon(emoji));
@@ -37,7 +36,7 @@ public final class ChatTransform {
 		if (!ChatMarks.any(message, c -> ChatMarks.isEmoji(c.getStyle()) || ChatMarks.mentionToken(c) != null)) {
 			return message;
 		}
-		boolean pack = PackHost.hasPack(viewer);
+		boolean pack = ChatServer.isModded(viewer);
 		boolean modded = ChatServer.isModded(viewer);
 		String me = "@" + viewer.getGameProfile().getName().toLowerCase(Locale.ROOT);
 		String rank = ChaosRanksCompat.present() ? ChaosRanksCompat.rankId(viewer) : null;

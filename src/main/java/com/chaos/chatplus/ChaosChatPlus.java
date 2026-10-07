@@ -9,7 +9,7 @@ import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.EmojiRegistry;
 import com.chaos.chatplus.gif.GifRegistry;
 import com.chaos.chatplus.net.ChatPayloads;
-import com.chaos.chatplus.pack.PackHost;
+import com.chaos.chatplus.pack.FontSync;
 import com.chaos.chatplus.server.ChatDecorator;
 import com.chaos.chatplus.server.ChatServer;
 
@@ -19,6 +19,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.resources.ResourceLocation;
 
@@ -39,6 +41,8 @@ public class ChaosChatPlus implements ModInitializer {
 		PayloadTypeRegistry.playS2C().register(ChatPayloads.ShotData.TYPE, ChatPayloads.ShotData.CODEC);
 		PayloadTypeRegistry.playS2C().register(ChatPayloads.GifResults.TYPE, ChatPayloads.GifResults.CODEC);
 		PayloadTypeRegistry.playS2C().register(ChatPayloads.GifData.TYPE, ChatPayloads.GifData.CODEC);
+		PayloadTypeRegistry.playS2C().register(ChatPayloads.FontPart.TYPE, ChatPayloads.FontPart.CODEC);
+		PayloadTypeRegistry.configurationS2C().register(ChatPayloads.Hello.TYPE, ChatPayloads.Hello.CODEC);
 		PayloadTypeRegistry.playC2S().register(ChatPayloads.GifSearch.TYPE, ChatPayloads.GifSearch.CODEC);
 		PayloadTypeRegistry.playC2S().register(ChatPayloads.GifRequest.TYPE, ChatPayloads.GifRequest.CODEC);
 		PayloadTypeRegistry.playC2S().register(ChatPayloads.SendGif.TYPE, ChatPayloads.SendGif.CODEC);
@@ -58,15 +62,21 @@ public class ChaosChatPlus implements ModInitializer {
 			ChatConfig.load();
 			EmojiRegistry.load();
 			GifRegistry.load();
-			PackHost.start(server);
+			FontSync.rebuild();
 			ChaosRanksCompat.cleanOrphanTeams(server);
 		});
 		ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
-			PackHost.stop();
 			ChatServer.stop();
 		});
 		ServerTickEvents.END_SERVER_TICK.register(ChatServer::tick);
-		ServerConfigurationConnectionEvents.CONFIGURE.register(PackHost::configure);
+		// El mod es obligatorio en el cliente: quien no lo tenga no entra (se le dice cuál instalar).
+		ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
+			if (!ServerConfigurationNetworking.canSend(handler, ChatPayloads.Hello.TYPE)) {
+				String version = FabricLoader.getInstance().getModContainer(MOD_ID)
+						.map(m -> m.getMetadata().getVersion().getFriendlyString()).orElse("");
+				handler.disconnect(Lang.tr("mod.required", version));
+			}
+		});
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> ChatServer.join(handler.player));
 		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> ChatServer.leave(handler.player));
 	}

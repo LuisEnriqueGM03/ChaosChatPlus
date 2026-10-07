@@ -7,6 +7,7 @@ import com.chaos.chatplus.net.ChatPayloads;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -28,6 +29,9 @@ public class ChaosChatPlusClient implements ClientModInitializer {
 			return;
 		}
 		ClientPrefs.load();
+		ClientConfigurationNetworking.registerGlobalReceiver(ChatPayloads.Hello.TYPE, (payload, context) -> { });
+		ClientPlayNetworking.registerGlobalReceiver(ChatPayloads.FontPart.TYPE, (payload, context) ->
+				context.client().execute(() -> FontInjector.accept(payload.part(), payload.parts(), payload.data())));
 		ClientPlayNetworking.registerGlobalReceiver(ChatPayloads.ServerInfo.TYPE, (payload, context) ->
 				context.client().execute(() -> ClientState.setInfo(payload.data())));
 		ClientPlayNetworking.registerGlobalReceiver(ChatPayloads.EmojiImage.TYPE, (payload, context) ->

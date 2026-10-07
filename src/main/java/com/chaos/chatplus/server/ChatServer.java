@@ -16,7 +16,7 @@ import com.chaos.chatplus.gif.GifRegistry;
 import com.chaos.chatplus.gif.GifServer;
 import com.chaos.chatplus.gif.OnlineGifs;
 import com.chaos.chatplus.net.ChatPayloads;
-import com.chaos.chatplus.pack.PackHost;
+import com.chaos.chatplus.pack.FontSync;
 import com.chaos.chatplus.perm.Perms;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -66,13 +66,13 @@ public final class ChatServer {
 	public static void join(ServerPlayer player) {
 		SENT.remove(player.getUUID());
 		if (isModded(player)) {
+			FontSync.send(player);
 			sync(player, true);
 		}
 	}
 
 	public static void leave(ServerPlayer player) {
 		SENT.remove(player.getUUID());
-		PackHost.forget(player);
 		ItemShare.forget(player);
 		Shots.forget(player);
 		GifServer.forget(player);
@@ -105,10 +105,11 @@ public final class ChatServer {
 		}
 	}
 
-	/** Tras recargar o cambiar emojis: vuelve a mandar todo y el pack. */
+	/** Tras recargar o cambiar emojis: vuelve a mandar todo y las fuentes. */
 	public static void resyncAll(MinecraftServer server) {
 		SENT.clear();
-		PackHost.pushAll(server);
+		FontSync.rebuild();
+		FontSync.sendAll(server);
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 			if (isModded(player)) {
 				sync(player, true);
@@ -138,8 +139,7 @@ public final class ChatServer {
 
 	/** Lo que decide los permisos de un jugador (si cambia, se vuelve a mandar ServerInfo). */
 	private static String permKey(ServerPlayer player) {
-		return player.server.getProfilePermissions(player.getGameProfile()) + "|" + Objects.toString(ChaosRanksCompat.rankId(player))
-				+ "|" + PackHost.hasPack(player);
+		return player.server.getProfilePermissions(player.getGameProfile()) + "|" + Objects.toString(ChaosRanksCompat.rankId(player));
 	}
 
 	private static JsonObject info(ServerPlayer player) {
@@ -152,7 +152,7 @@ public final class ChatServer {
 		o.addProperty("mentionColor", cfg.mentionRgb());
 		o.addProperty("blurShots", cfg.screenshots.blurUntilClick);
 		o.addProperty("maxShotKb", cfg.screenshots.maxKilobytes);
-		o.addProperty("pack", PackHost.hasPack(player));
+		o.addProperty("pack", true);
 		o.addProperty("gifs", GifServer.canUse(player));
 		o.addProperty("gifSource", OnlineGifs.sourceName());
 		JsonArray special = new JsonArray();

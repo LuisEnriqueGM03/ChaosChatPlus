@@ -3,13 +3,9 @@
 	"package": "com.chaos.chatplus.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ConnectionMixin",
 		"MsgCommandMixin",
 		"PlayerListMixin",
-		"ServerCommonPacketListenerImplAccessor",
-		"ServerCommonPacketListenerImplMixin",
 		"ServerGamePacketListenerImplMixin",
-		"ServerHandshakePacketListenerImplMixin",
 		"ServerPlayerMixin"
 	],
 	"client": [
@@ -18,8 +14,10 @@
 		"client.ChatComponentMixin",
 		"client.ChatScreenMixin",
 		"client.EditBoxAccessor",
+		"client.FontManagerAccessor",
 		"client.GuiMixin",
 		"client.KeyboardHandlerMixin",
+		"client.MinecraftAccessor",
 		"client.MouseHandlerMixin"
 	],
 	"injectors": {

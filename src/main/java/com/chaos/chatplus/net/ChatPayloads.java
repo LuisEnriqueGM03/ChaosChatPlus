@@ -144,6 +144,35 @@ public final class ChatPayloads {
 	}
 
 	/** Cliente -> servidor: un trozo de la captura que se está enviando (part empieza en 0). */
+	/** Trozo de las fuentes del chat (emojis añadidos por el servidor y etiquetas de rangos). */
+	public record FontPart(int part, int parts, byte[] data) implements CustomPacketPayload {
+
+		public static final Type<FontPart> TYPE = new Type<>(ChaosChatPlus.id("font_part"));
+		public static final StreamCodec<ByteBuf, FontPart> CODEC = StreamCodec.composite(
+				ByteBufCodecs.VAR_INT, FontPart::part,
+				ByteBufCodecs.VAR_INT, FontPart::parts,
+				ByteBufCodecs.byteArray(MAX_S2C), FontPart::data,
+				FontPart::new);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
+	}
+
+	/** Durante la conexión: el servidor comprueba con él que el cliente tiene el mod (si no, lo echa). */
+	public record Hello() implements CustomPacketPayload {
+
+		public static final Hello INSTANCE = new Hello();
+		public static final Type<Hello> TYPE = new Type<>(ChaosChatPlus.id("hello"));
+		public static final StreamCodec<ByteBuf, Hello> CODEC = StreamCodec.unit(INSTANCE);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
+	}
+
 	public record ShotPart(int part, int parts, byte[] data, String target) implements CustomPacketPayload {
 
 		public static final Type<ShotPart> TYPE = new Type<>(ChaosChatPlus.id("shot_part"));

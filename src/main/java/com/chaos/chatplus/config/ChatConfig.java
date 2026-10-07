@@ -54,18 +54,6 @@ public final class ChatConfig {
 		public int maxCustom = 500;
 	}
 
-	public static class ResourcePack {
-		/** embedded = lo sirve el propio servidor por HTTP; external = lo subes tú a externalUrl; none = sin pack. */
-		public String mode = "embedded";
-		public int port = 25599;
-		/** IP o dominio con el que los jugadores llegan al puerto. Vacío = el mismo con el que entraron al server. */
-		public String publicHost = "";
-		/** Con mode = external: URL del zip (descárgalo con /chatplus pack export). */
-		public String externalUrl = "";
-		public boolean required = false;
-		public String prompt = "Emojis del chat (Chaos ChatPlus)";
-	}
-
 	public static class Mentions {
 		public boolean enabled = true;
 		public String color = "#7AA2FF";
@@ -142,7 +130,6 @@ public final class ChatConfig {
 	/** Idioma de los mensajes para clientes sin el mod (es_es, en_us...). */
 	public String language = "es_es";
 	public Emojis emojis = new Emojis();
-	public ResourcePack resourcePack = new ResourcePack();
 	public Mentions mentions = new Mentions();
 	public Items items = new Items();
 	public Screenshots screenshots = new Screenshots();
@@ -191,12 +178,6 @@ public final class ChatConfig {
 		if (emojis.upload == null) emojis.upload = new Access(2);
 		emojis.upload.sanitize();
 		emojis.maxCustom = Math.max(0, Math.min(5000, emojis.maxCustom));
-		if (resourcePack == null) resourcePack = new ResourcePack();
-		resourcePack.mode = resourcePack.mode == null ? "embedded" : resourcePack.mode.toLowerCase(Locale.ROOT).strip();
-		if (resourcePack.publicHost == null) resourcePack.publicHost = "";
-		if (resourcePack.externalUrl == null) resourcePack.externalUrl = "";
-		if (resourcePack.prompt == null) resourcePack.prompt = "";
-		resourcePack.port = Math.max(1, Math.min(65535, resourcePack.port));
 		if (mentions == null) mentions = new Mentions();
 		if (mentions.everyone == null) mentions.everyone = new Access(2);
 		if (mentions.ranks == null) mentions.ranks = new Access(2);

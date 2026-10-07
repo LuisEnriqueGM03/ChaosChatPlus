@@ -10,7 +10,6 @@ import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.Emoji;
 import com.chaos.chatplus.emoji.EmojiRegistry;
 import com.chaos.chatplus.gif.GifRegistry;
-import com.chaos.chatplus.pack.PackHost;
 import com.chaos.chatplus.server.ChatServer;
 import com.chaos.chatplus.server.Shots;
 import com.chaos.chatplus.text.ChatMarks;
@@ -30,7 +29,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
- * /chatplus reload | pack export | shot view|delete|list
+ * /chatplus reload | shot view|delete|list
  * /emoji list | pending | approve | deny | remove | enable | alias | ranks
  */
 public final class ChatPlusCommand {
@@ -62,8 +61,7 @@ public final class ChatPlusCommand {
 					return 1;
 				}))
 				.then(Commands.literal("reload").requires(s -> s.hasPermission(2)).executes(ChatPlusCommand::reload))
-				.then(Commands.literal("pack").requires(s -> s.hasPermission(2))
-						.then(Commands.literal("export").executes(ChatPlusCommand::export)))
+
 				.then(Commands.literal("shot")
 						.then(Commands.literal("view").then(Commands.argument("id", StringArgumentType.word())
 								.executes(ctx -> {
@@ -112,21 +110,9 @@ public final class ChatPlusCommand {
 		ChatConfig.load();
 		EmojiRegistry.load();
 		GifRegistry.load();
-		PackHost.start(ctx.getSource().getServer());
 		ChatServer.resyncAll(ctx.getSource().getServer());
 		ctx.getSource().sendSuccess(() -> Lang.tr("reloaded", EmojiRegistry.all().size()).withStyle(ChatFormatting.GREEN), true);
 		return 1;
-	}
-
-	private static int export(CommandContext<CommandSourceStack> ctx) {
-		try {
-			Path out = PackHost.export();
-			ctx.getSource().sendSuccess(() -> Lang.tr("pack.exported", out.toString(), PackHost.hash()), false);
-			return 1;
-		} catch (Exception e) {
-			ctx.getSource().sendFailure(Component.literal(e.toString()));
-			return 0;
-		}
 	}
 
 	private static int deleteShot(CommandContext<CommandSourceStack> ctx) {
@@ -155,7 +141,7 @@ public final class ChatPlusCommand {
 
 	private static int list(CommandContext<CommandSourceStack> ctx) {
 		ServerPlayer player = ctx.getSource().getPlayer();
-		boolean glyphs = player != null && (PackHost.hasPack(player) || ChatServer.isModded(player));
+		boolean glyphs = player != null && (ChatServer.isModded(player) || ChatServer.isModded(player));
 		MutableComponent out = Lang.tr("emoji.list", EmojiRegistry.all().size()).withStyle(ChatFormatting.GOLD).append("\n");
 		boolean first = true;
 		for (Emoji e : EmojiRegistry.all()) {
@@ -164,7 +150,7 @@ public final class ChatPlusCommand {
 			}
 			first = false;
 			Component hover = Component.literal(e.code() + (e.aliases().isEmpty() ? "" : "\n" + String.join(", ", e.aliases())));
-			Component item = glyphs && (e.builtin() || player == null || PackHost.hasPack(player))
+			Component item = glyphs && (e.builtin() || player == null || ChatServer.isModded(player))
 					? ChatMarks.emoji(e)
 					: Component.literal(e.code()).withStyle(ChatFormatting.GRAY);
 			out.append(Component.empty().append(item).withStyle(s -> s

@@ -22,34 +22,19 @@ public final class PackBuilder {
 
 	/** pack_format de la 1.21.1. */
 	private static final int PACK_FORMAT = 34;
-	/** Fecha fija para las entradas del zip (si cambiara, cambiaría el hash). */
-	private static final long FIXED_TIME = 1767225600000L;
+		private PackBuilder() {}
 
-	private PackBuilder() {}
-
-	public static byte[] build() throws IOException {
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		try (ZipOutputStream zip = new ZipOutputStream(bytes)) {
-			JsonObject meta = new JsonObject();
-			JsonObject pack = new JsonObject();
-			pack.addProperty("pack_format", PACK_FORMAT);
-			pack.addProperty("description", "Chaos ChatPlus: emojis del chat");
-			meta.add("pack", pack);
-			put(zip, "pack.mcmeta", meta.toString().getBytes(StandardCharsets.UTF_8));
-
-			try (InputStream icon = PackBuilder.class.getResourceAsStream("/assets/chaoschatplus/icon.png")) {
-				if (icon != null) {
-					put(zip, "pack.png", icon.readAllBytes());
-				}
-			}
-
+	/** Fuentes del chat: ruta (assets/...) → contenido. */
+	public static Map<String, byte[]> files() throws IOException {
+		Map<String, byte[]> zip = new java.util.LinkedHashMap<>();
+		{
 			JsonArray providers = new JsonArray();
 			for (Emoji e : EmojiRegistry.all()) {
 				byte[] png = EmojiRegistry.png(e);
 				if (png == null) {
 					continue;
 				}
-				put(zip, "assets/chaoschatplus/textures/emoji/" + e.name() + ".png", png);
+				zip.put("assets/chaoschatplus/textures/emoji/" + e.name() + ".png", png);
 				JsonObject p = new JsonObject();
 				p.addProperty("type", "bitmap");
 				p.addProperty("file", "chaoschatplus:emoji/" + e.name() + ".png");
@@ -62,21 +47,14 @@ public final class PackBuilder {
 			}
 			JsonObject font = new JsonObject();
 			font.add("providers", providers);
-			put(zip, "assets/chaoschatplus/font/emoji.json", font.toString().getBytes(StandardCharsets.UTF_8));
+			zip.put("assets/chaoschatplus/font/emoji.json", font.toString().getBytes(StandardCharsets.UTF_8));
 
 			// Con Chaos Ranks: sus fuentes y texturas también van en el pack, así los clientes vanilla ven las etiquetas.
 			for (Map.Entry<String, byte[]> e : ChaosRanksCompat.clientAssets().entrySet()) {
-				put(zip, e.getKey(), e.getValue());
+				zip.put(e.getKey(), e.getValue());
 			}
 		}
-		return bytes.toByteArray();
+		return zip;
 	}
 
-	private static void put(ZipOutputStream zip, String path, byte[] data) throws IOException {
-		ZipEntry entry = new ZipEntry(path);
-		entry.setTime(FIXED_TIME);
-		zip.putNextEntry(entry);
-		zip.write(data);
-		zip.closeEntry();
-	}
 }
