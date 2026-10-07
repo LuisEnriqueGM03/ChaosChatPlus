@@ -109,7 +109,13 @@ public final class OnlineGifs {
 					continue;
 				}
 				int[] dims = dims(tiny.has("dims") ? tiny.getAsJsonArray("dims") : null);
-				String name = r.has("content_description") ? r.get("content_description").getAsString() : "GIF";
+				String name = text(r, "title");
+				if (name.isEmpty()) {
+					name = text(r, "content_description");
+				}
+				if (name.isEmpty()) {
+					name = "GIF";
+				}
 				String page = r.has("itemurl") ? r.get("itemurl").getAsString() : tiny.get("url").getAsString();
 				out.add(new GifInfo(KLIPY + r.get("id").getAsString(), name, tiny.get("url").getAsString(), dims[0], dims[1], page));
 			}
@@ -129,6 +135,10 @@ public final class OnlineGifs {
 			}
 			return response.body();
 		});
+	}
+
+	private static String text(JsonObject o, String key) {
+		return o.has(key) && o.get(key).isJsonPrimitive() ? o.get(key).getAsString().strip() : "";
 	}
 
 	private static int[] dims(@Nullable com.google.gson.JsonArray arr) {
