@@ -166,7 +166,10 @@ public final class GifRegistry {
 				Builtin b = builtins().get(base);
 				String name = b != null ? b.name() : base.replace('_', ' ');
 				List<String> tags = new ArrayList<>(b != null ? b.tags() : List.of());
-				tags.add(category);
+				// Todas las carpetas del camino son etiquetas (anime/risa → se encuentra buscando «anime» o «risa»).
+				if (parent != null) {
+					parent.forEach(f -> tags.add(f.toString().toLowerCase(Locale.ROOT)));
+				}
 				String hash = sha1(data);
 				String url = b != null && hash.equals(builtinSha1.get(base)) ? "jar:" + base : "sha1:" + hash;
 				int[] size = size(data);

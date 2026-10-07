@@ -44,3 +44,15 @@ con la que entró cada jugador (o `resourcePack.publicHost`). Si tu hosting no d
   capturas en `run*/screenshots/selftest_*.png`.
 
 Los emojis de serie son pixel art propio (`tools/gen_emojis.py`), licencia MIT como el resto del mod.
+
+## GIFs de anime en carpetas (nekos.best)
+
+```
+python tools/download_nekos.py      # baja ~300 GIFs a gifs-anime/<categoría>/ (1 cada 2 s)
+python tools/install_anime.py       # los copia a run-server/config/chaoschatplus/gifs/anime/<categoría>/
+python tools/install_anime.py RUTA  # o a otro servidor
+```
+
+Con eso el servidor los sirve como cualquier GIF de la carpeta (se reducen solos). Pon `gifs.anime = false` en
+la config para que los clientes no los bajen también por su cuenta. `gifs-anime/` no va en git ni en el jar:
+los términos de nekos.best no permiten volver a publicar sus GIFs.
