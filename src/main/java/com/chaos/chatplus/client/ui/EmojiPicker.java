@@ -25,7 +25,7 @@ import net.minecraft.util.Mth;
 public final class EmojiPicker {
 
 	private static final int COLS = 12;
-	private static final int ROWS = 6;
+	private static final int ROWS = 7;
 	private static final int CELL = 13;
 	private static final int TAB = 12;
 	private static final int PAD = 4;

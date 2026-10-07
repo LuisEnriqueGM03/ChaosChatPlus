@@ -160,23 +160,123 @@ def ojos():
 
 
 GIFS = [
-    ("creeper_baile", "Creeper bailando", creeper_baile, 90),
-    ("fuego", "Fuego", fuego, 110),
-    ("tnt_boom", "TNT boom", tnt_boom, 120),
-    ("corazon_latido", "Corazón latiendo", corazon_latido, 100),
-    ("aplausos", "Aplausos", aplausos, 90),
-    ("gg", "GG", gg, 150),
-    ("risa", "Risa", risa, 90),
-    ("ojos", "Ojos", ojos, 400),
+    ("creeper_baile", "Creeper bailando", creeper_baile, 90, ["baile", "dance", "minecraft"]),
+    ("fuego", "Fuego", fuego, 110, ["fire", "lit"]),
+    ("tnt_boom", "TNT boom", tnt_boom, 120, ["explosion", "boom", "minecraft"]),
+    ("corazon_latido", "Corazón latiendo", corazon_latido, 100, ["amor", "love", "heart"]),
+    ("aplausos", "Aplausos", aplausos, 90, ["clap", "bravo"]),
+    ("gg", "GG", gg, 150, ["good game", "ganar"]),
+    ("risa", "Risa", risa, 90, ["laugh", "jaja", "lol"]),
+    ("ojos", "Ojos", ojos, 400, ["mirar", "eyes"]),
 ]
+
+
+# ---------------------------------------------------------------- GIFs animados a partir de los emojis
+
+def anim_bounce(img):
+    return [place(img, 3.2, dy=dy, sx=3.2 * sx, sy=3.2 / sx)
+            for dy, sx in ((0, 1.08), (-6, 0.96), (-10, 0.94), (-6, 0.96), (0, 1.08), (2, 1.14))]
+
+
+def anim_shake(img):
+    return [place(img, 3.3, dx=dx) for dx in (0, -4, 4, -3, 3, 0)]
+
+
+def anim_pulse(img):
+    return [place(img, s) for s in (2.9, 3.2, 3.6, 3.2, 2.9, 2.9)]
+
+
+def anim_wobble(img):
+    frames = []
+    for angle in (0, 12, 18, 12, 0, -12, -18, -12):
+        big = img.resize((52, 52), Image.NEAREST).rotate(angle, resample=Image.NEAREST, expand=False)
+        out = canvas()
+        out.alpha_composite(big, (6, 6))
+        frames.append(out)
+    return frames
+
+
+def anim_float(img):
+    return [place(img, 3.2, dy=dy) for dy in (0, -2, -4, -5, -4, -2, 0, 1)]
+
+
+def anim_spin(img):
+    frames = []
+    for k in range(8):
+        sx = abs(math.cos(k / 8 * math.pi)) * 3.4
+        frames.append(place(img if k < 4 else img.transpose(Image.FLIP_LEFT_RIGHT), sx=max(0.4, sx), sy=3.4))
+    return frames
+
+
+def anim_blink(img):
+    """Aparece y desaparece con brillo (para símbolos)."""
+    frames = []
+    for a in (1.0, 1.0, 0.7, 0.4, 0.7, 1.0):
+        f = place(img, 3.3)
+        alpha = f.getchannel("A").point(lambda v: int(v * a))
+        f.putalpha(alpha)
+        frames.append(f)
+    return frames
+
+
+EFFECTS = {
+    "bounce": (anim_bounce, 90, "saltando"),
+    "shake": (anim_shake, 70, "temblando"),
+    "pulse": (anim_pulse, 110, "latiendo"),
+    "wobble": (anim_wobble, 80, "bailando"),
+    "float": (anim_float, 110, "flotando"),
+    "spin": (anim_spin, 70, "girando"),
+    "blink": (anim_blink, 120, "brillando"),
+}
+
+# Efecto por categoría de emoji, y qué emojis se animan (100 en total).
+CATEGORY_EFFECTS = {
+    "caras": ["bounce", "shake", "wobble"],
+    "corazones": ["pulse"],
+    "gestos": ["wobble"],
+    "animales": ["bounce", "wobble"],
+    "comida": ["spin", "float"],
+    "naturaleza": ["float", "spin"],
+    "objetos": ["float", "spin"],
+    "simbolos": ["blink", "pulse"],
+    "minecraft": ["float", "spin", "bounce"],
+}
+SKIP = {"n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10", "arriba", "abajo", "izquierda", "derecha",
+        "mas", "menos", "new", "ok_simbolo", "sos", "gg", "fuego", "creeper", "tnt", "ojos", "aplausos", "corazon",
+        "llorar_risa"}
+EXTRA_COUNT = 100
+
+
+def emoji_gifs():
+    with open(os.path.join(EMOJI, "..", "..", "emojis.json"), encoding="utf-8") as f:
+        emojis = json.load(f)
+    out = []
+    used = {}
+    for e in emojis:
+        if len(out) >= EXTRA_COUNT:
+            break
+        if e["name"] in SKIP or e["category"] not in CATEGORY_EFFECTS:
+            continue
+        effects = CATEGORY_EFFECTS[e["category"]]
+        n = used.get(e["category"], 0)
+        used[e["category"]] = n + 1
+        effect = effects[n % len(effects)]
+        fn, duration, label = EFFECTS[effect]
+        title = e["name"].replace("_", " ").capitalize() + " " + label
+        tags = [e["name"].replace("_", " "), e["category"], label] + e["aliases"]
+        out.append(("e_" + e["name"], title, (lambda img=emoji(e["name"]), fn=fn: fn(img)), duration, tags))
+    return out
 
 
 def main():
     os.makedirs(OUT, exist_ok=True)
+    for f in os.listdir(OUT):
+        if f.endswith(".gif"):
+            os.remove(os.path.join(OUT, f))
     index = []
-    for gid, name, fn, duration in GIFS:
+    for gid, name, fn, duration, tags in GIFS + emoji_gifs():
         save(gid, fn(), duration)
-        index.append({"id": gid, "name": name})
+        index.append({"id": gid, "name": name, "tags": tags})
     with open(os.path.join(OUT, "index.json"), "w", encoding="utf-8") as f:
         json.dump(index, f, ensure_ascii=False, indent="\t")
         f.write("\n")

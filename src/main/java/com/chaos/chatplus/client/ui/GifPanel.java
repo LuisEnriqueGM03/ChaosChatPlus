@@ -7,8 +7,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.client.ClientState;
+import com.chaos.chatplus.client.EmojiTextures;
 import com.chaos.chatplus.client.GifCache;
 import com.chaos.chatplus.gif.GifInfo;
+import com.chaos.chatplus.gif.GifServer;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -37,8 +39,29 @@ public final class GifPanel {
 	private static List<GifInfo> results = List.of();
 	private static boolean received;
 
+	/** Categorías de la barra de arriba: búsqueda, emoji que hace de icono y nombre. */
+	private record Chip(String query, String icon, String label) {}
+
+	private static final List<Chip> CHIPS = List.of(
+			new Chip("", "fuego", "gif.trending"),
+			new Chip(GifServer.OWN, "corona", "gif.own"),
+			new Chip("risa", "jaja", "gif.cat.laugh"),
+			new Chip("baile", "musica", "gif.cat.dance"),
+			new Chip("abrazo", "corazon", "gif.cat.hug"),
+			new Chip("aplausos", "aplausos", "gif.cat.clap"),
+			new Chip("hola", "saludo", "gif.cat.wave"),
+			new Chip("like", "pulgar_arriba", "gif.cat.like"),
+			new Chip("llorar", "llanto", "gif.cat.cry"),
+			new Chip("beso", "beso", "gif.cat.kiss"),
+			new Chip("enojado", "furioso", "gif.cat.angry"),
+			new Chip("sorpresa", "sorpresa", "gif.cat.wow"));
+	private static final int CHIP = 12;
+	/** Altura del buscador + la barra de categorías (la rejilla va debajo). */
+	private static final int HEADER = 30;
+
 	private final Runnable onSent;
 	private String query = "";
+	private String chip = "";
 	private String requested;
 	private long editedAt;
 	private int scroll;
@@ -75,11 +98,17 @@ public final class GifPanel {
 		return out;
 	}
 
+	/** Lo que se busca: lo escrito, o si no hay nada, la categoría elegida. */
+	private String effective() {
+		return query.isEmpty() ? chip : query;
+	}
+
 	private void requestNow() {
-		requested = query;
+		requested = effective();
 		received = false;
+		scroll = 0;
 		if (ClientPlayNetworking.canSend(ChatPayloads.GifSearch.TYPE)) {
-			ClientPlayNetworking.send(new ChatPayloads.GifSearch(query));
+			ClientPlayNetworking.send(new ChatPayloads.GifSearch(requested));
 		}
 	}
 
@@ -124,7 +153,7 @@ public final class GifPanel {
 		this.y = y;
 		this.w = w;
 		this.h = h;
-		if (!query.equals(requested) && Util.getMillis() - editedAt > DEBOUNCE_MS) {
+		if (!effective().equals(requested) && Util.getMillis() - editedAt > DEBOUNCE_MS) {
 			requestNow();
 		}
 		// Buscador.
@@ -137,8 +166,29 @@ public final class GifPanel {
 			g.drawString(font, shown + (caret ? "_" : ""), x + 4, y + 3, Ui.TEXT, false);
 		}
 
-		int gy = y + 16;
-		int gh = h - 16;
+		// Categorías.
+		Chip hoveredChip = null;
+		for (int i = 0; i < CHIPS.size(); i++) {
+			Chip c = CHIPS.get(i);
+			int cx = x + i * (CHIP + 1);
+			if (cx + CHIP > x + w) {
+				break;
+			}
+			boolean sel = query.isEmpty() && c.query().equals(chip);
+			boolean hover = Ui.inside(mouseX, mouseY, cx, y + 16, cx + CHIP, y + 16 + CHIP);
+			if (sel) {
+				Ui.round(g, cx, y + 16, cx + CHIP, y + 16 + CHIP, 3, Ui.SELECTED);
+			} else if (hover) {
+				Ui.round(g, cx, y + 16, cx + CHIP, y + 16 + CHIP, 3, Ui.HOVER);
+			}
+			EmojiTextures.draw(g, c.icon(), true, cx + 2, y + 18, 8);
+			if (hover) {
+				hoveredChip = c;
+			}
+		}
+
+		int gy = y + HEADER;
+		int gh = h - HEADER;
 		List<GifInfo> list = items();
 		int rows = (list.size() + COLS - 1) / COLS;
 		int visibleRows = Math.max(1, gh / (CELL_H + GAP));
@@ -173,6 +223,8 @@ public final class GifPanel {
 		int fy = y + h + 2;
 		if (hovered != null) {
 			g.drawString(font, font.plainSubstrByWidth(hovered.name(), w, false), x, fy, Ui.TEXT, false);
+		} else if (hoveredChip != null) {
+			g.drawString(font, Lang.tr(hoveredChip.label()), x, fy, Ui.TEXT, false);
 		} else if (ClientState.gifSource().isEmpty()) {
 			g.drawString(font, font.plainSubstrByWidth(Lang.tr("gif.no_online").getString(), w, false), x, fy, Ui.MUTED, false);
 		} else {
@@ -183,7 +235,7 @@ public final class GifPanel {
 
 	@Nullable
 	private GifInfo at(double mx, double my) {
-		int gy = y + 16;
+		int gy = y + HEADER;
 		int cellW = (w - GAP * (COLS - 1)) / COLS;
 		List<GifInfo> list = items();
 		for (int i = scroll * COLS; i < list.size(); i++) {
@@ -202,6 +254,15 @@ public final class GifPanel {
 	}
 
 	public boolean mouseClicked(double mx, double my) {
+		for (int i = 0; i < CHIPS.size(); i++) {
+			int cx = x + i * (CHIP + 1);
+			if (Ui.inside(mx, my, cx, y + 16, cx + CHIP, y + 16 + CHIP)) {
+				chip = CHIPS.get(i).query();
+				query = "";
+				requestNow();
+				return true;
+			}
+		}
 		GifInfo gif = at(mx, my);
 		if (gif != null && ClientPlayNetworking.canSend(ChatPayloads.SendGif.TYPE)) {
 			ClientPlayNetworking.send(new ChatPayloads.SendGif(gif.id()));

@@ -291,6 +291,11 @@ public final class ChatBar {
 		return false;
 	}
 
+	/** ¿El ratón está sobre un popup (selector o autocompletado)? Entonces el chat de debajo no debe reaccionar. */
+	public boolean blocksMouse(double mx, double my) {
+		return (picker != null && picker.contains(mx, my)) || (picker == null && suggest.contains(mx, my));
+	}
+
 	public boolean mouseScrolled(double mx, double my, double amount) {
 		return picker != null && picker.mouseScrolled(mx, my, amount);
 	}

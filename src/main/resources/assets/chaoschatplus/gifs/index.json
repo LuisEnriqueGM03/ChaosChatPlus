@@ -1,34 +1,1118 @@
 [
 	{
 		"id": "creeper_baile",
-		"name": "Creeper bailando"
+		"name": "Creeper bailando",
+		"tags": [
+			"baile",
+			"dance",
+			"minecraft"
+		]
 	},
 	{
 		"id": "fuego",
-		"name": "Fuego"
+		"name": "Fuego",
+		"tags": [
+			"fire",
+			"lit"
+		]
 	},
 	{
 		"id": "tnt_boom",
-		"name": "TNT boom"
+		"name": "TNT boom",
+		"tags": [
+			"explosion",
+			"boom",
+			"minecraft"
+		]
 	},
 	{
 		"id": "corazon_latido",
-		"name": "Corazón latiendo"
+		"name": "Corazón latiendo",
+		"tags": [
+			"amor",
+			"love",
+			"heart"
+		]
 	},
 	{
 		"id": "aplausos",
-		"name": "Aplausos"
+		"name": "Aplausos",
+		"tags": [
+			"clap",
+			"bravo"
+		]
 	},
 	{
 		"id": "gg",
-		"name": "GG"
+		"name": "GG",
+		"tags": [
+			"good game",
+			"ganar"
+		]
 	},
 	{
 		"id": "risa",
-		"name": "Risa"
+		"name": "Risa",
+		"tags": [
+			"laugh",
+			"jaja",
+			"lol"
+		]
 	},
 	{
 		"id": "ojos",
-		"name": "Ojos"
+		"name": "Ojos",
+		"tags": [
+			"mirar",
+			"eyes"
+		]
+	},
+	{
+		"id": "e_sonrisa",
+		"name": "Sonrisa saltando",
+		"tags": [
+			"sonrisa",
+			"caras",
+			"saltando",
+			"smile",
+			"smiley"
+		]
+	},
+	{
+		"id": "e_feliz",
+		"name": "Feliz temblando",
+		"tags": [
+			"feliz",
+			"caras",
+			"temblando",
+			"blush",
+			"happy"
+		]
+	},
+	{
+		"id": "e_risa",
+		"name": "Risa bailando",
+		"tags": [
+			"risa",
+			"caras",
+			"bailando",
+			"grin",
+			"grinning"
+		]
+	},
+	{
+		"id": "e_jaja",
+		"name": "Jaja saltando",
+		"tags": [
+			"jaja",
+			"caras",
+			"saltando",
+			"laughing",
+			"xd",
+			"lol"
+		]
+	},
+	{
+		"id": "e_sudor",
+		"name": "Sudor temblando",
+		"tags": [
+			"sudor",
+			"caras",
+			"temblando",
+			"sweat_smile"
+		]
+	},
+	{
+		"id": "e_guino",
+		"name": "Guino bailando",
+		"tags": [
+			"guino",
+			"caras",
+			"bailando",
+			"wink"
+		]
+	},
+	{
+		"id": "e_enamorado",
+		"name": "Enamorado saltando",
+		"tags": [
+			"enamorado",
+			"caras",
+			"saltando",
+			"heart_eyes",
+			"love"
+		]
+	},
+	{
+		"id": "e_estrellas",
+		"name": "Estrellas temblando",
+		"tags": [
+			"estrellas",
+			"caras",
+			"temblando",
+			"star_struck",
+			"wow"
+		]
+	},
+	{
+		"id": "e_beso",
+		"name": "Beso bailando",
+		"tags": [
+			"beso",
+			"caras",
+			"bailando",
+			"kiss",
+			"kissing_heart"
+		]
+	},
+	{
+		"id": "e_lengua",
+		"name": "Lengua saltando",
+		"tags": [
+			"lengua",
+			"caras",
+			"saltando",
+			"tongue",
+			"yum"
+		]
+	},
+	{
+		"id": "e_loco",
+		"name": "Loco temblando",
+		"tags": [
+			"loco",
+			"caras",
+			"temblando",
+			"crazy",
+			"zany"
+		]
+	},
+	{
+		"id": "e_cool",
+		"name": "Cool bailando",
+		"tags": [
+			"cool",
+			"caras",
+			"bailando",
+			"sunglasses",
+			"gafas"
+		]
+	},
+	{
+		"id": "e_nerd",
+		"name": "Nerd saltando",
+		"tags": [
+			"nerd",
+			"caras",
+			"saltando",
+			"nerd_face"
+		]
+	},
+	{
+		"id": "e_angel",
+		"name": "Angel temblando",
+		"tags": [
+			"angel",
+			"caras",
+			"temblando",
+			"innocent",
+			"halo"
+		]
+	},
+	{
+		"id": "e_neutral",
+		"name": "Neutral bailando",
+		"tags": [
+			"neutral",
+			"caras",
+			"bailando",
+			"neutral_face"
+		]
+	},
+	{
+		"id": "e_inexpresivo",
+		"name": "Inexpresivo saltando",
+		"tags": [
+			"inexpresivo",
+			"caras",
+			"saltando",
+			"expressionless"
+		]
+	},
+	{
+		"id": "e_aburrido",
+		"name": "Aburrido temblando",
+		"tags": [
+			"aburrido",
+			"caras",
+			"temblando",
+			"unamused",
+			"meh"
+		]
+	},
+	{
+		"id": "e_ojos_blanco",
+		"name": "Ojos blanco bailando",
+		"tags": [
+			"ojos blanco",
+			"caras",
+			"bailando",
+			"rolling_eyes",
+			"roll"
+		]
+	},
+	{
+		"id": "e_picaro",
+		"name": "Picaro saltando",
+		"tags": [
+			"picaro",
+			"caras",
+			"saltando",
+			"smirk"
+		]
+	},
+	{
+		"id": "e_pensativo",
+		"name": "Pensativo temblando",
+		"tags": [
+			"pensativo",
+			"caras",
+			"temblando",
+			"thinking",
+			"hmm"
+		]
+	},
+	{
+		"id": "e_triste",
+		"name": "Triste bailando",
+		"tags": [
+			"triste",
+			"caras",
+			"bailando",
+			"sad",
+			"pensive"
+		]
+	},
+	{
+		"id": "e_llorar",
+		"name": "Llorar saltando",
+		"tags": [
+			"llorar",
+			"caras",
+			"saltando",
+			"cry"
+		]
+	},
+	{
+		"id": "e_llanto",
+		"name": "Llanto temblando",
+		"tags": [
+			"llanto",
+			"caras",
+			"temblando",
+			"sob"
+		]
+	},
+	{
+		"id": "e_suplicar",
+		"name": "Suplicar bailando",
+		"tags": [
+			"suplicar",
+			"caras",
+			"bailando",
+			"pleading",
+			"plis",
+			"please"
+		]
+	},
+	{
+		"id": "e_enojado",
+		"name": "Enojado saltando",
+		"tags": [
+			"enojado",
+			"caras",
+			"saltando",
+			"angry"
+		]
+	},
+	{
+		"id": "e_furioso",
+		"name": "Furioso temblando",
+		"tags": [
+			"furioso",
+			"caras",
+			"temblando",
+			"rage"
+		]
+	},
+	{
+		"id": "e_sorpresa",
+		"name": "Sorpresa bailando",
+		"tags": [
+			"sorpresa",
+			"caras",
+			"bailando",
+			"open_mouth",
+			"surprised"
+		]
+	},
+	{
+		"id": "e_asombro",
+		"name": "Asombro saltando",
+		"tags": [
+			"asombro",
+			"caras",
+			"saltando",
+			"hushed",
+			"o_o"
+		]
+	},
+	{
+		"id": "e_grito",
+		"name": "Grito temblando",
+		"tags": [
+			"grito",
+			"caras",
+			"temblando",
+			"scream"
+		]
+	},
+	{
+		"id": "e_dormido",
+		"name": "Dormido bailando",
+		"tags": [
+			"dormido",
+			"caras",
+			"bailando",
+			"sleeping",
+			"sleepy"
+		]
+	},
+	{
+		"id": "e_mareado",
+		"name": "Mareado saltando",
+		"tags": [
+			"mareado",
+			"caras",
+			"saltando",
+			"dizzy_face",
+			"dizzy"
+		]
+	},
+	{
+		"id": "e_enfermo",
+		"name": "Enfermo temblando",
+		"tags": [
+			"enfermo",
+			"caras",
+			"temblando",
+			"sick",
+			"nauseated"
+		]
+	},
+	{
+		"id": "e_frio",
+		"name": "Frio bailando",
+		"tags": [
+			"frio",
+			"caras",
+			"bailando",
+			"cold",
+			"cold_face"
+		]
+	},
+	{
+		"id": "e_calor",
+		"name": "Calor saltando",
+		"tags": [
+			"calor",
+			"caras",
+			"saltando",
+			"hot",
+			"hot_face"
+		]
+	},
+	{
+		"id": "e_dinero",
+		"name": "Dinero temblando",
+		"tags": [
+			"dinero",
+			"caras",
+			"temblando",
+			"money",
+			"money_mouth"
+		]
+	},
+	{
+		"id": "e_fiesta",
+		"name": "Fiesta bailando",
+		"tags": [
+			"fiesta",
+			"caras",
+			"bailando",
+			"party",
+			"partying"
+		]
+	},
+	{
+		"id": "e_diablo",
+		"name": "Diablo saltando",
+		"tags": [
+			"diablo",
+			"caras",
+			"saltando",
+			"devil",
+			"smiling_imp"
+		]
+	},
+	{
+		"id": "e_calavera",
+		"name": "Calavera temblando",
+		"tags": [
+			"calavera",
+			"caras",
+			"temblando",
+			"skull",
+			"dead"
+		]
+	},
+	{
+		"id": "e_fantasma",
+		"name": "Fantasma bailando",
+		"tags": [
+			"fantasma",
+			"caras",
+			"bailando",
+			"ghost"
+		]
+	},
+	{
+		"id": "e_caca",
+		"name": "Caca saltando",
+		"tags": [
+			"caca",
+			"caras",
+			"saltando",
+			"poop"
+		]
+	},
+	{
+		"id": "e_corazon_naranja",
+		"name": "Corazon naranja latiendo",
+		"tags": [
+			"corazon naranja",
+			"corazones",
+			"latiendo",
+			"orange_heart"
+		]
+	},
+	{
+		"id": "e_corazon_amarillo",
+		"name": "Corazon amarillo latiendo",
+		"tags": [
+			"corazon amarillo",
+			"corazones",
+			"latiendo",
+			"yellow_heart"
+		]
+	},
+	{
+		"id": "e_corazon_verde",
+		"name": "Corazon verde latiendo",
+		"tags": [
+			"corazon verde",
+			"corazones",
+			"latiendo",
+			"green_heart"
+		]
+	},
+	{
+		"id": "e_corazon_azul",
+		"name": "Corazon azul latiendo",
+		"tags": [
+			"corazon azul",
+			"corazones",
+			"latiendo",
+			"blue_heart"
+		]
+	},
+	{
+		"id": "e_corazon_morado",
+		"name": "Corazon morado latiendo",
+		"tags": [
+			"corazon morado",
+			"corazones",
+			"latiendo",
+			"purple_heart"
+		]
+	},
+	{
+		"id": "e_corazon_negro",
+		"name": "Corazon negro latiendo",
+		"tags": [
+			"corazon negro",
+			"corazones",
+			"latiendo",
+			"black_heart"
+		]
+	},
+	{
+		"id": "e_corazon_blanco",
+		"name": "Corazon blanco latiendo",
+		"tags": [
+			"corazon blanco",
+			"corazones",
+			"latiendo",
+			"white_heart"
+		]
+	},
+	{
+		"id": "e_corazon_roto",
+		"name": "Corazon roto latiendo",
+		"tags": [
+			"corazon roto",
+			"corazones",
+			"latiendo",
+			"broken_heart"
+		]
+	},
+	{
+		"id": "e_pulgar_arriba",
+		"name": "Pulgar arriba bailando",
+		"tags": [
+			"pulgar arriba",
+			"gestos",
+			"bailando",
+			"thumbsup",
+			"like",
+			"+1"
+		]
+	},
+	{
+		"id": "e_pulgar_abajo",
+		"name": "Pulgar abajo bailando",
+		"tags": [
+			"pulgar abajo",
+			"gestos",
+			"bailando",
+			"thumbsdown",
+			"dislike",
+			"-1"
+		]
+	},
+	{
+		"id": "e_ok",
+		"name": "Ok bailando",
+		"tags": [
+			"ok",
+			"gestos",
+			"bailando",
+			"ok_hand"
+		]
+	},
+	{
+		"id": "e_rezar",
+		"name": "Rezar bailando",
+		"tags": [
+			"rezar",
+			"gestos",
+			"bailando",
+			"pray",
+			"gracias",
+			"thanks"
+		]
+	},
+	{
+		"id": "e_saludo",
+		"name": "Saludo bailando",
+		"tags": [
+			"saludo",
+			"gestos",
+			"bailando",
+			"wave",
+			"hola",
+			"hi"
+		]
+	},
+	{
+		"id": "e_musculo",
+		"name": "Musculo bailando",
+		"tags": [
+			"musculo",
+			"gestos",
+			"bailando",
+			"muscle",
+			"strong"
+		]
+	},
+	{
+		"id": "e_estrella",
+		"name": "Estrella brillando",
+		"tags": [
+			"estrella",
+			"simbolos",
+			"brillando",
+			"star"
+		]
+	},
+	{
+		"id": "e_brillos",
+		"name": "Brillos latiendo",
+		"tags": [
+			"brillos",
+			"simbolos",
+			"latiendo",
+			"sparkles"
+		]
+	},
+	{
+		"id": "e_cien",
+		"name": "Cien brillando",
+		"tags": [
+			"cien",
+			"simbolos",
+			"brillando",
+			"100"
+		]
+	},
+	{
+		"id": "e_check",
+		"name": "Check latiendo",
+		"tags": [
+			"check",
+			"simbolos",
+			"latiendo",
+			"white_check_mark",
+			"si",
+			"yes"
+		]
+	},
+	{
+		"id": "e_cruz",
+		"name": "Cruz brillando",
+		"tags": [
+			"cruz",
+			"simbolos",
+			"brillando",
+			"x",
+			"no"
+		]
+	},
+	{
+		"id": "e_alerta",
+		"name": "Alerta latiendo",
+		"tags": [
+			"alerta",
+			"simbolos",
+			"latiendo",
+			"warning"
+		]
+	},
+	{
+		"id": "e_pregunta",
+		"name": "Pregunta brillando",
+		"tags": [
+			"pregunta",
+			"simbolos",
+			"brillando",
+			"question"
+		]
+	},
+	{
+		"id": "e_exclamacion",
+		"name": "Exclamacion latiendo",
+		"tags": [
+			"exclamacion",
+			"simbolos",
+			"latiendo",
+			"exclamation"
+		]
+	},
+	{
+		"id": "e_zzz",
+		"name": "Zzz brillando",
+		"tags": [
+			"zzz",
+			"simbolos",
+			"brillando",
+			"zz"
+		]
+	},
+	{
+		"id": "e_musica",
+		"name": "Musica latiendo",
+		"tags": [
+			"musica",
+			"simbolos",
+			"latiendo",
+			"music",
+			"notes"
+		]
+	},
+	{
+		"id": "e_rayo",
+		"name": "Rayo brillando",
+		"tags": [
+			"rayo",
+			"simbolos",
+			"brillando",
+			"zap",
+			"lightning"
+		]
+	},
+	{
+		"id": "e_chat",
+		"name": "Chat latiendo",
+		"tags": [
+			"chat",
+			"simbolos",
+			"latiendo",
+			"speech",
+			"speech_balloon"
+		]
+	},
+	{
+		"id": "e_corona",
+		"name": "Corona flotando",
+		"tags": [
+			"corona",
+			"objetos",
+			"flotando",
+			"crown"
+		]
+	},
+	{
+		"id": "e_trofeo",
+		"name": "Trofeo girando",
+		"tags": [
+			"trofeo",
+			"objetos",
+			"girando",
+			"trophy"
+		]
+	},
+	{
+		"id": "e_regalo",
+		"name": "Regalo flotando",
+		"tags": [
+			"regalo",
+			"objetos",
+			"flotando",
+			"gift"
+		]
+	},
+	{
+		"id": "e_pastel",
+		"name": "Pastel girando",
+		"tags": [
+			"pastel",
+			"objetos",
+			"girando",
+			"cake",
+			"birthday"
+		]
+	},
+	{
+		"id": "e_cafe",
+		"name": "Cafe flotando",
+		"tags": [
+			"cafe",
+			"objetos",
+			"flotando",
+			"coffee"
+		]
+	},
+	{
+		"id": "e_pizza",
+		"name": "Pizza girando",
+		"tags": [
+			"pizza",
+			"objetos",
+			"girando"
+		]
+	},
+	{
+		"id": "e_confeti",
+		"name": "Confeti flotando",
+		"tags": [
+			"confeti",
+			"objetos",
+			"flotando",
+			"tada",
+			"confetti"
+		]
+	},
+	{
+		"id": "e_camara",
+		"name": "Camara girando",
+		"tags": [
+			"camara",
+			"objetos",
+			"girando",
+			"camera"
+		]
+	},
+	{
+		"id": "e_diamante",
+		"name": "Diamante flotando",
+		"tags": [
+			"diamante",
+			"minecraft",
+			"flotando",
+			"diamond"
+		]
+	},
+	{
+		"id": "e_esmeralda",
+		"name": "Esmeralda girando",
+		"tags": [
+			"esmeralda",
+			"minecraft",
+			"girando",
+			"emerald"
+		]
+	},
+	{
+		"id": "e_oro",
+		"name": "Oro saltando",
+		"tags": [
+			"oro",
+			"minecraft",
+			"saltando",
+			"gold",
+			"gold_ingot"
+		]
+	},
+	{
+		"id": "e_espada",
+		"name": "Espada flotando",
+		"tags": [
+			"espada",
+			"minecraft",
+			"flotando",
+			"sword"
+		]
+	},
+	{
+		"id": "e_pico",
+		"name": "Pico girando",
+		"tags": [
+			"pico",
+			"minecraft",
+			"girando",
+			"pickaxe"
+		]
+	},
+	{
+		"id": "e_manzana",
+		"name": "Manzana saltando",
+		"tags": [
+			"manzana",
+			"minecraft",
+			"saltando",
+			"apple"
+		]
+	},
+	{
+		"id": "e_cama",
+		"name": "Cama flotando",
+		"tags": [
+			"cama",
+			"minecraft",
+			"flotando",
+			"bed"
+		]
+	},
+	{
+		"id": "e_portal",
+		"name": "Portal girando",
+		"tags": [
+			"portal",
+			"minecraft",
+			"girando",
+			"nether_portal"
+		]
+	},
+	{
+		"id": "e_timido",
+		"name": "Timido temblando",
+		"tags": [
+			"timido",
+			"caras",
+			"temblando",
+			"shy"
+		]
+	},
+	{
+		"id": "e_guino_sonrisa",
+		"name": "Guino sonrisa bailando",
+		"tags": [
+			"guino sonrisa",
+			"caras",
+			"bailando",
+			"wink_smile"
+		]
+	},
+	{
+		"id": "e_nervioso",
+		"name": "Nervioso saltando",
+		"tags": [
+			"nervioso",
+			"caras",
+			"saltando",
+			"grimacing",
+			"nervous"
+		]
+	},
+	{
+		"id": "e_bostezo",
+		"name": "Bostezo temblando",
+		"tags": [
+			"bostezo",
+			"caras",
+			"temblando",
+			"yawn"
+		]
+	},
+	{
+		"id": "e_zombi",
+		"name": "Zombi bailando",
+		"tags": [
+			"zombi",
+			"caras",
+			"bailando",
+			"zombie_face"
+		]
+	},
+	{
+		"id": "e_robot",
+		"name": "Robot saltando",
+		"tags": [
+			"robot",
+			"caras",
+			"saltando",
+			"bot"
+		]
+	},
+	{
+		"id": "e_alien",
+		"name": "Alien temblando",
+		"tags": [
+			"alien",
+			"caras",
+			"temblando",
+			"alien_face"
+		]
+	},
+	{
+		"id": "e_payaso",
+		"name": "Payaso bailando",
+		"tags": [
+			"payaso",
+			"caras",
+			"bailando",
+			"clown"
+		]
+	},
+	{
+		"id": "e_gato_feliz",
+		"name": "Gato feliz saltando",
+		"tags": [
+			"gato feliz",
+			"caras",
+			"saltando",
+			"smiley_cat"
+		]
+	},
+	{
+		"id": "e_sin_boca",
+		"name": "Sin boca temblando",
+		"tags": [
+			"sin boca",
+			"caras",
+			"temblando",
+			"no_mouth"
+		]
+	},
+	{
+		"id": "e_mascarilla",
+		"name": "Mascarilla bailando",
+		"tags": [
+			"mascarilla",
+			"caras",
+			"bailando",
+			"mask"
+		]
+	},
+	{
+		"id": "e_uwu",
+		"name": "Uwu saltando",
+		"tags": [
+			"uwu",
+			"caras",
+			"saltando",
+			"owo"
+		]
+	},
+	{
+		"id": "e_al_reves",
+		"name": "Al reves temblando",
+		"tags": [
+			"al reves",
+			"caras",
+			"temblando",
+			"upside_down"
+		]
+	},
+	{
+		"id": "e_vaquero",
+		"name": "Vaquero bailando",
+		"tags": [
+			"vaquero",
+			"caras",
+			"bailando",
+			"cowboy"
+		]
+	},
+	{
+		"id": "e_explota",
+		"name": "Explota saltando",
+		"tags": [
+			"explota",
+			"caras",
+			"saltando",
+			"exploding_head",
+			"mind_blown"
+		]
+	},
+	{
+		"id": "e_gato",
+		"name": "Gato saltando",
+		"tags": [
+			"gato",
+			"animales",
+			"saltando",
+			"cat"
+		]
+	},
+	{
+		"id": "e_perro",
+		"name": "Perro bailando",
+		"tags": [
+			"perro",
+			"animales",
+			"bailando",
+			"dog"
+		]
+	},
+	{
+		"id": "e_cerdo",
+		"name": "Cerdo saltando",
+		"tags": [
+			"cerdo",
+			"animales",
+			"saltando",
+			"pig"
+		]
 	}
 ]

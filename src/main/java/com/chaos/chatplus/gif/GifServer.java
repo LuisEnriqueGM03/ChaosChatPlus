@@ -3,6 +3,7 @@ package com.chaos.chatplus.gif;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.chaos.chatplus.ChaosChatPlus;
@@ -29,6 +30,8 @@ import net.minecraft.server.level.ServerPlayer;
 public final class GifServer {
 
 	public static final String MARK = "chaoschatplus:gif:";
+	/** Búsqueda especial: todos los GIFs propios (los de serie del mod y los del servidor). */
+	public static final String OWN = "@propios";
 	/** Líneas que ocupa el GIF en el chat (la de la marca + 3 vacías). */
 	public static final int LINES = 4;
 
@@ -44,10 +47,12 @@ public final class GifServer {
 		if (!canUse(player)) {
 			return;
 		}
-		List<GifInfo> local = GifRegistry.search(query);
+		boolean own = query.equals(OWN);
+		String onlineQuery = own ? null : query;
+		List<GifInfo> local = GifRegistry.search(own ? "" : query, own || (query.isEmpty() && !OnlineGifs.enabled()));
 		MinecraftServer server = player.server;
 		UUID id = player.getUUID();
-		OnlineGifs.search(query).thenAccept(online -> server.execute(() -> {
+		(onlineQuery == null ? CompletableFuture.completedFuture(List.<GifInfo>of()) : OnlineGifs.search(onlineQuery)).thenAccept(online -> server.execute(() -> {
 			ServerPlayer p = server.getPlayerList().getPlayer(id);
 			if (p == null) {
 				return;

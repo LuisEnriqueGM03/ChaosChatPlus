@@ -24,8 +24,10 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -96,8 +98,25 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
 	}
 
 	@WrapOperation(method = "render", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V"))
+	private void chaoschatplus$chatMouse(ChatComponent chat, GuiGraphics g, int tick, int mx, int my, boolean focused,
+			Operation<Void> original) {
+		boolean blocked = chaoschatplus$bar != null && chaoschatplus$bar.blocksMouse(mx, my);
+		original.call(chat, g, tick, blocked ? -1000 : mx, blocked ? -1000 : my, focused);
+	}
+
+	@WrapOperation(method = "render", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/client/gui/components/ChatComponent;getMessageTagAt(DD)Lnet/minecraft/client/GuiMessageTag;"))
+	private GuiMessageTag chaoschatplus$tagMouse(ChatComponent chat, double mx, double my, Operation<GuiMessageTag> original) {
+		return chaoschatplus$bar != null && chaoschatplus$bar.blocksMouse(mx, my) ? null : original.call(chat, mx, my);
+	}
+
+	@WrapOperation(method = "render", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/client/gui/GuiGraphics;renderComponentHoverEffect(Lnet/minecraft/client/gui/Font;Lnet/minecraft/network/chat/Style;II)V"))
 	private void chaoschatplus$hover(GuiGraphics g, Font font, @Nullable Style style, int x, int y, Operation<Void> original) {
+		if (chaoschatplus$bar != null && chaoschatplus$bar.blocksMouse(x, y)) {
+			return;
+		}
 		if (!ChatClicks.renderHover(g, style, x, y)) {
 			original.call(g, font, style, x, y);
 		}

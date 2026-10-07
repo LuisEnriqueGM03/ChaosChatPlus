@@ -30,7 +30,7 @@ import com.google.gson.JsonParser;
 /** GIFs propios: los de serie del mod (assets/chaoschatplus/gifs) y los del servidor (config/chaoschatplus/gifs/*.gif). */
 public final class GifRegistry {
 
-	private record Entry(GifInfo info, byte[] data) {}
+	private record Entry(GifInfo info, byte[] data, boolean builtin, List<String> tags) {}
 
 	private static Map<String, Entry> gifs = Map.of();
 
@@ -51,7 +51,8 @@ public final class GifRegistry {
 						ChaosChatPlus.LOGGER.warn("GIF {} demasiado grande ({} KB, máximo {} KB)", file, data.length / 1024, max / 1024);
 						continue;
 					}
-					add(found, name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]", "_"), name.replace('_', ' '), data);
+					add(found, name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]", "_"), name.replace('_', ' '), data, false,
+							List.of());
 				}
 			}
 		} catch (IOException e) {
@@ -64,7 +65,11 @@ public final class GifRegistry {
 					String id = o.get("id").getAsString();
 					try (InputStream gif = GifRegistry.class.getResourceAsStream("/assets/chaoschatplus/gifs/" + id + ".gif")) {
 						if (gif != null && !found.containsKey(GifInfo.LOCAL + id)) {
-							add(found, id, o.get("name").getAsString(), gif.readAllBytes());
+							List<String> tags = new ArrayList<>();
+							if (o.has("tags")) {
+								o.getAsJsonArray("tags").forEach(t -> tags.add(t.getAsString().toLowerCase(Locale.ROOT)));
+							}
+							add(found, id, o.get("name").getAsString(), gif.readAllBytes(), true, List.copyOf(tags));
 						}
 					}
 				}
@@ -76,14 +81,14 @@ public final class GifRegistry {
 		ChaosChatPlus.LOGGER.info("GIFs propios: {}", gifs.size());
 	}
 
-	private static void add(Map<String, Entry> out, String key, String name, byte[] data) {
+	private static void add(Map<String, Entry> out, String key, String name, byte[] data, boolean builtin, List<String> tags) {
 		int[] size = size(data);
 		if (size == null) {
 			ChaosChatPlus.LOGGER.warn("GIF {} no válido", key);
 			return;
 		}
 		String id = GifInfo.LOCAL + key;
-		out.put(id, new Entry(new GifInfo(id, name, "", size[0], size[1], ""), data));
+		out.put(id, new Entry(new GifInfo(id, name, "", size[0], size[1], ""), data, builtin, tags));
 	}
 
 	@Nullable
@@ -111,11 +116,26 @@ public final class GifRegistry {
 		return out;
 	}
 
-	public static List<GifInfo> search(String query) {
-		String q = query.toLowerCase(Locale.ROOT).strip();
+	/**
+	 * GIFs propios que encajan con la búsqueda (nombre, id o etiquetas). Vacío = solo los que puso el servidor;
+	 * {@code all} = todos (también los de serie).
+	 */
+	public static List<GifInfo> search(String query, boolean all) {
+		String q = java.text.Normalizer.normalize(query.toLowerCase(Locale.ROOT).strip(), java.text.Normalizer.Form.NFD)
+				.replaceAll("\\p{M}", "");
 		List<GifInfo> out = new ArrayList<>();
 		for (Entry e : gifs.values()) {
-			if (q.isEmpty() || e.info().name().toLowerCase(Locale.ROOT).contains(q) || e.info().id().contains(q)) {
+			boolean match;
+			if (all) {
+				match = true;
+			} else if (q.isEmpty()) {
+				match = !e.builtin();
+			} else {
+				String name = java.text.Normalizer.normalize(e.info().name().toLowerCase(Locale.ROOT), java.text.Normalizer.Form.NFD)
+						.replaceAll("\\p{M}", "");
+				match = name.contains(q) || e.info().id().contains(q) || e.tags().stream().anyMatch(t -> t.contains(q));
+			}
+			if (match) {
 				out.add(e.info());
 			}
 		}

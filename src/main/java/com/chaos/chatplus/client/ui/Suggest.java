@@ -164,6 +164,14 @@ public final class Suggest {
 		}
 	}
 
+	public boolean contains(double mx, double my) {
+		if (!visible()) {
+			return false;
+		}
+		int h = entries.size() * ROW + 4;
+		return Ui.inside(mx, my, boxX - 1, boxY - 3, boxX + boxW + 1, boxY + h - 1);
+	}
+
 	public boolean mouseClicked(double mx, double my) {
 		if (!visible()) {
 			return false;
