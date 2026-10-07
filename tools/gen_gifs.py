@@ -270,11 +270,17 @@ def emoji_gifs():
 
 def main():
     os.makedirs(OUT, exist_ok=True)
+    # Los GIFs "x_*" (troll y bromas) se hicieron aparte: se conservan con su entrada del índice.
+    kept = []
+    index_path = os.path.join(OUT, "index.json")
+    if os.path.exists(index_path):
+        with open(index_path, encoding="utf-8") as f:
+            kept = [e for e in json.load(f) if e["id"].startswith("x_")]
     for f in os.listdir(OUT):
-        if f.endswith(".gif"):
+        if f.endswith(".gif") and not f.startswith("x_"):
             os.remove(os.path.join(OUT, f))
     from gen_gifs_extra import all_extra
-    index = []
+    index = list(kept)
     # Primero los textos y efectos (sin anime ni emojis): salen antes en "Tendencias" y en las categorías.
     for gid, name, fn, tags in all_extra():
         frames, duration = fn()

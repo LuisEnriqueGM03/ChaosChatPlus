@@ -28,7 +28,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * GIFs animados en el cliente: los propios se piden al servidor y los de internet se descargan de su web (nekos.best o Klipy).
+ * GIFs animados en el cliente: los propios se piden al servidor y los de internet se descargan de su web (Wikimedia, nekos.best o Klipy).
  * Se decodifican en otro hilo y cada frame se sube como textura.
  */
 public final class GifCache {

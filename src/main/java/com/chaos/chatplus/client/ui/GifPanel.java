@@ -45,6 +45,7 @@ public final class GifPanel {
 	private static final List<Chip> CHIPS = List.of(
 			new Chip("", "fuego", "gif.trending"),
 			new Chip(GifServer.OWN, "corona", "gif.own"),
+			new Chip("troll", "diablo", "gif.cat.troll"),
 			new Chip("risa", "jaja", "gif.cat.laugh"),
 			new Chip("baile", "musica", "gif.cat.dance"),
 			new Chip("abrazo", "corazon", "gif.cat.hug"),
@@ -55,7 +56,7 @@ public final class GifPanel {
 			new Chip("beso", "beso", "gif.cat.kiss"),
 			new Chip("enojado", "furioso", "gif.cat.angry"),
 			new Chip("sorpresa", "sorpresa", "gif.cat.wow"));
-	private static final int CHIP = 12;
+	private static final int CHIP = 11;
 	/** Altura del buscador + la barra de categorías (la rejilla va debajo). */
 	private static final int HEADER = 30;
 
@@ -181,7 +182,7 @@ public final class GifPanel {
 			} else if (hover) {
 				Ui.round(g, cx, y + 16, cx + CHIP, y + 16 + CHIP, 3, Ui.HOVER);
 			}
-			EmojiTextures.draw(g, c.icon(), true, cx + 2, y + 18, 8);
+			EmojiTextures.draw(g, c.icon(), true, cx + 1, y + 17, 9);
 			if (hover) {
 				hoveredChip = c;
 			}

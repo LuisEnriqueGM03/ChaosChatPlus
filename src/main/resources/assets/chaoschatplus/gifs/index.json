@@ -1,5 +1,218 @@
 [
 	{
+		"id": "x_rickrolled",
+		"name": "Rickrolled (parodia)",
+		"tags": [
+			"rickroll",
+			"rick roll",
+			"troll",
+			"broma",
+			"baile",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_bailarin",
+		"name": "Bailarín ochentero",
+		"tags": [
+			"baile",
+			"dance",
+			"rickroll",
+			"troll",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_te_la_creiste",
+		"name": "Te la creíste",
+		"tags": [
+			"troll",
+			"broma",
+			"te la creiste",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_get_trolled",
+		"name": "Get trolled",
+		"tags": [
+			"troll",
+			"trolled",
+			"broma",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_gotcha",
+		"name": "Gotcha",
+		"tags": [
+			"troll",
+			"gotcha",
+			"broma",
+			"caiste",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_caiste",
+		"name": "Caíste",
+		"tags": [
+			"troll",
+			"caiste",
+			"risa",
+			"broma",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_diamantes_gratis",
+		"name": "Diamantes gratis (falso)",
+		"tags": [
+			"troll",
+			"broma",
+			"diamantes",
+			"falso",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_op_gratis",
+		"name": "OP gratis (falso)",
+		"tags": [
+			"troll",
+			"broma",
+			"op",
+			"falso",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_hackeando",
+		"name": "Hackeando... (falso)",
+		"tags": [
+			"troll",
+			"hack",
+			"broma",
+			"falso",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_descargando_ram",
+		"name": "Descargando RAM",
+		"tags": [
+			"troll",
+			"ram",
+			"broma",
+			"lag",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_crash",
+		"name": "Crash falso",
+		"tags": [
+			"troll",
+			"crash",
+			"error",
+			"broma",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_burla",
+		"name": "Cara burlona",
+		"tags": [
+			"troll",
+			"burla",
+			"risa",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_nope",
+		"name": "Nope",
+		"tags": [
+			"nope",
+			"no",
+			"troll",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_skill_issue",
+		"name": "Skill issue",
+		"tags": [
+			"troll",
+			"skill issue",
+			"noob",
+			"risa",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_u_mad",
+		"name": "U mad?",
+		"tags": [
+			"troll",
+			"enojado",
+			"mad",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_ez_clap",
+		"name": "EZ clap",
+		"tags": [
+			"troll",
+			"ez",
+			"aplausos",
+			"ganar",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_lol_noob",
+		"name": "LOL noob",
+		"tags": [
+			"troll",
+			"noob",
+			"risa",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_404",
+		"name": "Error 404",
+		"tags": [
+			"troll",
+			"error",
+			"404",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_trololo",
+		"name": "Trololo",
+		"tags": [
+			"troll",
+			"trololo",
+			"baile",
+			"risa",
+			"destacado"
+		]
+	},
+	{
+		"id": "x_ups",
+		"name": "Ups",
+		"tags": [
+			"troll",
+			"ups",
+			"perdon",
+			"destacado"
+		]
+	},
+	{
 		"id": "t_gg",
 		"name": "GG",
 		"tags": [

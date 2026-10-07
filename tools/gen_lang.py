@@ -58,6 +58,7 @@ TEXTS = {
     "gif.cat.kiss": ("Beso", "Kiss"),
     "gif.cat.angry": ("Enojado", "Angry"),
     "gif.cat.wow": ("Sorpresa", "Wow"),
+    "gif.cat.troll": ("Troll y bromas", "Troll & pranks"),
     "gif.loading": ("Cargando…", "Loading…"),
     "gif.none": ("No hay GIFs", "No GIFs"),
     "gif.no_online": ("Solo GIFs del servidor", "Server GIFs only"),

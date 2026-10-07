@@ -30,7 +30,9 @@ import com.google.gson.JsonParser;
  * GIFs de internet, buscados desde el servidor:
  * <ul>
  * <li><b>Klipy</b> (sucesor gratuito de Tenor, misma API v2) si el dueño pone gifs.klipyKey.</li>
- * <li><b>nekos.best</b>: sin clave ni registro. GIFs de reacciones (risa, baile, abrazo, aplausos, saludo...). La
+ * <li><b>Wikimedia Commons</b>: sin clave. GIFs reales con licencia libre (animales, gente, humor, animaciones...).
+ * La búsqueda en español se traduce a inglés y se excluye contenido adulto.</li>
+ * <li><b>nekos.best</b>: sin clave ni registro. GIFs de reacciones de anime (risa, baile, abrazo, aplausos...). La
  * búsqueda se traduce a sus categorías (en español o inglés).</li>
  * </ul>
  * Tenor (Google) cerró su API el 30 de junio de 2026, por eso ya no se usa.
@@ -39,6 +41,14 @@ public final class OnlineGifs {
 
 	public static final String KLIPY = "klipy:";
 	public static final String NEKOS = "nekos:";
+	public static final String COMMONS = "commons:";
+
+	/** Para excluir contenido adulto de Wikimedia (en la búsqueda y en los títulos). */
+	private static final List<String> BLOCKED = List.of("nude", "naked", "sex", "porn", "nsfw", "erotic", "breast",
+			"penis", "vagina", "genital", "masturb", "intercourse", "topless", "nipple", "fetish", "xxx", "hentai",
+			"gore", "blood", "corpse", "dead body", "execution", "torture");
+	private static final List<String> COMMONS_FEATURED = List.of("funny", "cat", "dog", "dance", "fireworks", "party",
+			"laughing", "thumbs up", "explosion", "minecraft", "pixel art", "cartoon");
 
 	private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(8))
 			.followRedirects(HttpClient.Redirect.NORMAL).build();
@@ -127,7 +137,7 @@ public final class OnlineGifs {
 	private OnlineGifs() {}
 
 	public static boolean enabled() {
-		return klipy() || ChatConfig.get().gifs.nekosBest;
+		return klipy() || ChatConfig.get().gifs.nekosBest || ChatConfig.get().gifs.wikimedia;
 	}
 
 	private static boolean klipy() {
@@ -136,7 +146,14 @@ public final class OnlineGifs {
 
 	/** Nombre de la fuente para el pie del selector ("" = ninguna). */
 	public static String sourceName() {
-		return klipy() ? "Klipy" : ChatConfig.get().gifs.nekosBest ? "nekos.best" : "";
+		if (klipy()) {
+			return "Klipy";
+		}
+		ChatConfig.Gifs cfg = ChatConfig.get().gifs;
+		if (cfg.wikimedia && cfg.nekosBest) {
+			return "Wikimedia + nekos.best";
+		}
+		return cfg.wikimedia ? "Wikimedia" : cfg.nekosBest ? "nekos.best" : "";
 	}
 
 	@Nullable
@@ -150,7 +167,8 @@ public final class OnlineGifs {
 			URI uri = URI.create(url);
 			String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase(Locale.ROOT);
 			return "https".equals(uri.getScheme())
-					&& (host.equals("nekos.best") || host.endsWith(".klipy.com") || host.equals("klipy.com"));
+					&& (host.equals("nekos.best") || host.endsWith(".klipy.com") || host.equals("klipy.com")
+							|| host.equals("upload.wikimedia.org") || host.equals("thumb.wikimedia.org"));
 		} catch (Exception e) {
 			return false;
 		}
@@ -165,7 +183,20 @@ public final class OnlineGifs {
 		if (cached != null && System.currentTimeMillis() - cached.time() < CACHE_MS) {
 			return CompletableFuture.completedFuture(cached.results());
 		}
-		CompletableFuture<List<GifInfo>> future = klipy() ? klipy(q) : nekos(q);
+		CompletableFuture<List<GifInfo>> future;
+		if (klipy()) {
+			future = klipy(q);
+		} else {
+			ChatConfig.Gifs cfg = ChatConfig.get().gifs;
+			CompletableFuture<List<GifInfo>> real = cfg.wikimedia ? commons(q) : CompletableFuture.completedFuture(List.of());
+			CompletableFuture<List<GifInfo>> anime = cfg.nekosBest ? nekos(q) : CompletableFuture.completedFuture(List.of());
+			// Primero los reales (Wikimedia) y luego los de anime.
+			future = real.exceptionally(e -> List.of()).thenCombine(anime.exceptionally(e -> List.of()), (a, b) -> {
+				List<GifInfo> all = new ArrayList<>(a);
+				all.addAll(b);
+				return all;
+			});
+		}
 		return future.thenApply(results -> {
 			results.forEach(g -> KNOWN.put(g.id(), g));
 			CACHE.put(q, new Cached(System.currentTimeMillis(), results));
@@ -204,6 +235,86 @@ public final class OnlineGifs {
 			}
 			return out;
 		});
+	}
+
+	// ------------------------------------------------------------------ Wikimedia Commons (sin clave)
+
+	private static CompletableFuture<List<GifInfo>> commons(String q) {
+		String terms;
+		if (q.isEmpty()) {
+			List<String> pick = new ArrayList<>(COMMONS_FEATURED);
+			java.util.Collections.shuffle(pick);
+			terms = "\"" + pick.get(0) + "\" OR \"" + pick.get(1) + "\" OR \"" + pick.get(2) + "\"";
+		} else {
+			terms = english(q);
+		}
+		StringBuilder search = new StringBuilder("filemime:image/gif ").append(terms);
+		for (String b : BLOCKED) {
+			if (!b.contains(" ")) {
+				search.append(" -").append(b);
+			}
+		}
+		String url = "https://commons.wikimedia.org/w/api.php?action=query&format=json&generator=search&gsrnamespace=6"
+				+ "&gsrlimit=24&prop=imageinfo&iiprop=url%7Csize&iiurlwidth=220&gsrsearch="
+				+ URLEncoder.encode(search.toString(), StandardCharsets.UTF_8);
+		return get(url).thenApply(body -> {
+			List<GifInfo> out = new ArrayList<>();
+			if (body == null) {
+				return out;
+			}
+			JsonObject root = JsonParser.parseString(body).getAsJsonObject();
+			if (!root.has("query")) {
+				return out;
+			}
+			for (Map.Entry<String, JsonElement> e : root.getAsJsonObject("query").getAsJsonObject("pages").entrySet()) {
+				JsonObject page = e.getValue().getAsJsonObject();
+				String title = page.has("title") ? page.get("title").getAsString() : "";
+				String lower = title.toLowerCase(Locale.ROOT);
+				if (!lower.endsWith(".gif") || BLOCKED.stream().anyMatch(lower::contains) || !page.has("imageinfo")) {
+					continue;
+				}
+				JsonObject info = page.getAsJsonArray("imageinfo").get(0).getAsJsonObject();
+				String thumb = info.has("thumburl") ? info.get("thumburl").getAsString() : info.get("url").getAsString();
+				int q2 = thumb.indexOf('?');
+				if (q2 > 0) {
+					thumb = thumb.substring(0, q2);
+				}
+				if (!allowedUrl(thumb) || info.get("width").getAsInt() < 32) {
+					continue;
+				}
+				int w = info.has("thumbwidth") ? info.get("thumbwidth").getAsInt() : info.get("width").getAsInt();
+				int h = info.has("thumbheight") ? info.get("thumbheight").getAsInt() : info.get("height").getAsInt();
+				String name = title.replaceFirst("^File:", "").replaceFirst("(?i)\\.gif$", "").replace('_', ' ') + " · Wikimedia";
+				String page2 = info.has("descriptionurl") ? info.get("descriptionurl").getAsString() : thumb;
+				out.add(new GifInfo(COMMONS + e.getKey(), name, thumb, Math.max(1, w), Math.max(1, h), page2));
+			}
+			return out;
+		});
+	}
+
+	/** La búsqueda en inglés para Wikimedia (las palabras conocidas en español se traducen). */
+	private static String english(String q) {
+		String plain = Normalizer.normalize(q, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+		StringBuilder out = new StringBuilder();
+		for (String w : plain.split("[^a-z0-9]+")) {
+			if (w.isEmpty()) {
+				continue;
+			}
+			String category = WORDS.get(w);
+			String term = category == null ? w : switch (category) {
+				case "thumbsup" -> "thumbs up";
+				case "highfive" -> "high five";
+				case "tableflip" -> "table flip";
+				case "laugh" -> "laughing";
+				case "cry" -> "crying";
+				case "dance" -> "dancing";
+				case "clap" -> "applause";
+				case "nya" -> "cat";
+				default -> category;
+			};
+			out.append(out.isEmpty() ? "" : " ").append(term);
+		}
+		return out.isEmpty() ? q : out.toString();
 	}
 
 	// ------------------------------------------------------------------ nekos.best (sin clave)
