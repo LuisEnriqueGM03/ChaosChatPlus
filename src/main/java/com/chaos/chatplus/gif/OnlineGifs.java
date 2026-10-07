@@ -47,7 +47,8 @@ public final class OnlineGifs {
 
 	/** Palabras (sin tildes, en minúsculas) → categoría de nekos.best. */
 	private static final Map<String, String> WORDS = new HashMap<>();
-	private static final List<String> FEATURED = List.of("laugh", "dance", "wave", "clap", "thumbsup", "hug", "happy", "cry");
+	private static final List<String> FEATURED = List.of("laugh", "dance", "wave", "clap", "thumbsup", "hug", "happy", "cry",
+			"smile", "wink", "shocked", "facepalm", "highfive", "yeet", "think", "kiss");
 
 	static {
 		word("laugh", "risa", "reir", "jaja", "jajaja", "lol", "xd", "carcajada", "gracioso");
@@ -219,7 +220,7 @@ public final class OnlineGifs {
 		if (q.isEmpty()) {
 			List<CompletableFuture<List<GifInfo>>> parts = new ArrayList<>();
 			for (String category : FEATURED) {
-				parts.add(nekosCategory(category, 3));
+				parts.add(nekosCategory(category, 5));
 			}
 			return CompletableFuture.allOf(parts.toArray(CompletableFuture[]::new)).thenApply(v -> {
 				List<GifInfo> out = new ArrayList<>();
@@ -243,7 +244,7 @@ public final class OnlineGifs {
 			String url = "https://nekos.best/api/v2/search?type=2&amount=20&query=" + URLEncoder.encode(q, StandardCharsets.UTF_8);
 			return get(url).thenApply(OnlineGifs::parseNekos);
 		}
-		int each = Math.max(4, 20 / categories.size());
+		int each = Math.max(10, 60 / categories.size());
 		List<CompletableFuture<List<GifInfo>>> parts = new ArrayList<>();
 		for (String c : categories) {
 			parts.add(nekosCategory(c, each));
@@ -255,9 +256,19 @@ public final class OnlineGifs {
 		});
 	}
 
+	/** GIFs de una categoría; nekos.best da como mucho 20 por petición, así que se piden varias y se quitan repetidos. */
 	private static CompletableFuture<List<GifInfo>> nekosCategory(String category, int amount) {
-		return get("https://nekos.best/api/v2/" + category + "?amount=" + Math.min(20, amount)).thenApply(OnlineGifs::parseNekos);
+		List<CompletableFuture<List<GifInfo>>> parts = new ArrayList<>();
+		for (int left = amount; left > 0; left -= 20) {
+			parts.add(get("https://nekos.best/api/v2/" + category + "?amount=" + Math.min(20, left)).thenApply(OnlineGifs::parseNekos));
+		}
+		return CompletableFuture.allOf(parts.toArray(CompletableFuture[]::new)).thenApply(v -> {
+			Map<String, GifInfo> unique = new java.util.LinkedHashMap<>();
+			parts.forEach(p -> p.join().forEach(g -> unique.putIfAbsent(g.id(), g)));
+			return new ArrayList<>(unique.values());
+		});
 	}
+
 
 	private static List<GifInfo> parseNekos(@Nullable String body) {
 		List<GifInfo> out = new ArrayList<>();
