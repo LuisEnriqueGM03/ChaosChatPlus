@@ -118,7 +118,11 @@ public final class AnimePrefetch {
 	private static void save() {
 		try {
 			Files.createDirectories(dir());
-			Files.writeString(indexFile(), GSON.toJson(saved), StandardCharsets.UTF_8);
+			// Primero a un temporal y luego se reemplaza: si el juego se cierra a medias, el índice no se corrompe.
+			Path tmp = indexFile().resolveSibling("nekos.json.tmp");
+			Files.writeString(tmp, GSON.toJson(saved), StandardCharsets.UTF_8);
+			Files.move(tmp, indexFile(), java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+					java.nio.file.StandardCopyOption.ATOMIC_MOVE);
 		} catch (Exception e) {
 			ChaosChatPlus.LOGGER.debug("No se pudo guardar el índice de GIFs de anime", e);
 		}
