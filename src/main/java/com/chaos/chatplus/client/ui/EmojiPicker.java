@@ -249,7 +249,7 @@ public final class EmojiPicker {
 			return true;
 		}
 		if (gifMode && gifs != null) {
-			gifs.mouseClicked(mx, my);
+			gifs.mouseClicked(mx, my, button);
 			return true;
 		}
 		int tx = x + PAD;
@@ -296,5 +296,10 @@ public final class EmojiPicker {
 		}
 		scroll = Mth.clamp(scroll - (int) Math.signum(amount), 0, maxScroll(current().size()));
 		return true;
+	}
+
+	@Nullable
+	public GifPanel gifsForTest() {
+		return gifs;
 	}
 }

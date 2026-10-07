@@ -48,7 +48,6 @@ public final class ClientState {
 	private static boolean blurShots;
 	private static boolean gifs;
 	private static String gifSource = "";
-	private static boolean anime;
 	private static int mentionColor = 0x7AA2FF;
 	private static int maxShotKb = 512;
 	private static List<String> specialMentions = List.of();
@@ -73,10 +72,6 @@ public final class ClientState {
 			blurShots = bool(o, "blurShots");
 			gifs = bool(o, "gifs");
 			gifSource = o.has("gifSource") ? o.get("gifSource").getAsString() : "";
-			anime = bool(o, "anime");
-			if (anime && gifs) {
-				AnimePrefetch.start();
-			}
 			mentionColor = o.has("mentionColor") ? o.get("mentionColor").getAsInt() : 0x7AA2FF;
 			maxShotKb = o.has("maxShotKb") ? o.get("maxShotKb").getAsInt() : 512;
 			List<String> special = new ArrayList<>();
@@ -121,8 +116,6 @@ public final class ClientState {
 		serverMod = false;
 		items = shots = upload = pack = blurShots = gifs = false;
 		gifSource = "";
-		anime = false;
-		AnimePrefetch.stop();
 		mentions = true;
 		specialMentions = List.of();
 		emojis = List.of();
@@ -160,14 +153,9 @@ public final class ClientState {
 		return serverMod && gifs;
 	}
 
-	/** Fuente de GIFs de internet del servidor ("nekos.best", "Klipy" o "" si no hay). */
+	/** Fuente de GIFs de internet del servidor ("Klipy" o "" si no hay). */
 	public static String gifSource() {
 		return gifSource;
-	}
-
-	/** ¿El servidor permite los GIFs de anime (nekos.best, guardados en cada PC)? */
-	public static boolean anime() {
-		return serverMod && gifs && anime;
 	}
 
 	public static boolean blurShots() {

@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 
 /**
  * Un GIF que se puede mandar: los propios ("local:nombre", el cliente pide los bytes al servidor) y los de internet
- * ("klipy:id" o "nekos:archivo", el cliente los descarga de {@code url}, solo de esas webs).
+ * ("klipy:id", el cliente los descarga de {@code url}, solo de Klipy).
  * {@code page} es la página web del GIF (para el enlace de los clientes vanilla).
  */
 public record GifInfo(String id, String name, String url, int width, int height, String page) {

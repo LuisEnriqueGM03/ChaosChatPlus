@@ -51,13 +51,14 @@ public final class GifServer {
 		if (!canUse(player)) {
 			return;
 		}
-		List<GifInfo> local = GifRegistry.search(query);
-		boolean category = query.startsWith(GifRegistry.CATEGORY_QUERY);
+		// Pestaña Custom ("@klipy:texto"): solo Klipy. El resto: solo los GIFs del servidor.
+		boolean klipy = query.startsWith(GifRegistry.KLIPY_QUERY);
+		List<GifInfo> local = klipy ? List.of() : GifRegistry.search(query);
 		MinecraftServer server = player.server;
 		UUID id = player.getUUID();
-		CompletableFuture<List<GifInfo>> online = category || !OnlineGifs.enabled()
-				? CompletableFuture.completedFuture(List.of())
-				: OnlineGifs.search(query);
+		CompletableFuture<List<GifInfo>> online = klipy && OnlineGifs.enabled()
+				? OnlineGifs.search(query.substring(GifRegistry.KLIPY_QUERY.length()))
+				: CompletableFuture.completedFuture(List.of());
 		online.thenAccept(results -> server.execute(() -> {
 			ServerPlayer p = server.getPlayerList().getPlayer(id);
 			if (p == null) {

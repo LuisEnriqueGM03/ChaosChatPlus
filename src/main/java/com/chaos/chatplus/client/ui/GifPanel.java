@@ -2,17 +2,18 @@ package com.chaos.chatplus.client.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.chaos.chatplus.Lang;
-import com.chaos.chatplus.client.AnimePrefetch;
+import com.chaos.chatplus.client.ClientPrefs;
 import com.chaos.chatplus.client.ClientState;
 import com.chaos.chatplus.client.EmojiTextures;
 import com.chaos.chatplus.client.GifCache;
 import com.chaos.chatplus.gif.GifInfo;
-import com.chaos.chatplus.gif.GifServer;
+import com.chaos.chatplus.gif.GifRegistry;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -22,11 +23,13 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 
 /**
- * Pestaña GIFs del selector: buscador, GIFs del servidor y de internet (destacados o resultados), todos en celdas del
- * mismo tamaño. Clic = se manda al chat.
+ * Pestaña GIFs del selector: buscador y categorías. Primero «Custom» (Klipy en vivo, si el servidor tiene clave),
+ * luego «Favoritos» (guardados en este PC) y los GIFs propios del servidor por carpeta. Clic = se manda al chat;
+ * clic derecho = favorito.
  */
 public final class GifPanel {
 
@@ -34,6 +37,9 @@ public final class GifPanel {
 	private static final int CELL_H = 30;
 	private static final int GAP = 3;
 	private static final long DEBOUNCE_MS = 450;
+	private static final int HEADER = 30;
+	private static final int CHIP = 11;
+	private static final int FAV_COLOR = 0xFFFFD54F;
 
 	/** Último resultado recibido (lo rellena el receptor de GifResults). */
 	private static String resultQuery = "";
@@ -44,62 +50,37 @@ public final class GifPanel {
 	/** Categorías de la barra de arriba: búsqueda, emoji que hace de icono y nombre. */
 	private record Chip(String query, String icon, String label) {}
 
-	/** Icono de cada carpeta conocida (las demás usan la estrella). */
+	/** Icono de cada carpeta conocida (las demás usan las estrellas). */
 	private static final Map<String, String> ICONS = Map.of(
 			"texto", "chat", "efectos", "brillos", "troll", "diablo", "emojis", "sonrisa",
-			"animados", "creeper", "servidor", "corona");
+			"animados", "creeper", "servidor", "corona", "anime", "gato_feliz");
 
 	/** Categorías que mandó el servidor (sus subcarpetas de GIFs). */
 	private static List<String> categories = List.of();
 
+	private static final String GIF_CATEGORY = GifRegistry.CATEGORY_QUERY;
+	/** Pestaña Custom: búsqueda en Klipy. */
+	private static final String CUSTOM = GifRegistry.KLIPY_QUERY;
+	/** Pestaña Favoritos: sale de las preferencias de este PC, no se pide nada al servidor. */
+	private static final String FAVORITES = "@fav";
+
 	private static List<Chip> chips() {
 		List<Chip> out = new ArrayList<>();
+		out.add(new Chip(CUSTOM, "arcoiris", Lang.tr("gif.custom").getString()));
+		out.add(new Chip(FAVORITES, "estrella", Lang.tr("gif.favorites").getString()));
 		out.add(new Chip("", "fuego", Lang.tr("gif.all").getString()));
 		for (String c : categories) {
 			String label = c.isEmpty() ? c : Character.toUpperCase(c.charAt(0)) + c.substring(1);
-			out.add(new Chip(GIF_CATEGORY + c, ICONS.getOrDefault(c, "estrella"), label));
-		}
-		if (ClientState.anime()) {
-			out.add(new Chip(ANIME, "gato_feliz", Lang.tr("gif.anime").getString()));
+			out.add(new Chip(GIF_CATEGORY + c, ICONS.getOrDefault(c, "estrellas"), label));
 		}
 		return out;
-	}
-
-	/** Icono de cada categoría de anime (nekos.best). */
-	private static final Map<String, String> ANIME_ICONS = Map.ofEntries(
-			Map.entry("laugh", "jaja"), Map.entry("dance", "musica"), Map.entry("happy", "feliz"),
-			Map.entry("smile", "sonrisa"), Map.entry("hug", "corazon"), Map.entry("wave", "saludo"),
-			Map.entry("thumbsup", "pulgar_arriba"), Map.entry("cry", "llanto"), Map.entry("clap", "aplausos"),
-			Map.entry("kiss", "beso"), Map.entry("angry", "furioso"), Map.entry("shocked", "sorpresa"),
-			Map.entry("facepalm", "inexpresivo"), Map.entry("sleep", "dormido"));
-
-	/** Segunda fila, con la pestaña Anime elegida: una categoría por cada reacción. */
-	private static List<Chip> animeChips() {
-		List<Chip> out = new ArrayList<>();
-		for (String c : AnimePrefetch.TARGETS.keySet()) {
-			out.add(new Chip(ANIME + ":" + c, ANIME_ICONS.getOrDefault(c, "estrella"), Lang.tr("gif.anime." + c).getString()));
-		}
-		return out;
-	}
-
-	private static final String GIF_CATEGORY = "@cat:";
-	/** Pestaña Anime (GIFs de nekos.best guardados en este PC; no se piden al servidor). */
-	private static final String ANIME = "@anime";
-	private static final int CHIP = 11;
-	private static final int SUB_CHIP = 10;
-	/** Altura del buscador + la barra de categorías (la rejilla va debajo); con Anime, una fila más. */
-	private int header() {
-		return animeMode() ? 43 : 30;
-	}
-
-	private boolean animeMode() {
-		return query.isEmpty() && chip.startsWith(ANIME);
 	}
 
 	private final Runnable onSent;
 	/** A quién va el GIF ("" = a todos; con el modo privado, al jugador elegido). */
 	private final java.util.function.Supplier<String> target;
 	private String query = "";
+	/** Pestaña elegida; al abrir, «Todos». */
 	private String chip = "";
 	private String requested;
 	private long editedAt;
@@ -143,19 +124,40 @@ public final class GifPanel {
 		return out;
 	}
 
-	/** Lo que se busca: lo escrito, o si no hay nada, la categoría elegida. */
+	private boolean customMode() {
+		return chip.equals(CUSTOM);
+	}
+
+	private boolean favoritesMode() {
+		return chip.equals(FAVORITES);
+	}
+
+	/** ¿El servidor tiene Klipy configurado? */
+	private static boolean klipy() {
+		return !ClientState.gifSource().isEmpty();
+	}
+
+	/** Lo que se pide al servidor: en Custom, «@klipy:» + lo escrito; si no, lo escrito o la categoría elegida. */
 	private String effective() {
+		if (customMode()) {
+			return CUSTOM + query;
+		}
+		if (favoritesMode()) {
+			return FAVORITES;
+		}
 		return query.isEmpty() ? chip : query;
+	}
+
+	/** Las pestañas que no preguntan al servidor (Favoritos, o Custom sin Klipy). */
+	private boolean offline() {
+		return favoritesMode() || (customMode() && !klipy());
 	}
 
 	private void requestNow() {
 		requested = effective();
 		received = false;
 		scroll = 0;
-		if (animeMode()) {
-			return; // los de anime ya están en este PC
-		}
-		if (ClientPlayNetworking.canSend(ChatPayloads.GifSearch.TYPE)) {
+		if (!offline() && ClientPlayNetworking.canSend(ChatPayloads.GifSearch.TYPE)) {
 			ClientPlayNetworking.send(new ChatPayloads.GifSearch(requested));
 		}
 	}
@@ -191,13 +193,30 @@ public final class GifPanel {
 	// ------------------------------------------------------------------ dibujo
 
 	private List<GifInfo> items() {
-		if (animeMode()) {
-			String cat = chip.length() > ANIME.length() + 1 ? chip.substring(ANIME.length() + 1) : "";
-			return AnimePrefetch.gifs(cat);
+		if (favoritesMode()) {
+			String q = query.strip().toLowerCase(Locale.ROOT);
+			List<GifInfo> out = new ArrayList<>();
+			for (GifInfo g : ClientPrefs.get().favoriteGifs) {
+				if (q.isEmpty() || g.name().toLowerCase(Locale.ROOT).contains(q)) {
+					out.add(g);
+				}
+			}
+			return out;
+		}
+		if (customMode() && !klipy()) {
+			return List.of();
 		}
 		List<GifInfo> out = new ArrayList<>(local);
 		out.addAll(results);
 		return out;
+	}
+
+	private boolean selected(Chip c) {
+		if (!c.query().equals(chip)) {
+			return false;
+		}
+		// En Custom y Favoritos el buscador busca dentro de la pestaña; en las demás, en todos los GIFs propios.
+		return query.isEmpty() || customMode() || favoritesMode();
 	}
 
 	public void render(GuiGraphics g, Font font, int x, int y, int w, int h, int mouseX, int mouseY) {
@@ -209,10 +228,10 @@ public final class GifPanel {
 			requestNow();
 		}
 		// Buscador.
-		Ui.roundBordered(g, x, y, x + w, y + 13, 3, 0xFF15171C, 0xFF3A3E48);
+		Ui.roundBordered(g, x, y, x + w, y + 13, 3, 0xFF15171C, customMode() ? 0xFF5A4A8E : 0xFF3A3E48);
 		boolean caret = (Util.getMillis() / 500) % 2 == 0;
 		if (query.isEmpty()) {
-			g.drawString(font, Lang.tr("gif.search"), x + 4, y + 3, 0xFF6C717B, false);
+			g.drawString(font, Lang.tr(customMode() ? "gif.search_klipy" : "gif.search"), x + 4, y + 3, 0xFF6C717B, false);
 		} else {
 			String shown = font.plainSubstrByWidth(query, w - 10, true);
 			g.drawString(font, shown + (caret ? "_" : ""), x + 4, y + 3, Ui.TEXT, false);
@@ -227,9 +246,8 @@ public final class GifPanel {
 			if (cx + CHIP > x + w) {
 				break;
 			}
-			boolean sel = query.isEmpty() && (c.query().equals(chip) || (c.query().equals(ANIME) && chip.startsWith(ANIME)));
 			boolean hover = Ui.inside(mouseX, mouseY, cx, y + 16, cx + CHIP, y + 16 + CHIP);
-			if (sel) {
+			if (selected(c)) {
 				Ui.round(g, cx, y + 16, cx + CHIP, y + 16 + CHIP, 3, Ui.SELECTED);
 			} else if (hover) {
 				Ui.round(g, cx, y + 16, cx + CHIP, y + 16 + CHIP, 3, Ui.HOVER);
@@ -238,32 +256,14 @@ public final class GifPanel {
 			if (hover) {
 				hoveredChip = c;
 			}
-		}
-		// Con Anime: segunda fila con sus categorías.
-		if (animeMode()) {
-			List<Chip> sub = animeChips();
-			for (int i = 0; i < sub.size(); i++) {
-				Chip c = sub.get(i);
-				int cx = x + i * (SUB_CHIP + 1);
-				if (cx + SUB_CHIP > x + w) {
-					break;
-				}
-				boolean sel = c.query().equals(chip);
-				boolean hover = Ui.inside(mouseX, mouseY, cx, y + 29, cx + SUB_CHIP, y + 29 + SUB_CHIP);
-				if (sel) {
-					Ui.round(g, cx, y + 29, cx + SUB_CHIP, y + 29 + SUB_CHIP, 3, 0x55734A9E);
-				} else if (hover) {
-					Ui.round(g, cx, y + 29, cx + SUB_CHIP, y + 29 + SUB_CHIP, 3, Ui.HOVER);
-				}
-				EmojiTextures.draw(g, c.icon(), true, cx + 1, y + 30, 8);
-				if (hover) {
-					hoveredChip = c;
-				}
+			// Separador tras Custom y Favoritos (las pestañas que no son carpetas).
+			if (i == 1) {
+				g.fill(cx + CHIP + 1, y + 18, cx + CHIP + 2, y + 16 + CHIP - 2, 0xFF3A3E48);
 			}
 		}
 
-		int gy = y + header();
-		int gh = h - header();
+		int gy = y + HEADER;
+		int gh = h - HEADER;
 		List<GifInfo> list = items();
 		int rows = (list.size() + COLS - 1) / COLS;
 		int visibleRows = Math.max(1, gh / (CELL_H + GAP));
@@ -272,56 +272,78 @@ public final class GifPanel {
 		GifInfo hovered = null;
 		g.enableScissor(x, gy, x + w, gy + gh);
 		for (int i = scroll * COLS; i < list.size() && i < (scroll + visibleRows) * COLS; i++) {
+			GifInfo gif = list.get(i);
 			int col = i % COLS;
 			int row = i / COLS - scroll;
 			int cx = x + col * (cellW + GAP);
 			int cy = gy + row * (CELL_H + GAP);
 			boolean hover = Ui.inside(mouseX, mouseY, cx, cy, cx + cellW, cy + CELL_H);
 			Ui.round(g, cx, cy, cx + cellW, cy + CELL_H, 3, hover ? 0x33FFFFFF : 0x18FFFFFF);
-			GifCache.draw(g, list.get(i), cx + 2, cy + 2, cellW - 4, CELL_H - 4, true);
+			GifCache.draw(g, gif, cx + 2, cy + 2, cellW - 4, CELL_H - 4, true);
+			if (ClientPrefs.isFavoriteGif(gif.id())) {
+				g.pose().pushPose();
+				g.pose().translate(0, 0, 200);
+				g.drawString(font, "★", cx + cellW - 8, cy + 1, FAV_COLOR, true);
+				g.pose().popPose();
+			}
 			if (hover) {
-				hovered = list.get(i);
+				hovered = gif;
 			}
 		}
 		g.disableScissor();
 
-		String note = null;
-		if (animeMode()) {
-			if (list.isEmpty()) {
-				note = AnimePrefetch.downloading()
-						? Lang.tr("gif.anime_downloading", AnimePrefetch.count(), AnimePrefetch.target()).getString()
-						: Lang.tr("gif.none").getString();
+		if (customMode() && !klipy()) {
+			// Sin clave de Klipy: aviso y cómo activarlo.
+			int cy = gy + gh / 2 - 12;
+			g.drawCenteredString(font, Lang.tr("gif.klipy_off"), x + w / 2, cy, Ui.TEXT);
+			List<FormattedCharSequence> hint = font.split(Lang.tr("gif.klipy_hint"), w - 8);
+			for (int i = 0; i < hint.size() && i < 4; i++) {
+				g.drawCenteredString(font, hint.get(i), x + w / 2, cy + 13 + i * 10, Ui.MUTED);
 			}
-		} else if (!received || !resultQuery.equals(requested)) {
-			note = Lang.tr("gif.loading").getString();
-		} else if (list.isEmpty()) {
-			note = Lang.tr("gif.none").getString();
+		} else {
+			String note = null;
+			if (favoritesMode()) {
+				if (list.isEmpty()) {
+					note = Lang.tr(query.isEmpty() ? "gif.fav_empty" : "gif.none").getString();
+				}
+			} else if (!received || !resultQuery.equals(requested)) {
+				note = Lang.tr("gif.loading").getString();
+			} else if (list.isEmpty()) {
+				note = Lang.tr("gif.none").getString();
+			}
+			if (note != null) {
+				List<FormattedCharSequence> lines = font.split(net.minecraft.network.chat.Component.literal(note), w - 8);
+				for (int i = 0; i < lines.size(); i++) {
+					g.drawCenteredString(font, lines.get(i), x + w / 2, gy + gh / 2 - 4 - (lines.size() - 1) * 5 + i * 10, Ui.MUTED);
+				}
+			}
 		}
-		if (note != null) {
-			g.drawCenteredString(font, note, x + w / 2, gy + gh / 2 - 4, Ui.MUTED);
-		}
-		// Pie: nombre del GIF o aviso de Tenor.
+		// Pie: nombre del GIF (con la ayuda del favorito), de la pestaña, o de dónde salen.
 		int fy = y + h + 2;
 		if (hovered != null) {
-			g.drawString(font, font.plainSubstrByWidth(hovered.name(), w, false), x, fy, Ui.TEXT, false);
+			String hint = " · " + Lang.tr("gif.fav_hint").getString();
+			String name = font.plainSubstrByWidth(hovered.name(), Math.max(20, w - font.width(hint)), false);
+			g.drawString(font, name, x, fy, Ui.TEXT, false);
+			if (font.width(name + hint) <= w) {
+				g.drawString(font, hint, x + font.width(name), fy, Ui.MUTED, false);
+			}
 		} else if (hoveredChip != null) {
 			g.drawString(font, hoveredChip.label(), x, fy, Ui.TEXT, false);
-		} else if (animeMode()) {
-			String info = Lang.tr("gif.anime_footer", AnimePrefetch.count(), AnimePrefetch.target()).getString();
-			g.drawString(font, font.plainSubstrByWidth(info, w, false), x, fy, 0xFFD6B4FF, false);
 		} else if (GifCache.pausedSeconds() > 0) {
 			String wait = Lang.tr("gif.busy", (GifCache.pausedSeconds() + 59) / 60).getString();
 			g.drawString(font, font.plainSubstrByWidth(wait, w, false), x, fy, Ui.WARN, false);
+		} else if (customMode()) {
+			if (klipy()) {
+				g.drawString(font, Lang.tr("gif.powered_klipy"), x, fy, 0xFFB9A6FF, false);
+			}
 		} else {
-			String via = ClientState.gifSource().isEmpty() ? Lang.tr("gif.server_only").getString()
-					: Lang.tr("gif.server_only").getString() + " + " + ClientState.gifSource();
-			g.drawString(font, font.plainSubstrByWidth(via, w, false), x, fy, Ui.MUTED, false);
+			g.drawString(font, font.plainSubstrByWidth(Lang.tr("gif.server_only").getString(), w, false), x, fy, Ui.MUTED, false);
 		}
 	}
 
 	@Nullable
 	private GifInfo at(double mx, double my) {
-		int gy = y + header();
+		int gy = y + HEADER;
 		int cellW = (w - GAP * (COLS - 1)) / COLS;
 		List<GifInfo> list = items();
 		for (int i = scroll * COLS; i < list.size(); i++) {
@@ -339,7 +361,7 @@ public final class GifPanel {
 		return null;
 	}
 
-	public boolean mouseClicked(double mx, double my) {
+	public boolean mouseClicked(double mx, double my, int button) {
 		List<Chip> chipList = chips();
 		for (int i = 0; i < chipList.size(); i++) {
 			int cx = x + i * (CHIP + 1);
@@ -347,27 +369,18 @@ public final class GifPanel {
 				break;
 			}
 			if (Ui.inside(mx, my, cx, y + 16, cx + CHIP, y + 16 + CHIP)) {
-				String q = chipList.get(i).query();
-				chip = q.equals(ANIME) ? ANIME + ":" + AnimePrefetch.TARGETS.keySet().iterator().next() : q;
+				chip = chipList.get(i).query();
 				query = "";
 				requestNow();
 				return true;
 			}
 		}
-		if (animeMode()) {
-			List<Chip> sub = animeChips();
-			for (int i = 0; i < sub.size(); i++) {
-				int cx = x + i * (SUB_CHIP + 1);
-				if (Ui.inside(mx, my, cx, y + 29, cx + SUB_CHIP, y + 29 + SUB_CHIP)) {
-					chip = sub.get(i).query();
-					scroll = 0;
-					requested = chip;
-					return true;
-				}
-			}
-		}
 		GifInfo gif = at(mx, my);
-		if (gif != null && ClientPlayNetworking.canSend(ChatPayloads.SendGif.TYPE)) {
+		if (gif != null && button == 1) {
+			ClientPrefs.toggleFavoriteGif(gif);
+			return true;
+		}
+		if (gif != null && button == 0 && ClientPlayNetworking.canSend(ChatPayloads.SendGif.TYPE)) {
 			ClientPlayNetworking.send(new ChatPayloads.SendGif(gif.id(), target.get()));
 			onSent.run();
 			return true;
@@ -378,6 +391,19 @@ public final class GifPanel {
 	public boolean mouseScrolled(double amount) {
 		scroll = Math.max(0, scroll - (int) Math.signum(amount));
 		return true;
+	}
+
+	/** Autoprueba: "custom", "fav" (marca el primero visible y abre Favoritos) o "" (Todos). */
+	public void tabForTest(String which) {
+		if (which.equals("fav")) {
+			List<GifInfo> list = items();
+			if (!list.isEmpty() && !ClientPrefs.isFavoriteGif(list.get(0).id())) {
+				ClientPrefs.toggleFavoriteGif(list.get(0));
+			}
+		}
+		chip = which.equals("custom") ? CUSTOM : which.equals("fav") ? FAVORITES : "";
+		query = "";
+		requestNow();
 	}
 
 	public static void reset() {

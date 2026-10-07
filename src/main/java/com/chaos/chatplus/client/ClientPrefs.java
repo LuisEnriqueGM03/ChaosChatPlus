@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.chaos.chatplus.ChaosChatPlus;
+import com.chaos.chatplus.gif.GifInfo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -30,6 +31,8 @@ public final class ClientPrefs {
 	public boolean mentionSound = true;
 	public List<String> recentEmojis = new ArrayList<>();
 	public Set<String> favoriteEmojis = new LinkedHashSet<>();
+	/** GIFs favoritos (con su enlace, para poder mandar también los de Klipy). */
+	public List<GifInfo> favoriteGifs = new ArrayList<>();
 
 	public static ClientPrefs get() {
 		return current;
@@ -47,6 +50,8 @@ public final class ClientPrefs {
 				if (loaded != null) {
 					if (loaded.recentEmojis == null) loaded.recentEmojis = new ArrayList<>();
 					if (loaded.favoriteEmojis == null) loaded.favoriteEmojis = new LinkedHashSet<>();
+					if (loaded.favoriteGifs == null) loaded.favoriteGifs = new ArrayList<>();
+					loaded.favoriteGifs.removeIf(g -> g == null || g.id() == null || g.url() == null);
 					current = loaded;
 				}
 			} catch (Exception e) {
@@ -77,6 +82,21 @@ public final class ClientPrefs {
 	public static void toggleFavorite(String name) {
 		if (!current.favoriteEmojis.remove(name)) {
 			current.favoriteEmojis.add(name);
+		}
+		save();
+	}
+
+	public static boolean isFavoriteGif(String id) {
+		return current.favoriteGifs.stream().anyMatch(g -> g.id().equals(id));
+	}
+
+	/** Marca o desmarca un GIF (como mucho 100; el más nuevo va primero). */
+	public static void toggleFavoriteGif(GifInfo gif) {
+		if (!current.favoriteGifs.removeIf(g -> g.id().equals(gif.id()))) {
+			current.favoriteGifs.add(0, gif);
+			while (current.favoriteGifs.size() > 100) {
+				current.favoriteGifs.remove(current.favoriteGifs.size() - 1);
+			}
 		}
 		save();
 	}

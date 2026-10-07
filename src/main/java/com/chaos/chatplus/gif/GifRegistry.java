@@ -167,7 +167,7 @@ public final class GifRegistry {
 				Builtin b = builtins().get(base);
 				String name = b != null ? b.name() : base.replace('_', ' ');
 				List<String> tags = new ArrayList<>(b != null ? b.tags() : List.of());
-				// Todas las carpetas del camino son etiquetas (anime/risa → se encuentra buscando «anime» o «risa»).
+				// Todas las carpetas del camino son etiquetas (memes/gatos → se encuentra buscando «memes» o «gatos»).
 				if (parent != null) {
 					parent.forEach(f -> tags.add(f.toString().toLowerCase(Locale.ROOT)));
 				}
@@ -262,6 +262,8 @@ public final class GifRegistry {
 
 	/** Categoría especial en la búsqueda: "@cat:nombre". */
 	public static final String CATEGORY_QUERY = "@cat:";
+	/** Búsqueda en Klipy (pestaña Custom del selector). */
+	public static final String KLIPY_QUERY = "@klipy:";
 
 	/** GIFs que encajan: vacío = todos; "@cat:x" = los de esa carpeta; si no, por nombre o etiquetas. */
 	public static List<GifInfo> search(String query) {

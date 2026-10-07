@@ -155,7 +155,6 @@ public final class ChatServer {
 		o.addProperty("pack", PackHost.hasPack(player));
 		o.addProperty("gifs", GifServer.canUse(player));
 		o.addProperty("gifSource", OnlineGifs.sourceName());
-		o.addProperty("anime", cfg.gifs.anime);
 		JsonArray special = new JsonArray();
 		ChatDecorator.specialMentions(player).forEach(special::add);
 		if (Perms.canMentionRanks(player)) {

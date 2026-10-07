@@ -119,14 +119,7 @@ public final class ChatConfig {
 	public static class Gifs {
 		public Access access = new Access(0);
 		public int cooldownSeconds = 5;
-		/** GIFs de reacciones de anime de nekos.best (sin clave ni registro). */
-		public boolean nekosBest = false;
-		/**
-		 * Pestaña Anime: cada jugador guarda en su PC unos 300 GIFs de reacciones de nekos.best (se descargan de poco en
-		 * poco, directamente de nekos.best; el servidor no los aloja).
-		 */
-		public boolean anime = true;
-		/** Clave gratuita de Klipy (klipy.com, el sucesor de Tenor). Si está, se busca en Klipy en lugar de nekos.best. */
+		/** Clave gratuita de Klipy (klipy.com, el sucesor de Tenor). Con ella se activa la pestaña Custom del selector. */
 		public String klipyKey = "";
 		/** Filtro de contenido de Klipy: off, low, medium o high. */
 		public String contentFilter = "high";

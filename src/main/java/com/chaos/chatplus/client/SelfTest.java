@@ -131,7 +131,13 @@ public final class SelfTest {
 					b.chaoschatplus$bar().openGifsForTest();
 				}
 			}
-			case 1040 -> shot("12_pestana_gifs");
+			case 1030 -> shot("12_pestana_gifs");
+			case 1036 -> gifTab("custom");
+			case 1044 -> shot("12b_gifs_custom");
+			case 1046 -> gifTab("");
+			case 1050 -> gifTab("fav");
+			case 1056 -> shot("12c_gifs_favoritos");
+			case 1058 -> gifTab("");
 			case 1060 -> mc.setScreen(null);
 			case 1100 -> mc.player.connection.sendCommand("msg Pepe hola en privado :fuego: :corazon:");
 			case 1130 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/troll/x_rickrolled", "Pepe"));
@@ -179,6 +185,12 @@ public final class SelfTest {
 			}
 		}
 		return null;
+	}
+
+	private static void gifTab(String which) {
+		if (Minecraft.getInstance().screen instanceof BarAccess b && b.chaoschatplus$bar() != null) {
+			b.chaoschatplus$bar().gifTabForTest(which);
+		}
 	}
 
 	private static void shot(String name) {

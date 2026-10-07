@@ -376,6 +376,12 @@ public final class ChatBar {
 		picker.showGifs();
 	}
 
+	public void gifTabForTest(String which) {
+		if (picker != null && picker.gifsForTest() != null) {
+			picker.gifsForTest().tabForTest(which);
+		}
+	}
+
 	public void togglePicker() {
 		picker = picker == null ? new EmojiPicker(this::insertEmoji, () -> Minecraft.getInstance().setScreen(null)) : null;
 	}
