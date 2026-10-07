@@ -24,13 +24,13 @@ import net.minecraft.server.level.ServerPlayer;
 
 /**
  * GIFs en el chat. A los clientes con el mod les llega una línea con una marca (inserción "chaoschatplus:gif:...")
- * y 5 líneas vacías que reservan el hueco donde el cliente dibuja el GIF animado. A los vanilla, un texto con enlace.
+ * y 3 líneas vacías que reservan el hueco donde el cliente dibuja el GIF animado. A los vanilla, un texto con enlace.
  */
 public final class GifServer {
 
 	public static final String MARK = "chaoschatplus:gif:";
-	/** Líneas que ocupa el GIF en el chat (la de la marca + 5 vacías). */
-	public static final int LINES = 6;
+	/** Líneas que ocupa el GIF en el chat (la de la marca + 3 vacías). */
+	public static final int LINES = 4;
 
 	private static final Map<UUID, Long> LAST = new ConcurrentHashMap<>();
 

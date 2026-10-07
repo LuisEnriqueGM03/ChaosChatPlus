@@ -181,10 +181,12 @@ public final class ModernChat {
 			g.pose().translate(slide, 0.0F, 50.0F);
 			g.drawString(mc.font, line.content(), 0, textY, 0xFFFFFF | (alpha << 24));
 			GifInfo gif = gifMark(line);
-			// El GIF ocupa esta línea y las 5 vacías de debajo: solo se dibuja si se ven todas.
+			// El GIF ocupa esta línea y las vacías de debajo: solo se dibuja si se ven todas.
 			if (gif != null && u >= GifServer.LINES - 1) {
 				int boxH = GifServer.LINES * lineHeight - 2;
-				int boxW = Math.min(width - 4, boxH * 2);
+				// La caja se ajusta a la forma del GIF (sin franjas vacías a los lados).
+				int fitW = (boxH - 4) * Math.max(1, gif.width()) / Math.max(1, gif.height()) + 4;
+				int boxW = Math.min(Math.min(width - 4, boxH * 2), fitW);
 				int top = lineBottom - lineHeight + 1;
 				Ui.round(g, 0, top, boxW, top + boxH, 4, Ui.alpha(0x000000, (int) (alpha * 0.35)));
 				g.setColor(1, 1, 1, alpha / 255F);

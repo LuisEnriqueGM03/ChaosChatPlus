@@ -9,6 +9,7 @@ import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.perm.Perms;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -33,9 +34,13 @@ public final class ItemShare {
 	public static final String VIEW_COMMAND = "/chatplus item view";
 	public static final int VIEW_COLOR = 0x55AAFF;
 
-	/** "[Espada de diamante] ×3 [Ver ítem]" con el tooltip del ítem. */
+	/** "Espada de diamante ×3 [Ver ítem]": el nombre en el color de su rareza; el ítem se ve con [Ver ítem]. */
 	public static MutableComponent component(ItemStack stack) {
-		MutableComponent out = Component.empty().append(stack.getDisplayName());
+		MutableComponent name = stack.getHoverName().copy().withStyle(stack.getRarity().color());
+		if (stack.has(DataComponents.CUSTOM_NAME)) {
+			name.withStyle(ChatFormatting.ITALIC);
+		}
+		MutableComponent out = Component.empty().append(name);
 		if (stack.getCount() > 1) {
 			out.append(Component.literal(" ×" + stack.getCount()).withStyle(ChatFormatting.GRAY));
 		}
