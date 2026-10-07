@@ -1,52 +1,30 @@
 package com.chaos.chatplus.gif;
 
 import java.net.URI;
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.config.ChatConfig;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 /**
- * GIFs de internet, buscados en vivo desde el servidor: <b>Klipy</b> (sucesor gratuito de Tenor, misma API v2), si el
- * dueño pone gifs.klipyKey. Se manda el enlace; no se guardan en el mod ni en la carpeta del servidor.
+ * GIFs de Klipy (pestaña Custom), siguiendo sus requisitos de integración (docs.klipy.com):
+ * <ul>
+ * <li>Las búsquedas y la descarga de los GIFs salen del juego de cada jugador, directo a Klipy (el servidor solo le pasa la
+ * clave).</li>
+ * <li>Los GIFs no se guardan en disco ni en el servidor: se cargan de sus enlaces tal cual.</li>
+ * <li>Los resultados se muestran en el orden y con el contenido que da Klipy, en su propia pestaña. El filtro de contenido
+ * se configura en el Partner Panel de Klipy.</li>
+ * </ul>
  */
 public final class OnlineGifs {
 
 	public static final String KLIPY = "klipy:";
-	private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(8))
-			.followRedirects(HttpClient.Redirect.NORMAL).build();
-	private static final String USER_AGENT = "ChaosChatPlus/1.1 (Minecraft mod)";
-	/** Momentos de las últimas peticiones a Klipy (tope por hora) y de las búsquedas de cada jugador (tope por minuto). */
-	private static final Deque<Long> CALLS = new ArrayDeque<>();
-	private static final Map<UUID, Deque<Long>> PLAYER_CALLS = new ConcurrentHashMap<>();
-
-	/** Resultado de una búsqueda: los GIFs y si se cortó por un tope ("" = no; "hour" o "player"). */
-	public record Result(List<GifInfo> gifs, String limited) {}
-	private static final int LIMIT = 24;
-
-	private record Cached(long time, List<GifInfo> results) {}
-
-	private static final Map<String, Cached> CACHE = new ConcurrentHashMap<>();
-	private static final Map<String, GifInfo> KNOWN = new ConcurrentHashMap<>();
 
 	private OnlineGifs() {}
 
@@ -59,12 +37,7 @@ public final class OnlineGifs {
 		return enabled() ? "Klipy" : "";
 	}
 
-	@Nullable
-	public static GifInfo known(String id) {
-		return KNOWN.get(id);
-	}
-
-	/** ¿Se puede descargar el GIF de esta URL? (solo de Klipy) */
+	/** ¿Es un enlace de Klipy? (solo de ahí se cargan GIFs de internet) */
 	public static boolean allowedUrl(String url) {
 		try {
 			URI uri = URI.create(url);
@@ -76,107 +49,52 @@ public final class OnlineGifs {
 	}
 
 	/**
-	 * Busca en Klipy ("" = destacados) sin pasarse de la clave: lo ya buscado sale de la memoria (gifs.klipyCacheMinutes),
-	 * cada jugador tiene unas búsquedas por minuto y el servidor entero unas por hora.
+	 * Un GIF de Klipy que manda un jugador (lo eligió en su juego): se acepta solo si su enlace es de Klipy y el servidor
+	 * tiene Klipy activado.
 	 */
-	public static CompletableFuture<Result> search(String query, UUID player, boolean unlimited) {
-		if (!enabled()) {
-			return CompletableFuture.completedFuture(new Result(List.of(), ""));
+	@Nullable
+	public static GifInfo fromClient(String id, String encoded) {
+		if (!enabled() || !id.startsWith(KLIPY)) {
+			return null;
 		}
-		ChatConfig.Gifs cfg = ChatConfig.get().gifs;
-		String q = query.strip().toLowerCase(Locale.ROOT);
-		long now = System.currentTimeMillis();
-		Cached cached = CACHE.get(q);
-		if (cached != null && now - cached.time() < cfg.klipyCacheMinutes * 60_000L) {
-			return CompletableFuture.completedFuture(new Result(cached.results(), ""));
+		GifInfo info = GifInfo.decode(encoded);
+		if (info == null || !info.id().equals(id) || !allowedUrl(info.url())) {
+			return null;
 		}
-		String limited = take(player, unlimited, now);
-		if (!limited.isEmpty()) {
-			// Sin peticiones libres: lo último que se tenga de esa búsqueda (aunque sea viejo) o nada.
-			return CompletableFuture.completedFuture(new Result(cached != null ? cached.results() : List.of(), limited));
-		}
-		return klipy(q).thenApply(results -> {
-			results.forEach(g -> KNOWN.put(g.id(), g));
-			if (CACHE.size() > 500) {
-				CACHE.clear();
-			}
-			CACHE.put(q, new Cached(System.currentTimeMillis(), results));
-			return new Result(results, "");
-		}).exceptionally(e -> {
-			ChaosChatPlus.LOGGER.warn("No se pudieron buscar GIFs en Klipy", e);
-			return new Result(List.of(), "");
-		});
+		return info;
 	}
 
-	/** Gasta una petición si quedan; si no, dice qué tope se alcanzó. */
-	private static synchronized String take(UUID player, boolean unlimited, long now) {
-		ChatConfig.Gifs cfg = ChatConfig.get().gifs;
-		while (!CALLS.isEmpty() && now - CALLS.peekFirst() > 3_600_000L) {
-			CALLS.pollFirst();
-		}
-		Deque<Long> mine = PLAYER_CALLS.computeIfAbsent(player, k -> new ArrayDeque<>());
-		while (!mine.isEmpty() && now - mine.peekFirst() > 60_000L) {
-			mine.pollFirst();
-		}
-		if (cfg.klipyMaxPerHour > 0 && CALLS.size() >= cfg.klipyMaxPerHour) {
-			return "hour";
-		}
-		if (!unlimited && mine.size() >= cfg.klipyPerPlayerPerMinute) {
-			return "player";
-		}
-		CALLS.addLast(now);
-		mine.addLast(now);
-		return "";
-	}
-
-	// ------------------------------------------------------------------ Klipy (API v2, compatible con Tenor)
-
-	private static CompletableFuture<List<GifInfo>> klipy(String q) {
-		ChatConfig.Gifs cfg = ChatConfig.get().gifs;
-		String base = q.isEmpty() ? "https://api.klipy.com/v2/featured?" : "https://api.klipy.com/v2/search?q="
-				+ URLEncoder.encode(q, StandardCharsets.UTF_8) + "&";
-		String url = base + "key=" + URLEncoder.encode(cfg.klipyKey, StandardCharsets.UTF_8)
-				+ "&client_key=chaoschatplus&limit=" + LIMIT + "&media_filter=tinygif&contentfilter="
-				+ URLEncoder.encode(cfg.contentFilter, StandardCharsets.UTF_8);
-		return get(url).thenApply(body -> {
-			List<GifInfo> out = new ArrayList<>();
-			if (body == null) {
-				return out;
-			}
-			for (JsonElement el : JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("results")) {
-				JsonObject r = el.getAsJsonObject();
-				JsonObject formats = r.getAsJsonObject("media_formats");
-				JsonObject tiny = formats != null && formats.has("tinygif") ? formats.getAsJsonObject("tinygif") : null;
-				if (tiny == null || !tiny.has("url") || !allowedUrl(tiny.get("url").getAsString())) {
-					continue;
-				}
-				int[] dims = dims(tiny.has("dims") ? tiny.getAsJsonArray("dims") : null);
-				String name = text(r, "title");
-				if (name.isEmpty()) {
-					name = text(r, "content_description");
-				}
-				if (name.isEmpty()) {
-					name = "GIF";
-				}
-				String page = r.has("itemurl") ? r.get("itemurl").getAsString() : tiny.get("url").getAsString();
-				out.add(new GifInfo(KLIPY + r.get("id").getAsString(), name, tiny.get("url").getAsString(), dims[0], dims[1], page));
-			}
+	/** Lee una respuesta de la API (v2, compatible con Tenor), sin reordenar ni quitar resultados. */
+	public static List<GifInfo> parse(@Nullable String body) {
+		List<GifInfo> out = new ArrayList<>();
+		if (body == null) {
 			return out;
-		});
-	}
-
-	// ------------------------------------------------------------------ util
-
-	private static CompletableFuture<String> get(String url) {
-		HttpRequest request = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(10))
-				.header("User-Agent", USER_AGENT).GET().build();
-		return HTTP.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-			if (response.statusCode() != 200) {
-				ChaosChatPlus.LOGGER.warn("GIFs: {} respondió {}", URI.create(url).getHost(), response.statusCode());
-				return null;
+		}
+		for (JsonElement el : JsonParser.parseString(body).getAsJsonObject().getAsJsonArray("results")) {
+			JsonObject r = el.getAsJsonObject();
+			JsonObject formats = r.getAsJsonObject("media_formats");
+			JsonObject media = null;
+			for (String f : new String[] {"tinygif", "gif", "nanogif", "mediumgif"}) {
+				if (media == null && formats != null && formats.has(f)) {
+					media = formats.getAsJsonObject(f);
+				}
 			}
-			return response.body();
-		});
+			if (media == null || !media.has("url")) {
+				continue; // sin ningún formato GIF no se puede mostrar
+			}
+			String url = media.get("url").getAsString();
+			int[] dims = dims(media.has("dims") ? media.getAsJsonArray("dims") : null);
+			String name = text(r, "title");
+			if (name.isEmpty()) {
+				name = text(r, "content_description");
+			}
+			if (name.isEmpty()) {
+				name = "GIF";
+			}
+			String page = r.has("itemurl") ? r.get("itemurl").getAsString() : url;
+			out.add(new GifInfo(KLIPY + r.get("id").getAsString(), name, url, dims[0], dims[1], page));
+		}
+		return out;
 	}
 
 	private static String text(JsonObject o, String key) {

@@ -39,6 +39,9 @@ Los emojis de serie son pixel art propio (`tools/gen_emojis.py`), licencia MIT c
 - **Los del mod**: 360 propios (texto, efectos, troll, emojis y anime chibi), en
   `config/chaoschatplus/gifs/default/<categoría>/`. Suelta más GIFs en `config/chaoschatplus/gifs/<categoría>/` y
   salen solos (se reducen a ≤128 px).
-- **Custom (Klipy)**: pon tu clave gratuita de klipy.com en `gifs.klipyKey`. La primera pestaña del selector busca en
-  Klipy en vivo (como Discord). Sin clave, la pestaña dice que no está configurado.
-- **Favoritos**: clic derecho en cualquier GIF del selector. Se guardan en el PC de cada jugador.
+- **Custom (Klipy)**: pon tu clave de https://partner.klipy.com/api-keys en `gifs.klipyKey`. Cumple los requisitos de
+  integración de Klipy: cada jugador busca y carga los GIFs desde su juego, directo a Klipy (el servidor solo le pasa la
+  clave); los GIFs no se guardan en disco; los resultados se muestran tal cual en su propia pestaña; el buscador dice
+  «Search KLIPY» y sale «Powered by KLIPY». El filtro de contenido se configura en el Partner Panel de Klipy. Sin clave,
+  la pestaña dice que no está configurado.
+- **Favoritos**: clic derecho en un GIF propio del selector (los de Klipy no, para no mezclarlos). Se guardan en el PC de cada jugador.

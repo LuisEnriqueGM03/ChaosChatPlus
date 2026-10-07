@@ -123,7 +123,7 @@ public final class SelfTest {
 				mc.player.respawn();
 				mc.setScreen(null);
 			}
-			case 870 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/animados/creeper_baile", ""));
+			case 870 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/animados/creeper_baile", "", ""));
 			case 920 -> mc.setScreen(new ChatScreen(""));
 			case 960 -> shot("11_muerte_y_gif");
 			case 980 -> {
@@ -140,7 +140,7 @@ public final class SelfTest {
 			case 1058 -> gifTab("");
 			case 1060 -> mc.setScreen(null);
 			case 1100 -> mc.player.connection.sendCommand("msg Pepe hola en privado :fuego: :corazon:");
-			case 1130 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/troll/x_rickrolled", "Pepe"));
+			case 1130 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/troll/x_rickrolled", "", "Pepe"));
 			case 1160 -> {
 				ClientState.setDmTarget("Pepe");
 				mc.setScreen(new ChatScreen(""));

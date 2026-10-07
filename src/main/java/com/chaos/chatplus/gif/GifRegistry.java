@@ -262,8 +262,6 @@ public final class GifRegistry {
 
 	/** Categoría especial en la búsqueda: "@cat:nombre". */
 	public static final String CATEGORY_QUERY = "@cat:";
-	/** Búsqueda en Klipy (pestaña Custom del selector). */
-	public static final String KLIPY_QUERY = "@klipy:";
 
 	/** GIFs que encajan: vacío = todos; "@cat:x" = los de esa carpeta; si no, por nombre o etiquetas. */
 	public static List<GifInfo> search(String query) {

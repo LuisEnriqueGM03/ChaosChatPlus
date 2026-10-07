@@ -51,31 +51,15 @@ public final class GifServer {
 		if (!canUse(player)) {
 			return;
 		}
-		// Pestaña Custom ("@klipy:texto"): solo Klipy. El resto: solo los GIFs del servidor.
-		boolean klipy = query.startsWith(GifRegistry.KLIPY_QUERY);
-		List<GifInfo> local = klipy ? List.of() : GifRegistry.search(query);
-		MinecraftServer server = player.server;
-		UUID id = player.getUUID();
-		CompletableFuture<OnlineGifs.Result> online = klipy && OnlineGifs.enabled()
-				? OnlineGifs.search(query.substring(GifRegistry.KLIPY_QUERY.length()), id, player.hasPermissions(2))
-				: CompletableFuture.completedFuture(new OnlineGifs.Result(List.of(), ""));
-		online.thenAccept(result -> server.execute(() -> {
-			List<GifInfo> results = result.gifs();
-			ServerPlayer p = server.getPlayerList().getPlayer(id);
-			if (p == null) {
-				return;
-			}
-			JsonObject o = new JsonObject();
-			o.addProperty("query", query);
-			o.addProperty("source", OnlineGifs.sourceName());
-			JsonArray cats = new JsonArray();
-			GifRegistry.categories().forEach(cats::add);
-			o.add("categories", cats);
-			o.add("local", array(local));
-			o.add("results", array(results));
-			o.addProperty("limited", result.limited());
-			ServerPlayNetworking.send(p, new ChatPayloads.GifResults(ChatPayloads.gzip(o.toString())));
-		}));
+		// Solo los GIFs del servidor: Klipy lo busca el juego de cada jugador (así lo pide Klipy).
+		JsonObject o = new JsonObject();
+		o.addProperty("query", query);
+		JsonArray cats = new JsonArray();
+		GifRegistry.categories().forEach(cats::add);
+		o.add("categories", cats);
+		o.add("local", array(GifRegistry.search(query)));
+		o.add("results", new JsonArray());
+		ServerPlayNetworking.send(player, new ChatPayloads.GifResults(ChatPayloads.gzip(o.toString())));
 	}
 
 	private static JsonArray array(List<GifInfo> list) {
@@ -89,7 +73,7 @@ public final class GifServer {
 		ServerPlayNetworking.send(player, new ChatPayloads.GifData(id, data == null ? new byte[0] : data));
 	}
 
-	public static void send(ServerPlayer player, String id, String targetName) {
+	public static void send(ServerPlayer player, String id, String klipyInfo, String targetName) {
 		if (!canUse(player)) {
 			player.sendSystemMessage(Lang.tr("gif.no_permission").withStyle(ChatFormatting.RED));
 			return;
@@ -101,7 +85,7 @@ public final class GifServer {
 			player.sendSystemMessage(Lang.tr("cooldown", left).withStyle(ChatFormatting.RED));
 			return;
 		}
-		GifInfo info = id.startsWith(GifInfo.LOCAL) ? GifRegistry.info(id) : OnlineGifs.known(id);
+		GifInfo info = id.startsWith(GifInfo.LOCAL) ? GifRegistry.info(id) : OnlineGifs.fromClient(id, klipyInfo);
 		if (info == null) {
 			player.sendSystemMessage(Lang.tr("gif.not_found").withStyle(ChatFormatting.RED));
 			return;

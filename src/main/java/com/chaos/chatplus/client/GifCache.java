@@ -131,10 +131,8 @@ public final class GifCache {
 		if (url.startsWith("sha1:")) {
 			return cacheDir().resolve(url.substring(5) + ".gif");
 		}
-		if (url.startsWith("jar:")) {
-			return null;
-		}
-		return cacheDir().resolve(GifRegistry.sha1(url.getBytes(StandardCharsets.UTF_8)) + ".gif");
+		// Los de Klipy no se guardan en disco (sus términos no lo permiten): solo en memoria mientras se ven.
+		return null;
 	}
 
 	/** Cada tick: lanza la siguiente descarga si toca. */

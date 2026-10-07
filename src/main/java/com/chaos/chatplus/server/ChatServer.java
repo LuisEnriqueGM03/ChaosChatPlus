@@ -53,7 +53,7 @@ public final class ChatServer {
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.GifRequest.TYPE, (payload, context) ->
 				context.server().execute(() -> GifServer.request(context.player(), payload.id())));
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.SendGif.TYPE, (payload, context) ->
-				context.server().execute(() -> GifServer.send(context.player(), payload.id(), payload.target())));
+				context.server().execute(() -> GifServer.send(context.player(), payload.id(), payload.info(), payload.target())));
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.UploadEmoji.TYPE, (payload, context) ->
 				context.server().execute(() -> upload(context.player(), payload)));
 	}
@@ -155,6 +155,8 @@ public final class ChatServer {
 		o.addProperty("pack", true);
 		o.addProperty("gifs", GifServer.canUse(player));
 		o.addProperty("gifSource", OnlineGifs.sourceName());
+		// La clave de Klipy va al juego del jugador: Klipy pide que las búsquedas salgan del cliente.
+		o.addProperty("klipyKey", GifServer.canUse(player) ? cfg.gifs.klipyKey : "");
 		JsonArray special = new JsonArray();
 		ChatDecorator.specialMentions(player).forEach(special::add);
 		if (Perms.canMentionRanks(player)) {

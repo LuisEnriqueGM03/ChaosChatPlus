@@ -12,8 +12,10 @@ import com.chaos.chatplus.client.ClientPrefs;
 import com.chaos.chatplus.client.ClientState;
 import com.chaos.chatplus.client.EmojiTextures;
 import com.chaos.chatplus.client.GifCache;
+import com.chaos.chatplus.client.KlipyClient;
 import com.chaos.chatplus.gif.GifInfo;
 import com.chaos.chatplus.gif.GifRegistry;
+import com.chaos.chatplus.gif.OnlineGifs;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -63,7 +65,7 @@ public final class GifPanel {
 
 	private static final String GIF_CATEGORY = GifRegistry.CATEGORY_QUERY;
 	/** Pestaña Custom: búsqueda en Klipy. */
-	private static final String CUSTOM = GifRegistry.KLIPY_QUERY;
+	private static final String CUSTOM = "@klipy:";
 	/** Pestaña Favoritos: sale de las preferencias de este PC, no se pide nada al servidor. */
 	private static final String FAVORITES = "@fav";
 
@@ -138,7 +140,7 @@ public final class GifPanel {
 
 	/** ¿El servidor tiene Klipy configurado? */
 	private static boolean klipy() {
-		return !ClientState.gifSource().isEmpty();
+		return !ClientState.klipyKey().isEmpty();
 	}
 
 	/** Lo que se pide al servidor: en Custom, «@klipy:» + lo escrito; si no, lo escrito o la categoría elegida. */
@@ -161,6 +163,22 @@ public final class GifPanel {
 		requested = effective();
 		received = false;
 		scroll = 0;
+		if (customMode()) {
+			// Klipy se busca desde este juego, directo a Klipy (como pide Klipy), y se muestra tal cual llega.
+			if (klipy()) {
+				String asked = requested;
+				KlipyClient.search(query, r -> {
+					if (asked.equals(requested)) {
+						local = List.of();
+						results = r.gifs();
+						limited = r.limited() ? "player" : "";
+						resultQuery = asked;
+						received = true;
+					}
+				});
+			}
+			return;
+		}
 		if (!offline() && ClientPlayNetworking.canSend(ChatPayloads.GifSearch.TYPE)) {
 			ClientPlayNetworking.send(new ChatPayloads.GifSearch(requested));
 		}
@@ -201,7 +219,8 @@ public final class GifPanel {
 			String q = query.strip().toLowerCase(Locale.ROOT);
 			List<GifInfo> out = new ArrayList<>();
 			for (GifInfo g : ClientPrefs.get().favoriteGifs) {
-				if (q.isEmpty() || g.name().toLowerCase(Locale.ROOT).contains(q)) {
+				// Solo los propios: los de Klipy van en su pestaña, sin mezclarse con otros.
+				if (!g.id().startsWith(OnlineGifs.KLIPY) && (q.isEmpty() || g.name().toLowerCase(Locale.ROOT).contains(q))) {
 					out.add(g);
 				}
 			}
@@ -329,7 +348,7 @@ public final class GifPanel {
 		// Pie: nombre del GIF (con la ayuda del favorito), de la pestaña, o de dónde salen.
 		int fy = y + h + 2;
 		if (hovered != null) {
-			String hint = " · " + Lang.tr("gif.fav_hint").getString();
+			String hint = hovered.id().startsWith(OnlineGifs.KLIPY) ? "" : " · " + Lang.tr("gif.fav_hint").getString();
 			String name = font.plainSubstrByWidth(hovered.name(), Math.max(20, w - font.width(hint)), false);
 			g.drawString(font, name, x, fy, Ui.TEXT, false);
 			if (font.width(name + hint) <= w) {
@@ -388,11 +407,14 @@ public final class GifPanel {
 		}
 		GifInfo gif = at(mx, my);
 		if (gif != null && button == 1) {
-			ClientPrefs.toggleFavoriteGif(gif);
+			if (!gif.id().startsWith(OnlineGifs.KLIPY)) {
+				ClientPrefs.toggleFavoriteGif(gif);
+			}
 			return true;
 		}
 		if (gif != null && button == 0 && ClientPlayNetworking.canSend(ChatPayloads.SendGif.TYPE)) {
-			ClientPlayNetworking.send(new ChatPayloads.SendGif(gif.id(), target.get()));
+			String info = gif.id().startsWith(OnlineGifs.KLIPY) ? gif.encode() : "";
+			ClientPlayNetworking.send(new ChatPayloads.SendGif(gif.id(), info, target.get()));
 			onSent.run();
 			return true;
 		}

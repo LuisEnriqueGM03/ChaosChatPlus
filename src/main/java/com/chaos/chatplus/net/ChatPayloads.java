@@ -257,11 +257,13 @@ public final class ChatPayloads {
 	}
 
 	/** Cliente -> servidor: mandar un GIF al chat (target = jugador para mandarlo en privado, "" = todos). */
-	public record SendGif(String id, String target) implements CustomPacketPayload {
+	/** {@code info} = el GIF de Klipy codificado (GifInfo.encode); vacío para los del servidor. */
+	public record SendGif(String id, String info, String target) implements CustomPacketPayload {
 
 		public static final Type<SendGif> TYPE = new Type<>(ChaosChatPlus.id("send_gif"));
 		public static final StreamCodec<ByteBuf, SendGif> CODEC = StreamCodec.composite(
 				ByteBufCodecs.stringUtf8(256), SendGif::id,
+				ByteBufCodecs.stringUtf8(4096), SendGif::info,
 				ByteBufCodecs.stringUtf8(16), SendGif::target,
 				SendGif::new);
 

@@ -48,6 +48,7 @@ public final class ClientState {
 	private static boolean blurShots;
 	private static boolean gifs;
 	private static String gifSource = "";
+	private static String klipyKey = "";
 	private static int mentionColor = 0x7AA2FF;
 	private static int maxShotKb = 512;
 	private static List<String> specialMentions = List.of();
@@ -72,6 +73,7 @@ public final class ClientState {
 			blurShots = bool(o, "blurShots");
 			gifs = bool(o, "gifs");
 			gifSource = o.has("gifSource") ? o.get("gifSource").getAsString() : "";
+			klipyKey = o.has("klipyKey") ? o.get("klipyKey").getAsString() : "";
 			mentionColor = o.has("mentionColor") ? o.get("mentionColor").getAsInt() : 0x7AA2FF;
 			maxShotKb = o.has("maxShotKb") ? o.get("maxShotKb").getAsInt() : 512;
 			List<String> special = new ArrayList<>();
@@ -116,6 +118,7 @@ public final class ClientState {
 		serverMod = false;
 		items = shots = upload = pack = blurShots = gifs = false;
 		gifSource = "";
+		klipyKey = "";
 		mentions = true;
 		specialMentions = List.of();
 		emojis = List.of();
@@ -154,6 +157,11 @@ public final class ClientState {
 	}
 
 	/** Fuente de GIFs de internet del servidor ("Klipy" o "" si no hay). */
+	/** Clave de Klipy del servidor ("" = sin Klipy). */
+	public static String klipyKey() {
+		return klipyKey;
+	}
+
 	public static String gifSource() {
 		return gifSource;
 	}

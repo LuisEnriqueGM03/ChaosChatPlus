@@ -51,7 +51,7 @@ public final class ClientPrefs {
 					if (loaded.recentEmojis == null) loaded.recentEmojis = new ArrayList<>();
 					if (loaded.favoriteEmojis == null) loaded.favoriteEmojis = new LinkedHashSet<>();
 					if (loaded.favoriteGifs == null) loaded.favoriteGifs = new ArrayList<>();
-					loaded.favoriteGifs.removeIf(g -> g == null || g.id() == null || g.url() == null);
+					loaded.favoriteGifs.removeIf(g -> g == null || g.id() == null || g.url() == null || g.id().startsWith("klipy:"));
 					current = loaded;
 				}
 			} catch (Exception e) {

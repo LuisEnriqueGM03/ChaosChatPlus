@@ -111,18 +111,11 @@ public final class ChatConfig {
 		public String klipyHelp = HELP;
 		/** Clave gratuita de Klipy (klipy.com, el sucesor de Tenor). Con ella se activa la pestaña Custom del selector. */
 		public String klipyKey = "";
-		/** Tope de peticiones a Klipy por hora entre todo el servidor (la clave de prueba permite 100). 0 = sin tope. */
-		public int klipyMaxPerHour = 90;
-		/** Búsquedas en Klipy por jugador y minuto (los OPs no tienen tope). */
-		public int klipyPerPlayerPerMinute = 6;
-		/** Minutos que se recuerda cada búsqueda (repetirla no gasta peticiones). */
-		public int klipyCacheMinutes = 15;
 
 		static final String HELP = "Clave gratis de Klipy en https://partner.klipy.com/api-keys (la de prueba da 100 "
-				+ "busquedas por hora; para un servidor grande pide la de produccion en ese panel). Topes: klipyMaxPerHour "
-				+ "(todo el servidor), klipyPerPlayerPerMinute (cada jugador) y klipyCacheMinutes (busquedas recordadas).";
-		/** Filtro de contenido de Klipy: off, low, medium o high. */
-		public String contentFilter = "high";
+				+ "busquedas por hora; para un servidor real pide la de produccion en ese panel). El filtro de contenido y "
+				+ "las palabras bloqueadas se configuran en ese mismo panel. Cada jugador busca en Klipy desde su juego con "
+				+ "esta clave (asi lo pide Klipy) y los GIFs no se guardan en disco.";
 		/** Tope del archivo original de un GIF de la carpeta (se reduce solo a ≤ 300 KB para el chat). */
 		public int maxKilobytes = 10240;
 	}
@@ -203,12 +196,8 @@ public final class ChatConfig {
 		if (gifs.access == null) gifs.access = new Access(0);
 		gifs.access.sanitize();
 		if (gifs.klipyKey == null) gifs.klipyKey = "";
-		if (gifs.contentFilter == null) gifs.contentFilter = "high";
 		gifs.cooldownSeconds = Math.max(0, gifs.cooldownSeconds);
 		gifs.klipyHelp = Gifs.HELP;
-		gifs.klipyMaxPerHour = Math.max(0, gifs.klipyMaxPerHour);
-		gifs.klipyPerPlayerPerMinute = Math.max(1, gifs.klipyPerPlayerPerMinute);
-		gifs.klipyCacheMinutes = Math.max(1, Math.min(1440, gifs.klipyCacheMinutes));
 		gifs.maxKilobytes = Math.max(64, Math.min(51200, gifs.maxKilobytes));
 	}
 
