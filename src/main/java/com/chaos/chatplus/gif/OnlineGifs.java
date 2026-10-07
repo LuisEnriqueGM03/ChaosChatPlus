@@ -7,10 +7,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +35,12 @@ public final class OnlineGifs {
 	private static final HttpClient HTTP = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(8))
 			.followRedirects(HttpClient.Redirect.NORMAL).build();
 	private static final String USER_AGENT = "ChaosChatPlus/1.1 (Minecraft mod)";
-	private static final long CACHE_MS = 2 * 60_000L;
+	/** Momentos de las últimas peticiones a Klipy (tope por hora) y de las búsquedas de cada jugador (tope por minuto). */
+	private static final Deque<Long> CALLS = new ArrayDeque<>();
+	private static final Map<UUID, Deque<Long>> PLAYER_CALLS = new ConcurrentHashMap<>();
+
+	/** Resultado de una búsqueda: los GIFs y si se cortó por un tope ("" = no; "hour" o "player"). */
+	public record Result(List<GifInfo> gifs, String limited) {}
 	private static final int LIMIT = 24;
 
 	private record Cached(long time, List<GifInfo> results) {}
@@ -67,24 +75,58 @@ public final class OnlineGifs {
 		}
 	}
 
-	/** Busca en Klipy ("" = destacados). */
-	public static CompletableFuture<List<GifInfo>> search(String query) {
+	/**
+	 * Busca en Klipy ("" = destacados) sin pasarse de la clave: lo ya buscado sale de la memoria (gifs.klipyCacheMinutes),
+	 * cada jugador tiene unas búsquedas por minuto y el servidor entero unas por hora.
+	 */
+	public static CompletableFuture<Result> search(String query, UUID player, boolean unlimited) {
 		if (!enabled()) {
-			return CompletableFuture.completedFuture(List.of());
+			return CompletableFuture.completedFuture(new Result(List.of(), ""));
 		}
+		ChatConfig.Gifs cfg = ChatConfig.get().gifs;
 		String q = query.strip().toLowerCase(Locale.ROOT);
+		long now = System.currentTimeMillis();
 		Cached cached = CACHE.get(q);
-		if (cached != null && System.currentTimeMillis() - cached.time() < CACHE_MS) {
-			return CompletableFuture.completedFuture(cached.results());
+		if (cached != null && now - cached.time() < cfg.klipyCacheMinutes * 60_000L) {
+			return CompletableFuture.completedFuture(new Result(cached.results(), ""));
+		}
+		String limited = take(player, unlimited, now);
+		if (!limited.isEmpty()) {
+			// Sin peticiones libres: lo último que se tenga de esa búsqueda (aunque sea viejo) o nada.
+			return CompletableFuture.completedFuture(new Result(cached != null ? cached.results() : List.of(), limited));
 		}
 		return klipy(q).thenApply(results -> {
 			results.forEach(g -> KNOWN.put(g.id(), g));
+			if (CACHE.size() > 500) {
+				CACHE.clear();
+			}
 			CACHE.put(q, new Cached(System.currentTimeMillis(), results));
-			return results;
+			return new Result(results, "");
 		}).exceptionally(e -> {
 			ChaosChatPlus.LOGGER.warn("No se pudieron buscar GIFs en Klipy", e);
-			return List.of();
+			return new Result(List.of(), "");
 		});
+	}
+
+	/** Gasta una petición si quedan; si no, dice qué tope se alcanzó. */
+	private static synchronized String take(UUID player, boolean unlimited, long now) {
+		ChatConfig.Gifs cfg = ChatConfig.get().gifs;
+		while (!CALLS.isEmpty() && now - CALLS.peekFirst() > 3_600_000L) {
+			CALLS.pollFirst();
+		}
+		Deque<Long> mine = PLAYER_CALLS.computeIfAbsent(player, k -> new ArrayDeque<>());
+		while (!mine.isEmpty() && now - mine.peekFirst() > 60_000L) {
+			mine.pollFirst();
+		}
+		if (cfg.klipyMaxPerHour > 0 && CALLS.size() >= cfg.klipyMaxPerHour) {
+			return "hour";
+		}
+		if (!unlimited && mine.size() >= cfg.klipyPerPlayerPerMinute) {
+			return "player";
+		}
+		CALLS.addLast(now);
+		mine.addLast(now);
+		return "";
 	}
 
 	// ------------------------------------------------------------------ Klipy (API v2, compatible con Tenor)

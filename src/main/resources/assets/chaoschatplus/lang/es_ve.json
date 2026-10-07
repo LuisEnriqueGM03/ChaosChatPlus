@@ -41,6 +41,8 @@
 	"chaoschatplus.gif.klipy_hint": "El dueño del servidor puede poner gifs.klipyKey en config/chaoschatplus/config.json",
 	"chaoschatplus.gif.powered_klipy": "Powered by KLIPY",
 	"chaoschatplus.gif.fav_empty": "Clic derecho en un GIF para guardarlo aquí",
+	"chaoschatplus.gif.limit_hour": "Klipy: el servidor llegó a su tope por hora. Prueba más tarde",
+	"chaoschatplus.gif.limit_player": "Vas muy rápido: espera un minuto para buscar en Klipy",
 	"chaoschatplus.gif.fav_hint": "clic derecho: favorito",
 	"chaoschatplus.gif.busy": "La web de GIFs pide esperar (~%s min)",
 	"chaoschatplus.gif.server_only": "GIFs del servidor",

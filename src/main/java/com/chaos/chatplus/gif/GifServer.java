@@ -56,10 +56,11 @@ public final class GifServer {
 		List<GifInfo> local = klipy ? List.of() : GifRegistry.search(query);
 		MinecraftServer server = player.server;
 		UUID id = player.getUUID();
-		CompletableFuture<List<GifInfo>> online = klipy && OnlineGifs.enabled()
-				? OnlineGifs.search(query.substring(GifRegistry.KLIPY_QUERY.length()))
-				: CompletableFuture.completedFuture(List.of());
-		online.thenAccept(results -> server.execute(() -> {
+		CompletableFuture<OnlineGifs.Result> online = klipy && OnlineGifs.enabled()
+				? OnlineGifs.search(query.substring(GifRegistry.KLIPY_QUERY.length()), id, player.hasPermissions(2))
+				: CompletableFuture.completedFuture(new OnlineGifs.Result(List.of(), ""));
+		online.thenAccept(result -> server.execute(() -> {
+			List<GifInfo> results = result.gifs();
 			ServerPlayer p = server.getPlayerList().getPlayer(id);
 			if (p == null) {
 				return;
@@ -72,6 +73,7 @@ public final class GifServer {
 			o.add("categories", cats);
 			o.add("local", array(local));
 			o.add("results", array(results));
+			o.addProperty("limited", result.limited());
 			ServerPlayNetworking.send(p, new ChatPayloads.GifResults(ChatPayloads.gzip(o.toString())));
 		}));
 	}

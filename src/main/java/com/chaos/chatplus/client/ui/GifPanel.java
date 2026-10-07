@@ -37,6 +37,7 @@ public final class GifPanel {
 	private static final int CELL_H = 30;
 	private static final int GAP = 3;
 	private static final long DEBOUNCE_MS = 450;
+	private static final long KLIPY_DEBOUNCE_MS = 900;
 	private static final int HEADER = 30;
 	private static final int CHIP = 11;
 	private static final int FAV_COLOR = 0xFFFFD54F;
@@ -46,6 +47,8 @@ public final class GifPanel {
 	private static List<GifInfo> local = List.of();
 	private static List<GifInfo> results = List.of();
 	private static boolean received;
+	/** Klipy cortado por un tope: "hour" (del servidor) o "player" (tuyo, por minuto). */
+	private static String limited = "";
 
 	/** Categorías de la barra de arriba: búsqueda, emoji que hace de icono y nombre. */
 	private record Chip(String query, String icon, String label) {}
@@ -107,6 +110,7 @@ public final class GifPanel {
 			}
 			local = list(o, "local");
 			results = list(o, "results");
+			limited = o.has("limited") ? o.get("limited").getAsString() : "";
 			received = true;
 		} catch (Exception e) {
 			local = List.of();
@@ -224,7 +228,9 @@ public final class GifPanel {
 		this.y = y;
 		this.w = w;
 		this.h = h;
-		if (!effective().equals(requested) && Util.getMillis() - editedAt > DEBOUNCE_MS) {
+		long debounce = customMode() ? KLIPY_DEBOUNCE_MS : DEBOUNCE_MS;
+		if (!effective().equals(requested) && Util.getMillis() - editedAt > debounce
+				&& (!customMode() || query.isEmpty() || query.strip().length() >= 2)) {
 			requestNow();
 		}
 		// Buscador.
@@ -308,6 +314,8 @@ public final class GifPanel {
 				}
 			} else if (!received || !resultQuery.equals(requested)) {
 				note = Lang.tr("gif.loading").getString();
+			} else if (customMode() && !limited.isEmpty() && list.isEmpty()) {
+				note = Lang.tr("gif.limit_" + limited).getString();
 			} else if (list.isEmpty()) {
 				note = Lang.tr("gif.none").getString();
 			}
@@ -332,6 +340,9 @@ public final class GifPanel {
 		} else if (GifCache.pausedSeconds() > 0) {
 			String wait = Lang.tr("gif.busy", (GifCache.pausedSeconds() + 59) / 60).getString();
 			g.drawString(font, font.plainSubstrByWidth(wait, w, false), x, fy, Ui.WARN, false);
+		} else if (customMode() && !limited.isEmpty() && received) {
+			String warn = Lang.tr("gif.limit_" + limited).getString();
+			g.drawString(font, font.plainSubstrByWidth(warn, w, false), x, fy, Ui.WARN, false);
 		} else if (customMode()) {
 			if (klipy()) {
 				g.drawString(font, Lang.tr("gif.powered_klipy"), x, fy, 0xFFB9A6FF, false);
