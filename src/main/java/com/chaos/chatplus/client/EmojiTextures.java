@@ -53,7 +53,7 @@ public final class EmojiTextures {
 	}
 
 	public static void draw(GuiGraphics g, String name, boolean builtin, int x, int y, int size) {
-		Texture t = builtin ? new Texture(builtin(name), 16, 16) : CUSTOM.get(name);
+		Texture t = builtin ? new Texture(builtin(name), 32, 32) : CUSTOM.get(name);
 		if (t == null) {
 			return;
 		}

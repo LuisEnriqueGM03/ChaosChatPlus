@@ -256,10 +256,18 @@ public final class EmojiRegistry {
 				done.addAll(Files.readAllLines(marker, StandardCharsets.UTF_8));
 			}
 			for (Emoji b : BUILTIN) {
+				Path target = dir().resolve("default").resolve(b.category()).resolve(b.name() + ".png");
+				// Los de serie pasaron de 16x16 a 32x32: la copia vieja (16x16) se cambia por la nueva.
+				if (Files.exists(target) && pngWidth(Files.readAllBytes(target)) == 16) {
+					byte[] png = jarPng(b.name());
+					if (png != null && pngWidth(png) == 32) {
+						Files.write(target, png);
+						copied++;
+					}
+				}
 				if (done.contains(b.name()) && !restoreAll) {
 					continue;
 				}
-				Path target = dir().resolve("default").resolve(b.category()).resolve(b.name() + ".png");
 				if (!Files.exists(target)) {
 					byte[] png = jarPng(b.name());
 					if (png != null) {
@@ -276,6 +284,14 @@ public final class EmojiRegistry {
 			ChaosChatPlus.LOGGER.error("No se pudieron copiar los emojis de serie a {}", dir(), e);
 		}
 		return copied;
+	}
+
+	/** Ancho de un PNG (de su cabecera IHDR); -1 si no es un PNG. */
+	private static int pngWidth(byte[] png) {
+		if (png == null || png.length < 24 || png[1] != 'P' || png[2] != 'N' || png[3] != 'G') {
+			return -1;
+		}
+		return ((png[16] & 0xFF) << 24) | ((png[17] & 0xFF) << 16) | ((png[18] & 0xFF) << 8) | (png[19] & 0xFF);
 	}
 
 	/** ¿Cambió algo en la carpeta de emojis desde la última carga? */

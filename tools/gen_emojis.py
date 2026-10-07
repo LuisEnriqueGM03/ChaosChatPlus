@@ -1,5 +1,6 @@
 """
-Genera los emojis por defecto de Chaos ChatPlus en pixel art de 16x16 (dibujo propio, sin licencias de terceros):
+Genera los emojis por defecto de Chaos ChatPlus: 32x32 en estilo liso (emoji_hd*.py; dibujo propio). Las funciones
+pixel art de 16x16 de aquí quedan como respaldo (y las usan los iconos de la barra):
 
   src/main/resources/assets/chaoschatplus/textures/emoji/<nombre>.png
   src/main/resources/assets/chaoschatplus/font/emoji.json   (fuente bitmap de los emojis por defecto)
@@ -1450,6 +1451,13 @@ EMOJIS = [
 
 def main():
     from gen_emojis_extra import EXTRA, gui_icons
+    from emoji_hd import HD as H1, OUT as HD_SIZE_
+    from emoji_hd2 import HD as H2
+    from emoji_hd3 import HD as H3
+    global HD, HD_SIZE
+    HD = {**H1, **H2, **H3}
+    HD["caca"] = H1["caca"]
+    HD_SIZE = HD_SIZE_
     all_emojis = EMOJIS + EXTRA
     gui_dir = os.path.join(ASSETS, "textures", "gui")
     os.makedirs(gui_dir, exist_ok=True)
@@ -1469,8 +1477,8 @@ def main():
     for n, (name, fn, aliases, category, unicode) in enumerate(all_emojis):
         assert name not in seen, name
         seen.add(name)
-        img = fn()
-        assert img.size == (S, S), name
+        img = HD[name]() if name in HD else fn().resize((HD_SIZE, HD_SIZE), Image.NEAREST)
+        assert img.size == (HD_SIZE, HD_SIZE), name
         img.save(os.path.join(tex_dir, name + ".png"))
         images.append((name, img))
         cp = FIRST_CODEPOINT + n
@@ -1490,12 +1498,14 @@ def main():
     if "--preview" in sys.argv:
         cols = 12
         rows = (len(images) + cols - 1) // cols
-        scale = 6
-        sheet = Image.new("RGBA", (cols * (S + 4) * scale, rows * (S + 4) * scale), rgb("2B2D31"))
+        S_ = HD_SIZE
+        scale = 3
+        sheet = Image.new("RGBA", (cols * (S_ + 4) * scale, rows * (S_ + 4) * scale), rgb("2B2D31"))
         for k, (name, img) in enumerate(images):
-            x = (k % cols) * (S + 4) * scale + 2 * scale
-            y = (k // cols) * (S + 4) * scale + 2 * scale
-            sheet.paste(img.resize((S * scale, S * scale), Image.NEAREST), (x, y), img.resize((S * scale, S * scale), Image.NEAREST))
+            x = (k % cols) * (S_ + 4) * scale + 2 * scale
+            y = (k // cols) * (S_ + 4) * scale + 2 * scale
+            big = img.resize((S_ * scale, S_ * scale), Image.NEAREST)
+            sheet.paste(big, (x, y), big)
         out = os.path.join(ROOT, "build", "emoji_preview.png")
         os.makedirs(os.path.dirname(out), exist_ok=True)
         sheet.save(out)
