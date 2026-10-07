@@ -434,8 +434,25 @@ public final class GifPanel {
 				ClientPrefs.toggleFavoriteGif(list.get(0));
 			}
 		}
-		chip = which.equals("custom") ? CUSTOM : which.equals("fav") ? FAVORITES : "";
+		if (which.equals("send")) {
+			List<GifInfo> list = items();
+			if (!list.isEmpty()) {
+				GifInfo gif = list.get(0);
+				String info = gif.id().startsWith(OnlineGifs.KLIPY) ? gif.encode() : "";
+				ClientPlayNetworking.send(new ChatPayloads.SendGif(gif.id(), info, target.get()));
+				onSent.run();
+			}
+			return;
+		}
 		query = "";
+		if (which.startsWith("custom")) {
+			chip = CUSTOM;
+			query = which.startsWith("custom:") ? which.substring(7) : "";
+		} else if (which.startsWith("cat:")) {
+			chip = GIF_CATEGORY + which.substring(4);
+		} else {
+			chip = which.equals("fav") ? FAVORITES : "";
+		}
 		requestNow();
 	}
 

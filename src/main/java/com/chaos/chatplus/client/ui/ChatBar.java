@@ -380,6 +380,10 @@ public final class ChatBar {
 		picker.showGifs();
 	}
 
+	public void dmPickerForTest() {
+		toggleDmPicker();
+	}
+
 	public void gifTabForTest(String which) {
 		if (picker != null && picker.gifsForTest() != null) {
 			picker.gifsForTest().tabForTest(which);

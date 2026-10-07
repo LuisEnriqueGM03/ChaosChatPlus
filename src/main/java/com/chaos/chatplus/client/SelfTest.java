@@ -131,28 +131,53 @@ public final class SelfTest {
 					b.chaoschatplus$bar().openGifsForTest();
 				}
 			}
-			case 1030 -> shot("12_pestana_gifs");
-			case 1036 -> gifTab("custom");
-			case 1044 -> shot("12b_gifs_custom");
-			case 1046 -> gifTab("");
-			case 1050 -> gifTab("fav");
-			case 1056 -> shot("12c_gifs_favoritos");
-			case 1058 -> gifTab("");
-			case 1060 -> mc.setScreen(null);
-			case 1100 -> mc.player.connection.sendCommand("msg Pepe hola en privado :fuego: :corazon:");
-			case 1130 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/troll/x_rickrolled", "", "Pepe"));
-			case 1160 -> {
+			case 1030 -> shot("12_gifs_todos");
+			case 1035 -> gifTab("cat:texto");
+			case 1060 -> shot("12a_gifs_texto");
+			case 1065 -> gifTab("cat:efectos");
+			case 1090 -> shot("12b_gifs_efectos");
+			case 1095 -> gifTab("cat:troll");
+			case 1120 -> shot("12c_gifs_troll");
+			case 1125 -> gifTab("cat:emojis");
+			case 1150 -> shot("12d_gifs_emojis");
+			case 1155 -> gifTab("cat:anime");
+			case 1180 -> shot("12e_gifs_anime");
+			case 1185 -> gifTab("custom");
+			case 1450 -> shot("12f_klipy_destacados");
+			case 1460 -> gifTab("custom:cat");
+			case 1720 -> shot("12g_klipy_busqueda");
+			case 1725 -> gifTab("send");
+			case 1745 -> mc.setScreen(new ChatScreen(""));
+			case 1800 -> shot("12h_klipy_en_chat");
+			case 1805 -> {
+				if (mc.screen instanceof BarAccess b && b.chaoschatplus$bar() != null) {
+					b.chaoschatplus$bar().openGifsForTest();
+				}
+			}
+			case 1815 -> gifTab("");
+			case 1830 -> gifTab("fav");
+			case 1860 -> shot("12i_gifs_favoritos");
+			case 1865 -> mc.setScreen(null);
+			case 1900 -> mc.player.connection.sendCommand("msg Pepe hola en privado :fuego: :corazon:");
+			case 1930 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:default/troll/x_rickrolled", "", "Pepe"));
+			case 1960 -> {
 				ClientState.setDmTarget("Pepe");
 				mc.setScreen(new ChatScreen(""));
 			}
-			case 1200 -> shot("13_modo_privado");
-			case 1220 -> {
+			case 2000 -> shot("13_modo_privado");
+			case 2005 -> {
+				if (mc.screen instanceof BarAccess b && b.chaoschatplus$bar() != null) {
+					b.chaoschatplus$bar().dmPickerForTest();
+				}
+			}
+			case 2030 -> shot("13b_elegir_jugador");
+			case 2040 -> {
 				ClientState.setDmTarget(null);
 				mc.setScreen(null);
 			}
-			case 1300 -> mc.setScreen(new ChatScreen(""));
-			case 1340 -> shot("10_mencion_recibida");
-			case 1400 -> mc.stop();
+			case 2100 -> mc.setScreen(new ChatScreen(""));
+			case 2140 -> shot("10_mencion_recibida");
+			case 2200 -> mc.stop();
 			default -> { }
 		}
 	}
@@ -161,9 +186,9 @@ public final class SelfTest {
 		switch (ticks) {
 			case 200 -> mc.player.connection.sendChat("@Luis mira esto :corazon: :fuego: (desde vanilla)");
 			case 260 -> mc.player.connection.sendChat("@everyone esto no debería sonar");
-			case 900 -> mc.setScreen(new ChatScreen(""));
-			case 940 -> shot("pepe_chat");
-			case 1000 -> mc.stop();
+			case 2050 -> mc.setScreen(new ChatScreen(""));
+			case 2090 -> shot("pepe_chat");
+			case 2300 -> mc.stop();
 			default -> { }
 		}
 	}
