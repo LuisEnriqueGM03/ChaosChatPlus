@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.gif.GifDecoder;
 import com.chaos.chatplus.gif.GifInfo;
+import com.chaos.chatplus.gif.OnlineGifs;
 import com.chaos.chatplus.net.ChatPayloads;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -27,7 +28,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * GIFs animados en el cliente: los propios se piden al servidor y los de Tenor se descargan de media.tenor.com.
+ * GIFs animados en el cliente: los propios se piden al servidor y los de internet se descargan de su web (nekos.best o Klipy).
  * Se decodifican en otro hilo y cada frame se sube como textura.
  */
 public final class GifCache {
@@ -68,8 +69,9 @@ public final class GifCache {
 			} else {
 				created.failed = true;
 			}
-		} else if (info.url().startsWith("https://media.tenor.com/")) {
-			HttpRequest request = HttpRequest.newBuilder(URI.create(info.url())).timeout(Duration.ofSeconds(15)).GET().build();
+		} else if (OnlineGifs.allowedUrl(info.url())) {
+			HttpRequest request = HttpRequest.newBuilder(URI.create(info.url())).timeout(Duration.ofSeconds(15))
+					.header("User-Agent", "ChaosChatPlus/1.1 (Minecraft mod)").GET().build();
 			HTTP.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray()).whenComplete((response, error) -> {
 				if (error != null || response.statusCode() != 200 || response.body().length > MAX_BYTES) {
 					Minecraft.getInstance().execute(() -> created.failed = true);

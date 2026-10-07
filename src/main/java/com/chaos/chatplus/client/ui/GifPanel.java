@@ -21,7 +21,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
 
 /**
- * Pestaña GIFs del selector: buscador, GIFs del servidor y de Tenor (destacados o resultados), todos en celdas del
+ * Pestaña GIFs del selector: buscador, GIFs del servidor y de internet (destacados o resultados), todos en celdas del
  * mismo tamaño. Clic = se manda al chat.
  */
 public final class GifPanel {
@@ -173,10 +173,11 @@ public final class GifPanel {
 		int fy = y + h + 2;
 		if (hovered != null) {
 			g.drawString(font, font.plainSubstrByWidth(hovered.name(), w, false), x, fy, Ui.TEXT, false);
-		} else if (!ClientState.tenor()) {
-			g.drawString(font, font.plainSubstrByWidth(Lang.tr("gif.no_tenor").getString(), w, false), x, fy, Ui.MUTED, false);
+		} else if (ClientState.gifSource().isEmpty()) {
+			g.drawString(font, font.plainSubstrByWidth(Lang.tr("gif.no_online").getString(), w, false), x, fy, Ui.MUTED, false);
 		} else {
-			g.drawString(font, "Tenor", x + w - font.width("Tenor"), fy, Ui.MUTED, false);
+			String via = Lang.tr("gif.via", ClientState.gifSource()).getString();
+			g.drawString(font, via, x + w - font.width(via), fy, Ui.MUTED, false);
 		}
 	}
 

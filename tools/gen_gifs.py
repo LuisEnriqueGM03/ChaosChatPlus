@@ -93,12 +93,42 @@ def corazon_latido():
     return [place(h, s) for s in (3.0, 3.4, 3.8, 3.4, 3.0, 3.0)]
 
 
+SKIN = (255, 202, 40, 255)
+SKIN_D = (224, 160, 0, 255)
+LINE = (138, 90, 0, 255)
+CUFF = (66, 165, 245, 255)
+CUFF_D = (21, 101, 192, 255)
+
+
+def hand(flip):
+    """Mano de lado (palma hacia la derecha) a 32 px: dedos, pulgar y puño de la manga."""
+    img = Image.new("RGBA", (14, 30), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([1, 2, 11, 22], radius=5, fill=SKIN, outline=LINE)
+    for x in (4, 6, 8):  # separación de los dedos
+        d.line([(x, 3), (x, 8)], fill=SKIN_D)
+    d.line([(10, 10), (10, 20)], fill=SKIN_D)  # sombra del canto
+    d.ellipse([7, 11, 13, 19], fill=SKIN, outline=LINE)  # pulgar
+    d.line([(9, 13), (11, 16)], fill=SKIN_D)
+    d.rectangle([2, 22, 10, 28], fill=CUFF, outline=CUFF_D)
+    return img.transpose(Image.FLIP_LEFT_RIGHT) if flip else img
+
+
 def aplausos():
-    a = emoji("aplausos")
+    """Dos manos que se juntan y aplauden, con chispas al chocar (dibujado a 32 px y ampliado x2)."""
+    left = hand(False)
+    right = hand(True)
+    spark = (255, 238, 88, 255)
     frames = []
-    for k in range(4):
-        img = place(a, 3.3 if k % 2 else 3.0, dy=-2 if k % 2 else 1)
-        frames.append(img)
+    for gap, sparks in ((8, False), (4, False), (0, True), (0, True), (4, False), (8, False)):
+        small = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
+        small.alpha_composite(left, (16 - 13 - gap // 2, 1))
+        small.alpha_composite(right, (16 - 1 + gap // 2, 1))
+        if sparks:
+            d = ImageDraw.Draw(small)
+            for (x0, y0, x1, y1) in ((15, 0, 15, 2), (10, 1, 8, -1), (20, 1, 22, -1), (4, 6, 2, 5), (26, 6, 28, 5)):
+                d.line([(x0, y0), (x1, y1)], fill=spark)
+        frames.append(small.resize((SIZE, SIZE), Image.NEAREST))
     return frames
 
 
@@ -134,7 +164,7 @@ GIFS = [
     ("fuego", "Fuego", fuego, 110),
     ("tnt_boom", "TNT boom", tnt_boom, 120),
     ("corazon_latido", "Corazón latiendo", corazon_latido, 100),
-    ("aplausos", "Aplausos", aplausos, 140),
+    ("aplausos", "Aplausos", aplausos, 90),
     ("gg", "GG", gg, 150),
     ("risa", "Risa", risa, 90),
     ("ojos", "Ojos", ojos, 400),

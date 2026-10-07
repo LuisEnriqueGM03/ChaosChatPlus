@@ -119,9 +119,11 @@ public final class ChatConfig {
 	public static class Gifs {
 		public Access access = new Access(0);
 		public int cooldownSeconds = 5;
-		/** Clave de la API de Tenor (Google Cloud). Vacío = solo los GIFs propios. */
-		public String tenorKey = "";
-		/** Filtro de contenido de Tenor: off, low, medium o high. */
+		/** GIFs de reacciones de nekos.best (sin clave ni registro). */
+		public boolean nekosBest = true;
+		/** Clave gratuita de Klipy (klipy.com, el sucesor de Tenor). Si está, se busca en Klipy en lugar de nekos.best. */
+		public String klipyKey = "";
+		/** Filtro de contenido de Klipy: off, low, medium o high. */
 		public String contentFilter = "high";
 		/** Tope de los GIFs propios (como mucho 1000: un paquete no puede pasar de 1 MB). */
 		public int maxKilobytes = 1000;
@@ -209,7 +211,7 @@ public final class ChatConfig {
 		if (gifs == null) gifs = new Gifs();
 		if (gifs.access == null) gifs.access = new Access(0);
 		gifs.access.sanitize();
-		if (gifs.tenorKey == null) gifs.tenorKey = "";
+		if (gifs.klipyKey == null) gifs.klipyKey = "";
 		if (gifs.contentFilter == null) gifs.contentFilter = "high";
 		gifs.cooldownSeconds = Math.max(0, gifs.cooldownSeconds);
 		gifs.maxKilobytes = Math.max(64, Math.min(1000, gifs.maxKilobytes));

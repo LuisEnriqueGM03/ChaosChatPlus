@@ -17,7 +17,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Mensajes del servidor con estilo: muertes (💀 después del nombre, asesino en rojo y [Ver ítem] en el arma) y
+ * Mensajes del servidor con estilo: muertes (☠ después del nombre, asesino en rojo y [Ver ítem] en el arma) y
  * entrada/salida («➜ Luis entró al servidor», bienvenida la primera vez, «← Luis salió»).
  * Los emojis van como iconos decorativos: a quien no pueda verlos se le quitan solos (ChatTransform).
  */
@@ -25,6 +25,7 @@ public final class ServerMessages {
 
 	private static final int DEATH_TEXT = 0xD3D6DD;
 	private static final int KILLER = 0xFF8A80;
+	private static final int SKULL = 0xE8E8E8;
 	private static final int JOIN = 0x6BE38E;
 	private static final int FIRST_JOIN = 0xFFD54A;
 	private static final int LEAVE = 0x9AA0A6;
@@ -44,7 +45,7 @@ public final class ServerMessages {
 		}
 		Object[] args = t.getArgs().clone();
 		if (args[0] instanceof Component victim) {
-			args[0] = Component.empty().append(victim).append(icon("calavera"));
+			args[0] = Component.empty().append(victim).append(Component.literal(" ☠").withColor(SKULL));
 		}
 		if (args.length > 1 && args[1] instanceof Component killer) {
 			args[1] = Component.empty().withColor(KILLER).append(killer);

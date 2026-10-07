@@ -47,16 +47,16 @@ public final class GifServer {
 		List<GifInfo> local = GifRegistry.search(query);
 		MinecraftServer server = player.server;
 		UUID id = player.getUUID();
-		Tenor.search(query).thenAccept(tenor -> server.execute(() -> {
+		OnlineGifs.search(query).thenAccept(online -> server.execute(() -> {
 			ServerPlayer p = server.getPlayerList().getPlayer(id);
 			if (p == null) {
 				return;
 			}
 			JsonObject o = new JsonObject();
 			o.addProperty("query", query);
-			o.addProperty("tenor", Tenor.enabled());
+			o.addProperty("source", OnlineGifs.sourceName());
 			o.add("local", array(local));
-			o.add("results", array(tenor));
+			o.add("results", array(online));
 			ServerPlayNetworking.send(p, new ChatPayloads.GifResults(ChatPayloads.gzip(o.toString())));
 		}));
 	}
@@ -84,7 +84,7 @@ public final class GifServer {
 			player.sendSystemMessage(Lang.tr("cooldown", left).withStyle(ChatFormatting.RED));
 			return;
 		}
-		GifInfo info = id.startsWith(GifInfo.LOCAL) ? GifRegistry.info(id) : Tenor.known(id);
+		GifInfo info = id.startsWith(GifInfo.LOCAL) ? GifRegistry.info(id) : OnlineGifs.known(id);
 		if (info == null) {
 			player.sendSystemMessage(Lang.tr("gif.not_found").withStyle(ChatFormatting.RED));
 			return;

@@ -39,6 +39,7 @@ public final class ShotCapture {
 	private static final int MAX_WIDTH = 960;
 
 	private static boolean cameraMode;
+	private static double zoom = 1.0;
 	private static int countdown = -1;
 
 	private ShotCapture() {}
@@ -52,6 +53,16 @@ public final class ShotCapture {
 		mc.setScreen(null);
 		cameraMode = true;
 		countdown = -1;
+		zoom = 1.0;
+	}
+
+	public static double zoom() {
+		return zoom;
+	}
+
+	/** Rueda del ratón en modo cámara: acercar o alejar (x1 a x8). */
+	public static void scrollZoom(double amount) {
+		zoom = Math.max(1.0, Math.min(8.0, zoom * (amount > 0 ? 1.15 : 1 / 1.15)));
 	}
 
 	public static boolean cameraMode() {
@@ -73,6 +84,7 @@ public final class ShotCapture {
 	public static void cancel() {
 		cameraMode = false;
 		countdown = -1;
+		zoom = 1.0;
 	}
 
 	/** Inicio del tick: los clics del modo cámara no pegan ni rompen bloques. */
@@ -132,7 +144,9 @@ public final class ShotCapture {
 		}
 		// Punto central.
 		g.fill(w / 2 - 1, h / 2 - 1, w / 2 + 1, h / 2 + 1, 0x99FFFFFF);
-		Component title = Lang.tr("camera.title");
+		Component title = zoom > 1.01
+				? Lang.tr("camera.title").append(String.format(" · x%.1f", zoom))
+				: Lang.tr("camera.title");
 		int tw = mc.font.width(title) + 22;
 		Ui.round(g, w / 2 - tw / 2, m + 2, w / 2 + tw / 2, m + 16, 5, 0xAA111318);
 		g.blit(ChaosChatPlus.id("textures/gui/btn_shot.png"), w / 2 - tw / 2 + 5, m + 5, 8, 8, 0, 0, 16, 16, 16, 16);

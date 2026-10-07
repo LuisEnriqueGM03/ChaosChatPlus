@@ -13,7 +13,7 @@ import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.Emoji;
 import com.chaos.chatplus.emoji.EmojiRegistry;
 import com.chaos.chatplus.gif.GifServer;
-import com.chaos.chatplus.gif.Tenor;
+import com.chaos.chatplus.gif.OnlineGifs;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.chaos.chatplus.pack.PackHost;
 import com.chaos.chatplus.perm.Perms;
@@ -143,7 +143,7 @@ public final class ChatServer {
 		o.addProperty("maxShotKb", cfg.screenshots.maxKilobytes);
 		o.addProperty("pack", PackHost.hasPack(player));
 		o.addProperty("gifs", GifServer.canUse(player));
-		o.addProperty("tenor", Tenor.enabled());
+		o.addProperty("gifSource", OnlineGifs.sourceName());
 		JsonArray special = new JsonArray();
 		ChatDecorator.specialMentions(player).forEach(special::add);
 		if (Perms.canMentionRanks(player)) {

@@ -12,12 +12,14 @@
 		"ServerPlayerMixin"
 	],
 	"client": [
+		"client.CameraZoomMixin",
 		"client.ChatComponentAccessor",
 		"client.ChatComponentMixin",
 		"client.ChatScreenMixin",
 		"client.EditBoxAccessor",
 		"client.GuiMixin",
-		"client.KeyboardHandlerMixin"
+		"client.KeyboardHandlerMixin",
+		"client.MouseHandlerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

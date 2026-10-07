@@ -47,7 +47,7 @@ public final class ClientState {
 	private static boolean pack;
 	private static boolean blurShots;
 	private static boolean gifs;
-	private static boolean tenor;
+	private static String gifSource = "";
 	private static int mentionColor = 0x7AA2FF;
 	private static int maxShotKb = 512;
 	private static List<String> specialMentions = List.of();
@@ -69,7 +69,7 @@ public final class ClientState {
 			pack = bool(o, "pack");
 			blurShots = bool(o, "blurShots");
 			gifs = bool(o, "gifs");
-			tenor = bool(o, "tenor");
+			gifSource = o.has("gifSource") ? o.get("gifSource").getAsString() : "";
 			mentionColor = o.has("mentionColor") ? o.get("mentionColor").getAsInt() : 0x7AA2FF;
 			maxShotKb = o.has("maxShotKb") ? o.get("maxShotKb").getAsInt() : 512;
 			List<String> special = new ArrayList<>();
@@ -112,7 +112,8 @@ public final class ClientState {
 
 	public static void reset() {
 		serverMod = false;
-		items = shots = upload = pack = blurShots = gifs = tenor = false;
+		items = shots = upload = pack = blurShots = gifs = false;
+		gifSource = "";
 		mentions = true;
 		specialMentions = List.of();
 		emojis = List.of();
@@ -149,8 +150,9 @@ public final class ClientState {
 		return serverMod && gifs;
 	}
 
-	public static boolean tenor() {
-		return tenor;
+	/** Fuente de GIFs de internet del servidor ("nekos.best", "Klipy" o "" si no hay). */
+	public static String gifSource() {
+		return gifSource;
 	}
 
 	public static boolean blurShots() {
