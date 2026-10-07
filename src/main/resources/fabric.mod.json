@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "chaoschatplus",
+	"version": "${version}",
+	"name": "Chaos ChatPlus",
+	"description": "Chat moderno: emojis (también para clientes vanilla), emojis propios, mostrar ítems del inventario, menciones @nombre con aviso y capturas del juego moderadas. Con Chaos Ranks instalado muestra tu etiqueta de rango al escribir.",
+	"authors": [
+		"Luis Enrique Gil Mayser"
+	],
+	"license": "MIT",
+	"icon": "assets/chaoschatplus/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.chaos.chatplus.ChaosChatPlus"
+		],
+		"client": [
+			"com.chaos.chatplus.client.ChaosChatPlusClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.16.0",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"chaosranks": "*"
+	},
+	"mixins": [
+		"chaoschatplus.mixins.json"
+	]
+}

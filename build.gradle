@@ -1,0 +1,63 @@
+plugins {
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id 'maven-publish'
+}
+
+loom {
+	mods {
+		"chaoschatplus" {
+			sourceSet sourceSets.main
+		}
+	}
+
+	runs {
+		// Servidor de pruebas en su propia carpeta: ./gradlew runServer
+		server {
+			runDir "run-server"
+		}
+		// Cliente que entra directo al servidor local como "Luis": ./gradlew runJoinServer
+		joinServer {
+			client()
+			name "Join Server"
+			programArgs "--username", "Luis", "--quickPlayMultiplayer", "localhost:25565"
+			vmArg "-Dchaoschatplus.selftest=" + (project.findProperty("selftest") ?: "false")
+		}
+		// Segundo jugador ("Pepe"), que se porta como un cliente sin el mod: ./gradlew runJoinVanilla
+		joinVanilla {
+			client()
+			name "Join Server (vanilla)"
+			runDir "run2"
+			programArgs "--username", "Pepe", "--quickPlayMultiplayer", "localhost:25565"
+			vmArg "-Dchaoschatplus.forceVanilla=true"
+			vmArg "-Dchaoschatplus.selftest=" + (project.findProperty("selftest") ?: "false")
+		}
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+}
+
+processResources {
+	def version = project.version
+	inputs.property "version", version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+	it.options.encoding = "UTF-8"
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}

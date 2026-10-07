@@ -1,0 +1,1058 @@
+[
+	{
+		"name": "sonrisa",
+		"aliases": [
+			"smile",
+			"smiley"
+		],
+		"category": "caras",
+		"unicode": [
+			"🙂",
+			"😀",
+			"😃"
+		],
+		"codepoint": 57344
+	},
+	{
+		"name": "feliz",
+		"aliases": [
+			"blush",
+			"happy"
+		],
+		"category": "caras",
+		"unicode": [
+			"😊",
+			"☺"
+		],
+		"codepoint": 57345
+	},
+	{
+		"name": "risa",
+		"aliases": [
+			"grin",
+			"grinning"
+		],
+		"category": "caras",
+		"unicode": [
+			"😁",
+			"😄"
+		],
+		"codepoint": 57346
+	},
+	{
+		"name": "jaja",
+		"aliases": [
+			"laughing",
+			"xd",
+			"lol"
+		],
+		"category": "caras",
+		"unicode": [
+			"😆"
+		],
+		"codepoint": 57347
+	},
+	{
+		"name": "llorar_risa",
+		"aliases": [
+			"joy",
+			"rofl"
+		],
+		"category": "caras",
+		"unicode": [
+			"😂",
+			"🤣"
+		],
+		"codepoint": 57348
+	},
+	{
+		"name": "sudor",
+		"aliases": [
+			"sweat_smile"
+		],
+		"category": "caras",
+		"unicode": [
+			"😅"
+		],
+		"codepoint": 57349
+	},
+	{
+		"name": "guino",
+		"aliases": [
+			"wink"
+		],
+		"category": "caras",
+		"unicode": [
+			"😉",
+			"😜"
+		],
+		"codepoint": 57350
+	},
+	{
+		"name": "enamorado",
+		"aliases": [
+			"heart_eyes",
+			"love"
+		],
+		"category": "caras",
+		"unicode": [
+			"😍",
+			"🥰"
+		],
+		"codepoint": 57351
+	},
+	{
+		"name": "estrellas",
+		"aliases": [
+			"star_struck",
+			"wow"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤩"
+		],
+		"codepoint": 57352
+	},
+	{
+		"name": "beso",
+		"aliases": [
+			"kiss",
+			"kissing_heart"
+		],
+		"category": "caras",
+		"unicode": [
+			"😘",
+			"😗"
+		],
+		"codepoint": 57353
+	},
+	{
+		"name": "lengua",
+		"aliases": [
+			"tongue",
+			"yum"
+		],
+		"category": "caras",
+		"unicode": [
+			"😛",
+			"😋"
+		],
+		"codepoint": 57354
+	},
+	{
+		"name": "loco",
+		"aliases": [
+			"crazy",
+			"zany"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤪"
+		],
+		"codepoint": 57355
+	},
+	{
+		"name": "cool",
+		"aliases": [
+			"sunglasses",
+			"gafas"
+		],
+		"category": "caras",
+		"unicode": [
+			"😎"
+		],
+		"codepoint": 57356
+	},
+	{
+		"name": "nerd",
+		"aliases": [
+			"nerd_face"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤓"
+		],
+		"codepoint": 57357
+	},
+	{
+		"name": "angel",
+		"aliases": [
+			"innocent",
+			"halo"
+		],
+		"category": "caras",
+		"unicode": [
+			"😇"
+		],
+		"codepoint": 57358
+	},
+	{
+		"name": "neutral",
+		"aliases": [
+			"neutral_face"
+		],
+		"category": "caras",
+		"unicode": [
+			"😐"
+		],
+		"codepoint": 57359
+	},
+	{
+		"name": "inexpresivo",
+		"aliases": [
+			"expressionless"
+		],
+		"category": "caras",
+		"unicode": [
+			"😑"
+		],
+		"codepoint": 57360
+	},
+	{
+		"name": "aburrido",
+		"aliases": [
+			"unamused",
+			"meh"
+		],
+		"category": "caras",
+		"unicode": [
+			"😒"
+		],
+		"codepoint": 57361
+	},
+	{
+		"name": "ojos_blanco",
+		"aliases": [
+			"rolling_eyes",
+			"roll"
+		],
+		"category": "caras",
+		"unicode": [
+			"🙄"
+		],
+		"codepoint": 57362
+	},
+	{
+		"name": "picaro",
+		"aliases": [
+			"smirk"
+		],
+		"category": "caras",
+		"unicode": [
+			"😏"
+		],
+		"codepoint": 57363
+	},
+	{
+		"name": "pensativo",
+		"aliases": [
+			"thinking",
+			"hmm"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤔"
+		],
+		"codepoint": 57364
+	},
+	{
+		"name": "triste",
+		"aliases": [
+			"sad",
+			"pensive"
+		],
+		"category": "caras",
+		"unicode": [
+			"😔",
+			"🙁",
+			"☹"
+		],
+		"codepoint": 57365
+	},
+	{
+		"name": "llorar",
+		"aliases": [
+			"cry"
+		],
+		"category": "caras",
+		"unicode": [
+			"😢"
+		],
+		"codepoint": 57366
+	},
+	{
+		"name": "llanto",
+		"aliases": [
+			"sob"
+		],
+		"category": "caras",
+		"unicode": [
+			"😭"
+		],
+		"codepoint": 57367
+	},
+	{
+		"name": "suplicar",
+		"aliases": [
+			"pleading",
+			"plis",
+			"please"
+		],
+		"category": "caras",
+		"unicode": [
+			"🥺"
+		],
+		"codepoint": 57368
+	},
+	{
+		"name": "enojado",
+		"aliases": [
+			"angry"
+		],
+		"category": "caras",
+		"unicode": [
+			"😠",
+			"😤"
+		],
+		"codepoint": 57369
+	},
+	{
+		"name": "furioso",
+		"aliases": [
+			"rage"
+		],
+		"category": "caras",
+		"unicode": [
+			"😡",
+			"🤬"
+		],
+		"codepoint": 57370
+	},
+	{
+		"name": "sorpresa",
+		"aliases": [
+			"open_mouth",
+			"surprised"
+		],
+		"category": "caras",
+		"unicode": [
+			"😮",
+			"😲"
+		],
+		"codepoint": 57371
+	},
+	{
+		"name": "asombro",
+		"aliases": [
+			"hushed",
+			"o_o"
+		],
+		"category": "caras",
+		"unicode": [
+			"😯"
+		],
+		"codepoint": 57372
+	},
+	{
+		"name": "grito",
+		"aliases": [
+			"scream"
+		],
+		"category": "caras",
+		"unicode": [
+			"😱"
+		],
+		"codepoint": 57373
+	},
+	{
+		"name": "dormido",
+		"aliases": [
+			"sleeping",
+			"sleepy"
+		],
+		"category": "caras",
+		"unicode": [
+			"😴"
+		],
+		"codepoint": 57374
+	},
+	{
+		"name": "mareado",
+		"aliases": [
+			"dizzy_face",
+			"dizzy"
+		],
+		"category": "caras",
+		"unicode": [
+			"😵",
+			"😵‍💫"
+		],
+		"codepoint": 57375
+	},
+	{
+		"name": "enfermo",
+		"aliases": [
+			"sick",
+			"nauseated"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤢",
+			"🤮"
+		],
+		"codepoint": 57376
+	},
+	{
+		"name": "frio",
+		"aliases": [
+			"cold",
+			"cold_face"
+		],
+		"category": "caras",
+		"unicode": [
+			"🥶"
+		],
+		"codepoint": 57377
+	},
+	{
+		"name": "calor",
+		"aliases": [
+			"hot",
+			"hot_face"
+		],
+		"category": "caras",
+		"unicode": [
+			"🥵"
+		],
+		"codepoint": 57378
+	},
+	{
+		"name": "dinero",
+		"aliases": [
+			"money",
+			"money_mouth"
+		],
+		"category": "caras",
+		"unicode": [
+			"🤑"
+		],
+		"codepoint": 57379
+	},
+	{
+		"name": "fiesta",
+		"aliases": [
+			"party",
+			"partying"
+		],
+		"category": "caras",
+		"unicode": [
+			"🥳"
+		],
+		"codepoint": 57380
+	},
+	{
+		"name": "diablo",
+		"aliases": [
+			"devil",
+			"smiling_imp"
+		],
+		"category": "caras",
+		"unicode": [
+			"😈"
+		],
+		"codepoint": 57381
+	},
+	{
+		"name": "calavera",
+		"aliases": [
+			"skull",
+			"dead"
+		],
+		"category": "caras",
+		"unicode": [
+			"💀",
+			"☠"
+		],
+		"codepoint": 57382
+	},
+	{
+		"name": "fantasma",
+		"aliases": [
+			"ghost"
+		],
+		"category": "caras",
+		"unicode": [
+			"👻"
+		],
+		"codepoint": 57383
+	},
+	{
+		"name": "caca",
+		"aliases": [
+			"poop"
+		],
+		"category": "caras",
+		"unicode": [
+			"💩"
+		],
+		"codepoint": 57384
+	},
+	{
+		"name": "corazon",
+		"aliases": [
+			"heart",
+			"red_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"❤",
+			"❤️",
+			"♥"
+		],
+		"codepoint": 57385
+	},
+	{
+		"name": "corazon_naranja",
+		"aliases": [
+			"orange_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"🧡"
+		],
+		"codepoint": 57386
+	},
+	{
+		"name": "corazon_amarillo",
+		"aliases": [
+			"yellow_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"💛"
+		],
+		"codepoint": 57387
+	},
+	{
+		"name": "corazon_verde",
+		"aliases": [
+			"green_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"💚"
+		],
+		"codepoint": 57388
+	},
+	{
+		"name": "corazon_azul",
+		"aliases": [
+			"blue_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"💙"
+		],
+		"codepoint": 57389
+	},
+	{
+		"name": "corazon_morado",
+		"aliases": [
+			"purple_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"💜"
+		],
+		"codepoint": 57390
+	},
+	{
+		"name": "corazon_negro",
+		"aliases": [
+			"black_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"🖤"
+		],
+		"codepoint": 57391
+	},
+	{
+		"name": "corazon_blanco",
+		"aliases": [
+			"white_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"🤍"
+		],
+		"codepoint": 57392
+	},
+	{
+		"name": "corazon_roto",
+		"aliases": [
+			"broken_heart"
+		],
+		"category": "corazones",
+		"unicode": [
+			"💔"
+		],
+		"codepoint": 57393
+	},
+	{
+		"name": "pulgar_arriba",
+		"aliases": [
+			"thumbsup",
+			"like",
+			"+1"
+		],
+		"category": "gestos",
+		"unicode": [
+			"👍"
+		],
+		"codepoint": 57394
+	},
+	{
+		"name": "pulgar_abajo",
+		"aliases": [
+			"thumbsdown",
+			"dislike",
+			"-1"
+		],
+		"category": "gestos",
+		"unicode": [
+			"👎"
+		],
+		"codepoint": 57395
+	},
+	{
+		"name": "ok",
+		"aliases": [
+			"ok_hand"
+		],
+		"category": "gestos",
+		"unicode": [
+			"👌"
+		],
+		"codepoint": 57396
+	},
+	{
+		"name": "aplausos",
+		"aliases": [
+			"clap"
+		],
+		"category": "gestos",
+		"unicode": [
+			"👏"
+		],
+		"codepoint": 57397
+	},
+	{
+		"name": "rezar",
+		"aliases": [
+			"pray",
+			"gracias",
+			"thanks"
+		],
+		"category": "gestos",
+		"unicode": [
+			"🙏"
+		],
+		"codepoint": 57398
+	},
+	{
+		"name": "saludo",
+		"aliases": [
+			"wave",
+			"hola",
+			"hi"
+		],
+		"category": "gestos",
+		"unicode": [
+			"👋"
+		],
+		"codepoint": 57399
+	},
+	{
+		"name": "musculo",
+		"aliases": [
+			"muscle",
+			"strong"
+		],
+		"category": "gestos",
+		"unicode": [
+			"💪"
+		],
+		"codepoint": 57400
+	},
+	{
+		"name": "ojos",
+		"aliases": [
+			"eyes"
+		],
+		"category": "gestos",
+		"unicode": [
+			"👀"
+		],
+		"codepoint": 57401
+	},
+	{
+		"name": "fuego",
+		"aliases": [
+			"fire",
+			"lit"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"🔥"
+		],
+		"codepoint": 57402
+	},
+	{
+		"name": "estrella",
+		"aliases": [
+			"star"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"⭐",
+			"🌟"
+		],
+		"codepoint": 57403
+	},
+	{
+		"name": "brillos",
+		"aliases": [
+			"sparkles"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"✨"
+		],
+		"codepoint": 57404
+	},
+	{
+		"name": "cien",
+		"aliases": [
+			"100"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"💯"
+		],
+		"codepoint": 57405
+	},
+	{
+		"name": "check",
+		"aliases": [
+			"white_check_mark",
+			"si",
+			"yes"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"✅",
+			"✔"
+		],
+		"codepoint": 57406
+	},
+	{
+		"name": "cruz",
+		"aliases": [
+			"x",
+			"no"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"❌",
+			"✖"
+		],
+		"codepoint": 57407
+	},
+	{
+		"name": "alerta",
+		"aliases": [
+			"warning"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"⚠",
+			"⚠️"
+		],
+		"codepoint": 57408
+	},
+	{
+		"name": "pregunta",
+		"aliases": [
+			"question"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"❓"
+		],
+		"codepoint": 57409
+	},
+	{
+		"name": "exclamacion",
+		"aliases": [
+			"exclamation"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"❗"
+		],
+		"codepoint": 57410
+	},
+	{
+		"name": "zzz",
+		"aliases": [
+			"zz"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"💤"
+		],
+		"codepoint": 57411
+	},
+	{
+		"name": "musica",
+		"aliases": [
+			"music",
+			"notes"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"🎵",
+			"🎶"
+		],
+		"codepoint": 57412
+	},
+	{
+		"name": "rayo",
+		"aliases": [
+			"zap",
+			"lightning"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"⚡"
+		],
+		"codepoint": 57413
+	},
+	{
+		"name": "gg",
+		"aliases": [
+			"good_game"
+		],
+		"category": "simbolos",
+		"unicode": [],
+		"codepoint": 57414
+	},
+	{
+		"name": "chat",
+		"aliases": [
+			"speech",
+			"speech_balloon"
+		],
+		"category": "simbolos",
+		"unicode": [
+			"💬"
+		],
+		"codepoint": 57415
+	},
+	{
+		"name": "corona",
+		"aliases": [
+			"crown"
+		],
+		"category": "objetos",
+		"unicode": [
+			"👑"
+		],
+		"codepoint": 57416
+	},
+	{
+		"name": "trofeo",
+		"aliases": [
+			"trophy"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🏆"
+		],
+		"codepoint": 57417
+	},
+	{
+		"name": "regalo",
+		"aliases": [
+			"gift"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🎁"
+		],
+		"codepoint": 57418
+	},
+	{
+		"name": "pastel",
+		"aliases": [
+			"cake",
+			"birthday"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🎂",
+			"🍰"
+		],
+		"codepoint": 57419
+	},
+	{
+		"name": "cafe",
+		"aliases": [
+			"coffee"
+		],
+		"category": "objetos",
+		"unicode": [
+			"☕"
+		],
+		"codepoint": 57420
+	},
+	{
+		"name": "pizza",
+		"aliases": [],
+		"category": "objetos",
+		"unicode": [
+			"🍕"
+		],
+		"codepoint": 57421
+	},
+	{
+		"name": "confeti",
+		"aliases": [
+			"tada",
+			"confetti"
+		],
+		"category": "objetos",
+		"unicode": [
+			"🎉",
+			"🎊"
+		],
+		"codepoint": 57422
+	},
+	{
+		"name": "camara",
+		"aliases": [
+			"camera"
+		],
+		"category": "objetos",
+		"unicode": [
+			"📷",
+			"📸"
+		],
+		"codepoint": 57423
+	},
+	{
+		"name": "diamante",
+		"aliases": [
+			"diamond"
+		],
+		"category": "minecraft",
+		"unicode": [
+			"💎"
+		],
+		"codepoint": 57424
+	},
+	{
+		"name": "esmeralda",
+		"aliases": [
+			"emerald"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57425
+	},
+	{
+		"name": "oro",
+		"aliases": [
+			"gold",
+			"gold_ingot"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57426
+	},
+	{
+		"name": "espada",
+		"aliases": [
+			"sword"
+		],
+		"category": "minecraft",
+		"unicode": [
+			"🗡",
+			"⚔"
+		],
+		"codepoint": 57427
+	},
+	{
+		"name": "pico",
+		"aliases": [
+			"pickaxe"
+		],
+		"category": "minecraft",
+		"unicode": [
+			"⛏"
+		],
+		"codepoint": 57428
+	},
+	{
+		"name": "tnt",
+		"aliases": [
+			"dynamite",
+			"boom"
+		],
+		"category": "minecraft",
+		"unicode": [
+			"🧨",
+			"💥"
+		],
+		"codepoint": 57429
+	},
+	{
+		"name": "creeper",
+		"aliases": [],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57430
+	},
+	{
+		"name": "manzana",
+		"aliases": [
+			"apple"
+		],
+		"category": "minecraft",
+		"unicode": [
+			"🍎"
+		],
+		"codepoint": 57431
+	},
+	{
+		"name": "cama",
+		"aliases": [
+			"bed"
+		],
+		"category": "minecraft",
+		"unicode": [
+			"🛏"
+		],
+		"codepoint": 57432
+	},
+	{
+		"name": "portal",
+		"aliases": [
+			"nether_portal"
+		],
+		"category": "minecraft",
+		"unicode": [],
+		"codepoint": 57433
+	}
+]
