@@ -119,8 +119,6 @@ public final class ChatConfig {
 	public static class Gifs {
 		public Access access = new Access(0);
 		public int cooldownSeconds = 5;
-		/** GIFs reales con licencia libre de Wikimedia Commons (sin clave). */
-		public boolean wikimedia = true;
 		/** GIFs de reacciones de anime de nekos.best (sin clave ni registro). */
 		public boolean nekosBest = true;
 		/** Clave gratuita de Klipy (klipy.com, el sucesor de Tenor). Si está, se busca en Klipy en lugar de nekos.best. */
