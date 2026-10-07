@@ -29,8 +29,8 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class ChatBar {
 
-	private static final int ICON = 8;
-	private static final int BOX = 12;
+	private static final int ICON = 12;
+	private static final int BOX = 14;
 	private static final int GAP = 3;
 	private static final int MAX_LENGTH = 256;
 	private static final long LIMIT_NOTICE_MS = 2500;
@@ -197,7 +197,11 @@ public final class ChatBar {
 			int fill = active ? 0x447AA2FF : hover ? 0x33FFFFFF : 0x22000000;
 			Ui.roundBordered(g, x, by, x + BOX, by + BOX, 3, fill, border);
 			g.setColor(1, 1, 1, hover || active ? 1.0F : 0.75F);
-			g.blit(icon(b.icon()), x + (BOX - ICON) / 2, by + (BOX - ICON) / 2, ICON, ICON, 0, 0, 16, 16, 16, 16);
+			Ui.smooth(icon(b.icon()));
+			com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+			com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
+			g.blit(icon(b.icon()), x + (BOX - ICON) / 2, by + (BOX - ICON) / 2, ICON, ICON, 0, 0, 32, 32, 32, 32);
+			com.mojang.blaze3d.systems.RenderSystem.disableBlend();
 			g.setColor(1, 1, 1, 1);
 			if (hover) {
 				hovered = b;

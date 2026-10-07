@@ -149,7 +149,8 @@ public final class ShotCapture {
 				: Lang.tr("camera.title");
 		int tw = mc.font.width(title) + 22;
 		Ui.round(g, w / 2 - tw / 2, m + 2, w / 2 + tw / 2, m + 16, 5, 0xAA111318);
-		g.blit(ChaosChatPlus.id("textures/gui/btn_shot.png"), w / 2 - tw / 2 + 5, m + 5, 8, 8, 0, 0, 16, 16, 16, 16);
+		com.chaos.chatplus.client.ui.Ui.smooth(ChaosChatPlus.id("textures/gui/btn_shot.png"));
+		g.blit(ChaosChatPlus.id("textures/gui/btn_shot.png"), w / 2 - tw / 2 + 5, m + 5, 8, 8, 0, 0, 32, 32, 32, 32);
 		g.drawString(mc.font, title, w / 2 - tw / 2 + 16, m + 5, 0xFFFFFFFF, false);
 		Component hint = Lang.tr("camera.hint");
 		int hw = mc.font.width(hint) + 16;

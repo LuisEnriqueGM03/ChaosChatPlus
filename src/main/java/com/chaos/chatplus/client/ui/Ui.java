@@ -60,4 +60,12 @@ public final class Ui {
 	public static boolean inside(double mx, double my, int x0, int y0, int x1, int y1) {
 		return mx >= x0 && mx < x1 && my >= y0 && my < y1;
 	}
+
+	/**
+	 * Filtro suave (bilineal) para una textura que se dibuja más pequeña que su tamaño real: sin él, los emojis de 32 px
+	 * reducidos a 9 px se ven con los bordes rotos.
+	 */
+	public static void smooth(net.minecraft.resources.ResourceLocation id) {
+		net.minecraft.client.Minecraft.getInstance().getTextureManager().getTexture(id).setFilter(true, false);
+	}
 }

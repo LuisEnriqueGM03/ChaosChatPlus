@@ -115,7 +115,32 @@ class Canvas:
         self.img.alpha_composite(layer.img)
 
     def done(self):
-        return self.img.resize((OUT, OUT), Image.LANCZOS)
+        return bleed(self.img.resize((OUT, OUT), Image.LANCZOS))
+
+
+def bleed(img):
+    """Pone en los píxeles transparentes el color del borde más cercano (su alfa sigue en 0). Así, al dibujar el
+    emoji reducido con filtro suave, el borde no se mezcla con negro y no salen halos oscuros."""
+    import numpy as np
+    a = np.asarray(img).astype(np.float32)
+    rgb_, al = a[..., :3], a[..., 3:4] / 255.0
+    acc, w = rgb_ * al, al.copy()
+    out = a.copy()
+    filled = al[..., 0] > 0
+    for _ in range(OUT):
+        if filled.all():
+            break
+        pad_acc = np.pad(acc, ((1, 1), (1, 1), (0, 0)), mode="edge")
+        pad_w = np.pad(w, ((1, 1), (1, 1), (0, 0)), mode="edge")
+        s_acc = sum(pad_acc[1 + dy:1 + dy + OUT, 1 + dx:1 + dx + OUT] for dy in (-1, 0, 1) for dx in (-1, 0, 1))
+        s_w = sum(pad_w[1 + dy:1 + dy + OUT, 1 + dx:1 + dx + OUT] for dy in (-1, 0, 1) for dx in (-1, 0, 1))
+        new = (~filled) & (s_w[..., 0] > 0)
+        col = s_acc / np.maximum(s_w, 1e-6)
+        out[new, :3] = col[new]
+        acc[new] = col[new]
+        w[new] = 1.0
+        filled = filled | new
+    return Image.fromarray(np.clip(out, 0, 255).astype(np.uint8), "RGBA")
 
 
 def star_pts(cx, cy, r_out, r_in, n=5, rot=-90):
@@ -788,3 +813,42 @@ def e_explota():
 
 HD = {name[2:]: fn for name, fn in list(globals().items()) if name.startswith("e_") and callable(fn)}
 # El de serie se llama "caca" pero en gen_emojis su función es e_payaso_caca.
+
+
+# ---------------------------------------------------------------- iconos de la barra (blancos, 32x32)
+
+def gui_icons():
+    w = rgb("F2F2F2")
+    icons = {}
+
+    c = Canvas()
+    c.circle(16, 16, 13, None, w, 2.6)
+    c.ellipse(10.5, 10, 13.5, 15, w); c.ellipse(18.5, 10, 21.5, 15, w)
+    c.arc(9, 12, 23, 24, 25, 155, w, 2.6)
+    icons["btn_emoji"] = c.done()
+
+    c = Canvas()
+    s = Canvas(direct=True)
+    s.poly([(14.2, 2), (17.8, 2), (17.8, 20), (16, 22.5), (14.2, 20)], w)
+    s.rrect(9.5, 20.5, 22.5, 23.5, 1.2, w)
+    s.rrect(14.6, 23, 17.4, 29, 1, w)
+    s.circle(16, 30, 1.8, w)
+    c.img.alpha_composite(s.img.rotate(-45, center=(128, 128), resample=Image.BICUBIC))
+    icons["btn_item"] = c.done()
+
+    c = Canvas()
+    c.rrect(10, 4.5, 22, 9, 1.5, w)
+    c.rrect(2.5, 7.5, 29.5, 27, 4, None, w, 2.6)
+    c.circle(16, 17, 5.6, None, w, 2.6)
+    c.circle(24.5, 12.2, 1.5, w)
+    icons["btn_shot"] = c.done()
+
+    c = Canvas()
+    c.rrect(2.5, 6.5, 29.5, 25.5, 3.5, None, w, 2.6)
+    c.line([(4, 8.5), (16, 17.5), (28, 8.5)], w, 2.6)
+    icons["btn_dm"] = c.done()
+
+    c = Canvas()
+    c.poly([(3, 4), (30, 16), (3, 28), (7.5, 16)], w)
+    icons["btn_send"] = c.done()
+    return icons

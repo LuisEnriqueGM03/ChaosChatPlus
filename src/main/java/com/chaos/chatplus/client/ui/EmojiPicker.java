@@ -24,9 +24,9 @@ import net.minecraft.util.Mth;
  */
 public final class EmojiPicker {
 
-	private static final int COLS = 12;
-	private static final int ROWS = 7;
-	private static final int CELL = 13;
+	private static final int COLS = 10;
+	private static final int ROWS = 6;
+	private static final int CELL = 19;
 	private static final int TAB = 12;
 	private static final int PAD = 4;
 	public static final int WIDTH = COLS * CELL + PAD * 2;
@@ -178,7 +178,7 @@ public final class EmojiPicker {
 			}
 			ClientState.ClientEmoji icon = ClientState.emoji(t.icon());
 			if (icon != null) {
-				EmojiTextures.draw(g, icon, tx + 2, y + PAD + 2, 8);
+				EmojiTextures.draw(g, icon, tx + 1, y + PAD + 1, 10);
 			} else {
 				g.drawString(font, t.icon(), tx + (TAB - font.width(t.icon())) / 2 + 1, y + PAD + 2, sel ? Ui.MENTION : Ui.MUTED, false);
 			}
@@ -202,7 +202,7 @@ public final class EmojiPicker {
 				Ui.round(g, cx, cy, cx + CELL, cy + CELL, 3, Ui.HOVER);
 				hovered = e;
 			}
-			EmojiTextures.draw(g, e, cx + 2, cy + 2, 9);
+			EmojiTextures.draw(g, e, cx + 1, cy + 1, 17);
 			if (ClientPrefs.get().favoriteEmojis.contains(e.name()) && !tab.equals("favorites")) {
 				g.fill(cx + CELL - 3, cy + 1, cx + CELL - 1, cy + 3, Ui.MENTION);
 			}

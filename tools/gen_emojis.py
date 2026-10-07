@@ -1461,7 +1461,8 @@ def main():
     all_emojis = EMOJIS + EXTRA
     gui_dir = os.path.join(ASSETS, "textures", "gui")
     os.makedirs(gui_dir, exist_ok=True)
-    for name, img in gui_icons().items():
+    from emoji_hd import gui_icons as gui_icons_hd
+    for name, img in gui_icons_hd().items():
         img.save(os.path.join(gui_dir, name + ".png"))
     tex_dir = os.path.join(ASSETS, "textures", "emoji")
     os.makedirs(tex_dir, exist_ok=True)
