@@ -30,7 +30,7 @@ public final class ChatTransform {
 		if (emoji == null || !(PackHost.hasPack(viewer) || (ChatServer.isModded(viewer) && emoji.builtin()))) {
 			return Component.empty();
 		}
-		return Component.literal(" ").append(ChatMarks.emoji(emoji));
+		return Component.literal(" ").append(ChatMarks.icon(emoji));
 	}
 
 	public static Component forRecipient(ServerPlayer viewer, Component message) {
@@ -49,6 +49,9 @@ public final class ChatTransform {
 				boolean visible = pack || (modded && emoji != null && emoji.builtin());
 				if (visible) {
 					return node;
+				}
+				if (node.getStyle().getInsertion() == null) {
+					return Component.empty(); // decorativo
 				}
 				String code = emoji != null ? emoji.code() : node.getStyle().getInsertion();
 				return Component.literal(code == null ? "?" : code)

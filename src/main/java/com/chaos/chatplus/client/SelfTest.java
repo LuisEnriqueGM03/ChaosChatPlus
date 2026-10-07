@@ -115,6 +115,24 @@ public final class SelfTest {
 				}
 			}
 			case 800 -> shot("09c_revision");
+			case 820 -> {
+				mc.setScreen(null);
+				mc.player.connection.sendCommand("kill");
+			}
+			case 850 -> {
+				mc.player.respawn();
+				mc.setScreen(null);
+			}
+			case 870 -> ClientPlayNetworking.send(new ChatPayloads.SendGif("local:creeper_baile"));
+			case 920 -> mc.setScreen(new ChatScreen(""));
+			case 960 -> shot("11_muerte_y_gif");
+			case 980 -> {
+				if (mc.screen instanceof BarAccess b && b.chaoschatplus$bar() != null) {
+					b.chaoschatplus$bar().openGifsForTest();
+				}
+			}
+			case 1040 -> shot("12_pestana_gifs");
+			case 1060 -> mc.setScreen(null);
 			case 1300 -> mc.setScreen(new ChatScreen(""));
 			case 1340 -> shot("10_mencion_recibida");
 			case 1400 -> mc.stop();

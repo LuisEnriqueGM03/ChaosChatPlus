@@ -12,6 +12,8 @@ import com.chaos.chatplus.compat.ChaosRanksCompat;
 import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.Emoji;
 import com.chaos.chatplus.emoji.EmojiRegistry;
+import com.chaos.chatplus.gif.GifServer;
+import com.chaos.chatplus.gif.Tenor;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.chaos.chatplus.pack.PackHost;
 import com.chaos.chatplus.perm.Perms;
@@ -45,6 +47,12 @@ public final class ChatServer {
 				context.server().execute(() -> Shots.send(context.player(), payload.id())));
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.ReportShot.TYPE, (payload, context) ->
 				context.server().execute(() -> Shots.report(context.player(), payload.id())));
+		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.GifSearch.TYPE, (payload, context) ->
+				context.server().execute(() -> GifServer.search(context.player(), payload.query())));
+		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.GifRequest.TYPE, (payload, context) ->
+				context.server().execute(() -> GifServer.request(context.player(), payload.id())));
+		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.SendGif.TYPE, (payload, context) ->
+				context.server().execute(() -> GifServer.send(context.player(), payload.id())));
 		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.UploadEmoji.TYPE, (payload, context) ->
 				context.server().execute(() -> upload(context.player(), payload)));
 	}
@@ -66,6 +74,7 @@ public final class ChatServer {
 		PackHost.forget(player);
 		ItemShare.forget(player);
 		Shots.forget(player);
+		GifServer.forget(player);
 	}
 
 	public static void stop() {
@@ -133,6 +142,8 @@ public final class ChatServer {
 		o.addProperty("blurShots", cfg.screenshots.blurUntilClick);
 		o.addProperty("maxShotKb", cfg.screenshots.maxKilobytes);
 		o.addProperty("pack", PackHost.hasPack(player));
+		o.addProperty("gifs", GifServer.canUse(player));
+		o.addProperty("tenor", Tenor.enabled());
 		JsonArray special = new JsonArray();
 		ChatDecorator.specialMentions(player).forEach(special::add);
 		if (Perms.canMentionRanks(player)) {

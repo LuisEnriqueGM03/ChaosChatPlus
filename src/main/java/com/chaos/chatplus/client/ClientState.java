@@ -46,6 +46,8 @@ public final class ClientState {
 	private static boolean mentions = true;
 	private static boolean pack;
 	private static boolean blurShots;
+	private static boolean gifs;
+	private static boolean tenor;
 	private static int mentionColor = 0x7AA2FF;
 	private static int maxShotKb = 512;
 	private static List<String> specialMentions = List.of();
@@ -66,6 +68,8 @@ public final class ClientState {
 			mentions = bool(o, "mentions");
 			pack = bool(o, "pack");
 			blurShots = bool(o, "blurShots");
+			gifs = bool(o, "gifs");
+			tenor = bool(o, "tenor");
 			mentionColor = o.has("mentionColor") ? o.get("mentionColor").getAsInt() : 0x7AA2FF;
 			maxShotKb = o.has("maxShotKb") ? o.get("maxShotKb").getAsInt() : 512;
 			List<String> special = new ArrayList<>();
@@ -108,7 +112,7 @@ public final class ClientState {
 
 	public static void reset() {
 		serverMod = false;
-		items = shots = upload = pack = blurShots = false;
+		items = shots = upload = pack = blurShots = gifs = tenor = false;
 		mentions = true;
 		specialMentions = List.of();
 		emojis = List.of();
@@ -139,6 +143,14 @@ public final class ClientState {
 
 	public static boolean pack() {
 		return pack;
+	}
+
+	public static boolean gifs() {
+		return serverMod && gifs;
+	}
+
+	public static boolean tenor() {
+		return tenor;
 	}
 
 	public static boolean blurShots() {

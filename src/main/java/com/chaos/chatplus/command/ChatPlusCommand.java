@@ -9,6 +9,7 @@ import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.Emoji;
 import com.chaos.chatplus.emoji.EmojiRegistry;
+import com.chaos.chatplus.gif.GifRegistry;
 import com.chaos.chatplus.pack.PackHost;
 import com.chaos.chatplus.server.ChatServer;
 import com.chaos.chatplus.server.Shots;
@@ -47,6 +48,10 @@ public final class ChatPlusCommand {
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("chatplus")
+				.then(Commands.literal("item").then(Commands.literal("view").executes(ctx -> {
+					ctx.getSource().sendSuccess(() -> Lang.tr("item.view_hint").withStyle(ChatFormatting.GRAY), false);
+					return 1;
+				})))
 				.then(Commands.literal("reload").requires(s -> s.hasPermission(2)).executes(ChatPlusCommand::reload))
 				.then(Commands.literal("pack").requires(s -> s.hasPermission(2))
 						.then(Commands.literal("export").executes(ChatPlusCommand::export)))
@@ -97,6 +102,7 @@ public final class ChatPlusCommand {
 	private static int reload(CommandContext<CommandSourceStack> ctx) {
 		ChatConfig.load();
 		EmojiRegistry.load();
+		GifRegistry.load();
 		PackHost.start(ctx.getSource().getServer());
 		ChatServer.resyncAll(ctx.getSource().getServer());
 		ctx.getSource().sendSuccess(() -> Lang.tr("reloaded", EmojiRegistry.all().size()).withStyle(ChatFormatting.GREEN), true);

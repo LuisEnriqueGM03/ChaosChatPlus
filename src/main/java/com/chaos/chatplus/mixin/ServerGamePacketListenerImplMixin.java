@@ -3,9 +3,11 @@ package com.chaos.chatplus.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import com.chaos.chatplus.server.ChatTransform;
+import com.chaos.chatplus.server.ServerMessages;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
@@ -30,6 +32,13 @@ abstract class ServerGamePacketListenerImplMixin {
 		}
 		Component adapted = ChatTransform.forRecipient(player, unsigned);
 		return adapted == unsigned ? message : message.withUnsignedContent(adapted);
+	}
+
+	@ModifyArg(method = "removePlayerFromWorld", at = @At(value = "INVOKE",
+			target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"),
+			index = 0)
+	private Component chaoschatplus$leave(Component message) {
+		return ServerMessages.leave(message, player);
 	}
 
 	@ModifyVariable(method = "sendDisguisedChatMessage", at = @At("HEAD"), argsOnly = true)

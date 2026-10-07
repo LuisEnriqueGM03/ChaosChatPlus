@@ -30,7 +30,10 @@ public final class EmojiPicker {
 	private static final int TAB = 12;
 	private static final int PAD = 4;
 	public static final int WIDTH = COLS * CELL + PAD * 2;
-	public static final int HEIGHT = TAB + 4 + ROWS * CELL + 14 + PAD;
+	private static final int CONTENT_H = TAB + 4 + ROWS * CELL + 14 + PAD;
+	/** Barra de arriba con las dos pestañas grandes: Emojis y GIFs. */
+	private static final int MODE = 16;
+	public static final int HEIGHT = CONTENT_H + MODE;
 
 	/** Pestaña: id, emoji que hace de icono (o texto) y su nombre traducible. */
 	private record Tab(String id, String icon, String key) {}
@@ -51,14 +54,18 @@ public final class EmojiPicker {
 	}
 
 	private final Consumer<ClientState.ClientEmoji> onPick;
+	@Nullable private final GifPanel gifs;
+	private boolean gifMode;
+	private int top;
 	private final List<Tab> tabs = new ArrayList<>();
 	private String tab;
 	private int scroll;
 	private int x;
 	private int y;
 
-	public EmojiPicker(Consumer<ClientState.ClientEmoji> onPick) {
+	public EmojiPicker(Consumer<ClientState.ClientEmoji> onPick, Runnable onGifSent) {
 		this.onPick = onPick;
+		this.gifs = ClientState.gifs() ? new GifPanel(onGifSent) : null;
 		tabs.add(new Tab("recent", "◷", "picker.recent"));
 		tabs.add(new Tab("favorites", "★", "picker.favorites"));
 		for (Map.Entry<String, String> e : CATEGORY_ICONS.entrySet()) {
@@ -72,11 +79,58 @@ public final class EmojiPicker {
 
 	public void place(int right, int bottom) {
 		x = right - WIDTH;
-		y = bottom - HEIGHT;
+		top = bottom - HEIGHT;
+		y = top + MODE;
 	}
 
 	public boolean contains(double mx, double my) {
-		return Ui.inside(mx, my, x, y, x + WIDTH, y + HEIGHT);
+		return Ui.inside(mx, my, x, top, x + WIDTH, top + HEIGHT);
+	}
+
+	/** Para la autoprueba. */
+	public void showGifs() {
+		gifMode = gifs != null;
+	}
+
+	/** El buscador de GIFs se queda las teclas mientras esa pestaña está abierta. */
+	public boolean charTyped(char c) {
+		return gifMode && gifs != null && gifs.charTyped(c);
+	}
+
+	public boolean keyPressed(int key) {
+		return gifMode && gifs != null && gifs.keyPressed(key);
+	}
+
+	private void renderModes(GuiGraphics g, Font font, int mouseX, int mouseY) {
+		int half = (WIDTH - PAD * 2) / (gifs == null ? 1 : 2);
+		String[] keys = gifs == null ? new String[] {"picker.tab_emojis"} : new String[] {"picker.tab_emojis", "picker.tab_gifs"};
+		for (int i = 0; i < keys.length; i++) {
+			int tx = x + PAD + i * half;
+			boolean sel = (i == 1) == gifMode;
+			boolean hover = Ui.inside(mouseX, mouseY, tx, top + PAD, tx + half - 2, top + PAD + 12);
+			if (sel) {
+				Ui.round(g, tx, top + PAD, tx + half - 2, top + PAD + 12, 3, Ui.SELECTED);
+			} else if (hover) {
+				Ui.round(g, tx, top + PAD, tx + half - 2, top + PAD + 12, 3, Ui.HOVER);
+			}
+			Component label = Lang.tr(keys[i]);
+			g.drawString(font, label, tx + (half - 2 - font.width(label)) / 2, top + PAD + 2, sel ? 0xFFFFFFFF : Ui.MUTED, false);
+		}
+	}
+
+	private boolean clickModes(double mx, double my) {
+		if (gifs == null) {
+			return false;
+		}
+		int half = (WIDTH - PAD * 2) / 2;
+		for (int i = 0; i < 2; i++) {
+			int tx = x + PAD + i * half;
+			if (Ui.inside(mx, my, tx, top + PAD, tx + half - 2, top + PAD + 12)) {
+				gifMode = i == 1;
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private List<ClientState.ClientEmoji> current() {
@@ -101,7 +155,12 @@ public final class EmojiPicker {
 	}
 
 	public void render(GuiGraphics g, Font font, int mouseX, int mouseY) {
-		Ui.roundBordered(g, x, y, x + WIDTH, y + HEIGHT, 5, Ui.POPUP, Ui.POPUP_BORDER);
+		Ui.roundBordered(g, x, top, x + WIDTH, top + HEIGHT, 5, Ui.POPUP, Ui.POPUP_BORDER);
+		renderModes(g, font, mouseX, mouseY);
+		if (gifMode && gifs != null) {
+			gifs.render(g, font, x + PAD, y + 2, WIDTH - PAD * 2, CONTENT_H - PAD - 14, mouseX, mouseY);
+			return;
+		}
 
 		// Pestañas.
 		int tx = x + PAD;
@@ -186,6 +245,13 @@ public final class EmojiPicker {
 		if (!contains(mx, my)) {
 			return false;
 		}
+		if (clickModes(mx, my)) {
+			return true;
+		}
+		if (gifMode && gifs != null) {
+			gifs.mouseClicked(mx, my);
+			return true;
+		}
 		int tx = x + PAD;
 		for (Tab t : tabs) {
 			if (Ui.inside(mx, my, tx, y + PAD, tx + TAB, y + PAD + TAB)) {
@@ -224,6 +290,9 @@ public final class EmojiPicker {
 	public boolean mouseScrolled(double mx, double my, double amount) {
 		if (!contains(mx, my)) {
 			return false;
+		}
+		if (gifMode && gifs != null) {
+			return gifs.mouseScrolled(amount);
 		}
 		scroll = Mth.clamp(scroll - (int) Math.signum(amount), 0, maxScroll(current().size()));
 		return true;

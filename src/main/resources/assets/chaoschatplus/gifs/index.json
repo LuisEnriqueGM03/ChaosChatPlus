@@ -1,0 +1,34 @@
+[
+	{
+		"id": "creeper_baile",
+		"name": "Creeper bailando"
+	},
+	{
+		"id": "fuego",
+		"name": "Fuego"
+	},
+	{
+		"id": "tnt_boom",
+		"name": "TNT boom"
+	},
+	{
+		"id": "corazon_latido",
+		"name": "Corazón latiendo"
+	},
+	{
+		"id": "aplausos",
+		"name": "Aplausos"
+	},
+	{
+		"id": "gg",
+		"name": "GG"
+	},
+	{
+		"id": "risa",
+		"name": "Risa"
+	},
+	{
+		"id": "ojos",
+		"name": "Ojos"
+	}
+]

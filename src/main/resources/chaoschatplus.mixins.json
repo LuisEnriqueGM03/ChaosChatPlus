@@ -4,10 +4,12 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"ConnectionMixin",
+		"PlayerListMixin",
 		"ServerCommonPacketListenerImplAccessor",
 		"ServerCommonPacketListenerImplMixin",
 		"ServerGamePacketListenerImplMixin",
-		"ServerHandshakePacketListenerImplMixin"
+		"ServerHandshakePacketListenerImplMixin",
+		"ServerPlayerMixin"
 	],
 	"client": [
 		"client.ChatComponentAccessor",

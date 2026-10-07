@@ -17,10 +17,13 @@ import com.chaos.chatplus.client.ChatClicks;
 import com.chaos.chatplus.client.EmojiInput;
 import com.chaos.chatplus.client.SelfTest;
 import com.chaos.chatplus.client.ui.ChatBar;
+import com.chaos.chatplus.client.screen.GifViewerScreen;
 import com.chaos.chatplus.client.ui.ModernChat;
+import com.chaos.chatplus.gif.GifInfo;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -111,6 +114,12 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
 	private void chaoschatplus$click(double mx, double my, int button, CallbackInfoReturnable<Boolean> cir) {
 		if (chaoschatplus$bar != null && chaoschatplus$bar.mouseClicked(mx, my, button)) {
 			cir.setReturnValue(true);
+			return;
+		}
+		GifInfo gif = ModernChat.gifAt(mx, my);
+		if (gif != null && button == 0) {
+			Minecraft.getInstance().setScreen(new GifViewerScreen(gif, (ChatScreen) (Object) this));
+			cir.setReturnValue(true);
 		}
 	}
 
@@ -129,6 +138,9 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
 	@Override
 	public boolean charTyped(char c, int modifiers) {
 		if (chaoschatplus$bar != null) {
+			if (chaoschatplus$bar.charTypedPicker(c)) {
+				return true;
+			}
 			chaoschatplus$bar.charTyped();
 		}
 		return super.charTyped(c, modifiers);

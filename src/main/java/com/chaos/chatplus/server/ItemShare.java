@@ -9,7 +9,9 @@ import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.perm.Perms;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -27,13 +29,25 @@ public final class ItemShare {
 
 	private ItemShare() {}
 
-	/** "[Espada de diamante] ×3" con el tooltip del ítem. */
+	/** Comando del enlace [Ver ítem] (el cliente con el mod lo intercepta y abre la vista ampliada). */
+	public static final String VIEW_COMMAND = "/chatplus item view";
+	public static final int VIEW_COLOR = 0x55AAFF;
+
+	/** "[Espada de diamante] ×3 [Ver ítem]" con el tooltip del ítem. */
 	public static MutableComponent component(ItemStack stack) {
 		MutableComponent out = Component.empty().append(stack.getDisplayName());
 		if (stack.getCount() > 1) {
 			out.append(Component.literal(" ×" + stack.getCount()).withStyle(ChatFormatting.GRAY));
 		}
-		return out;
+		return out.append(" ").append(viewLink(stack));
+	}
+
+	/** "[Ver ítem]" en azul: hover con el ítem y clic para verlo en grande. */
+	public static MutableComponent viewLink(ItemStack stack) {
+		return Lang.tr("item.view").withStyle(s -> s
+				.withColor(VIEW_COLOR)
+				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(stack)))
+				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, VIEW_COMMAND)));
 	}
 
 	public static boolean ready(ServerPlayer player) {

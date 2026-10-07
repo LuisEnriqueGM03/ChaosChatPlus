@@ -109,6 +109,24 @@ public final class ChatConfig {
 		public Moderation moderation = new Moderation();
 	}
 
+	public static class Messages {
+		/** Muertes con estilo (calavera tras el nombre, asesino en rojo, [Ver ítem] en el arma). */
+		public boolean deaths = true;
+		/** «➜ Luis entró al servidor» / «← Luis salió» y bienvenida la primera vez. */
+		public boolean joinLeave = true;
+	}
+
+	public static class Gifs {
+		public Access access = new Access(0);
+		public int cooldownSeconds = 5;
+		/** Clave de la API de Tenor (Google Cloud). Vacío = solo los GIFs propios. */
+		public String tenorKey = "";
+		/** Filtro de contenido de Tenor: off, low, medium o high. */
+		public String contentFilter = "high";
+		/** Tope de los GIFs propios (como mucho 1000: un paquete no puede pasar de 1 MB). */
+		public int maxKilobytes = 1000;
+	}
+
 	/** Idioma de los mensajes para clientes sin el mod (es_es, en_us...). */
 	public String language = "es_es";
 	public Emojis emojis = new Emojis();
@@ -116,6 +134,8 @@ public final class ChatConfig {
 	public Mentions mentions = new Mentions();
 	public Items items = new Items();
 	public Screenshots screenshots = new Screenshots();
+	public Messages messages = new Messages();
+	public Gifs gifs = new Gifs();
 
 	public static ChatConfig get() {
 		return current;
@@ -185,6 +205,14 @@ public final class ChatConfig {
 		screenshots.expireMinutes = Math.max(1, screenshots.expireMinutes);
 		screenshots.autoHideReports = Math.max(0, screenshots.autoHideReports);
 		if (language == null) language = "en_us";
+		if (messages == null) messages = new Messages();
+		if (gifs == null) gifs = new Gifs();
+		if (gifs.access == null) gifs.access = new Access(0);
+		gifs.access.sanitize();
+		if (gifs.tenorKey == null) gifs.tenorKey = "";
+		if (gifs.contentFilter == null) gifs.contentFilter = "high";
+		gifs.cooldownSeconds = Math.max(0, gifs.cooldownSeconds);
+		gifs.maxKilobytes = Math.max(64, Math.min(1000, gifs.maxKilobytes));
 	}
 
 	public static int parseColor(String s, int fallback) {

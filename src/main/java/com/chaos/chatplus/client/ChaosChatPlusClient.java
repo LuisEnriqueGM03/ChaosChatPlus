@@ -1,6 +1,7 @@
 package com.chaos.chatplus.client;
 
 import com.chaos.chatplus.ChaosChatPlus;
+import com.chaos.chatplus.client.ui.GifPanel;
 import com.chaos.chatplus.net.ChatPayloads;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -35,7 +36,13 @@ public class ChaosChatPlusClient implements ClientModInitializer {
 				context.client().execute(() -> ClientState.setPrefix(payload.prefix().orElse(null), payload.fallback().orElse(null))));
 		ClientPlayNetworking.registerGlobalReceiver(ChatPayloads.ShotData.TYPE, (payload, context) ->
 				context.client().execute(() -> ShotCache.accept(payload)));
+		ClientPlayNetworking.registerGlobalReceiver(ChatPayloads.GifResults.TYPE, (payload, context) ->
+				context.client().execute(() -> GifPanel.accept(payload.data())));
+		ClientPlayNetworking.registerGlobalReceiver(ChatPayloads.GifData.TYPE, (payload, context) ->
+				context.client().execute(() -> GifCache.accept(payload)));
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(() -> {
+			GifCache.clear();
+			GifPanel.reset();
 			ClientState.reset();
 			EmojiTextures.clear();
 			ShotCache.clear();

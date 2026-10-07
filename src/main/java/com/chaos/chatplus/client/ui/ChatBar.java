@@ -215,8 +215,16 @@ public final class ChatBar {
 		suggest.update();
 	}
 
+	/** Para la autoprueba: abre el selector en la pestaña GIFs. */
+	public void openGifsForTest() {
+		if (picker == null) {
+			togglePicker();
+		}
+		picker.showGifs();
+	}
+
 	public void togglePicker() {
-		picker = picker == null ? new EmojiPicker(this::insertEmoji) : null;
+		picker = picker == null ? new EmojiPicker(this::insertEmoji, () -> Minecraft.getInstance().setScreen(null)) : null;
 	}
 
 	private void insertEmoji(ClientState.ClientEmoji e) {
@@ -236,10 +244,18 @@ public final class ChatBar {
 			picker = null;
 			return true;
 		}
+		if (picker != null && picker.keyPressed(key)) {
+			return true;
+		}
 		if (picker == null && suggest.keyPressed(key)) {
 			return true;
 		}
 		return false;
+	}
+
+	/** Letras para el buscador de GIFs (si está abierto). true = no van al chat. */
+	public boolean charTypedPicker(char c) {
+		return picker != null && picker.charTyped(c);
 	}
 
 	/** Al intentar escribir con el campo lleno, vuelve a enseñar el aviso. */

@@ -170,6 +170,73 @@ public final class ChatPayloads {
 		}
 	}
 
+	/** Servidor -> cliente: resultados de una búsqueda de GIFs (JSON con gzip). */
+	public record GifResults(byte[] data) implements CustomPacketPayload {
+
+		public static final Type<GifResults> TYPE = new Type<>(ChaosChatPlus.id("gif_results"));
+		public static final StreamCodec<ByteBuf, GifResults> CODEC =
+				ByteBufCodecs.byteArray(MAX_S2C).map(GifResults::new, GifResults::data);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
+	}
+
+	/** Servidor -> cliente: los bytes de un GIF propio del servidor. Sin datos = no existe. */
+	public record GifData(String id, byte[] data) implements CustomPacketPayload {
+
+		public static final Type<GifData> TYPE = new Type<>(ChaosChatPlus.id("gif_data"));
+		public static final StreamCodec<ByteBuf, GifData> CODEC = StreamCodec.composite(
+				ByteBufCodecs.stringUtf8(128), GifData::id,
+				ByteBufCodecs.byteArray(MAX_S2C), GifData::data,
+				GifData::new);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
+	}
+
+	/** Cliente -> servidor: buscar GIFs (vacío = los destacados). */
+	public record GifSearch(String query) implements CustomPacketPayload {
+
+		public static final Type<GifSearch> TYPE = new Type<>(ChaosChatPlus.id("gif_search"));
+		public static final StreamCodec<ByteBuf, GifSearch> CODEC =
+				ByteBufCodecs.stringUtf8(64).map(GifSearch::new, GifSearch::query);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
+	}
+
+	/** Cliente -> servidor: pedir los bytes de un GIF propio. */
+	public record GifRequest(String id) implements CustomPacketPayload {
+
+		public static final Type<GifRequest> TYPE = new Type<>(ChaosChatPlus.id("gif_request"));
+		public static final StreamCodec<ByteBuf, GifRequest> CODEC =
+				ByteBufCodecs.stringUtf8(128).map(GifRequest::new, GifRequest::id);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
+	}
+
+	/** Cliente -> servidor: mandar un GIF al chat. */
+	public record SendGif(String id) implements CustomPacketPayload {
+
+		public static final Type<SendGif> TYPE = new Type<>(ChaosChatPlus.id("send_gif"));
+		public static final StreamCodec<ByteBuf, SendGif> CODEC =
+				ByteBufCodecs.stringUtf8(128).map(SendGif::new, SendGif::id);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
+	}
+
 	/** Cliente -> servidor: reportar una captura. */
 	public record ReportShot(String id) implements CustomPacketPayload {
 

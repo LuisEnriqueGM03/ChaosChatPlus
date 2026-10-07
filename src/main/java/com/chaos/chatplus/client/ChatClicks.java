@@ -11,6 +11,7 @@ import com.chaos.chatplus.client.screen.EmojiUploadScreen;
 import com.chaos.chatplus.client.screen.ItemPreviewScreen;
 import com.chaos.chatplus.client.screen.ShotViewerScreen;
 import com.chaos.chatplus.client.ui.Ui;
+import com.chaos.chatplus.server.ItemShare;
 import com.chaos.chatplus.server.Shots;
 
 import net.minecraft.ChatFormatting;
@@ -65,7 +66,9 @@ public final class ChatClicks {
 			return true;
 		}
 		HoverEvent hover = style.getHoverEvent();
-		if (click == null && hover != null && hover.getAction() == HoverEvent.Action.SHOW_ITEM) {
+		boolean viewLink = click != null && click.getAction() == ClickEvent.Action.RUN_COMMAND
+				&& click.getValue().equals(ItemShare.VIEW_COMMAND);
+		if ((click == null || viewLink) && hover != null && hover.getAction() == HoverEvent.Action.SHOW_ITEM) {
 			HoverEvent.ItemStackInfo info = hover.getValue(HoverEvent.Action.SHOW_ITEM);
 			if (info != null) {
 				ItemStack stack = info.getItemStack();

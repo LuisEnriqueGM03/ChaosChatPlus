@@ -11,6 +11,7 @@ import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.emoji.Emoji;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -39,6 +40,11 @@ public final class ChatMarks {
 				.withColor(0xFFFFFF)
 				.withInsertion(emoji.code())
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(emoji.code()))));
+	}
+
+	/** Emoji decorativo (en muertes, entradas, capturas...): sin inserción; si quien lo recibe no lo puede ver, se quita. */
+	public static MutableComponent icon(Emoji emoji) {
+		return Component.literal(emoji.glyph()).withStyle(Style.EMPTY.withFont(EMOJI_FONT).withColor(0xFFFFFF));
 	}
 
 	public static boolean isEmoji(Style style) {
@@ -74,7 +80,17 @@ public final class ChatMarks {
 	 * cambia). Los hijos se copian detrás de cada nodo, igual que en el original.
 	 */
 	public static Component rebuild(Component c, UnaryOperator<Component> map) {
-		MutableComponent self = MutableComponent.create(c.getContents()).setStyle(c.getStyle());
+		ComponentContents contents = c.getContents();
+		if (contents instanceof TranslatableContents t && t.getArgs().length > 0) {
+			Object[] args = t.getArgs().clone();
+			for (int i = 0; i < args.length; i++) {
+				if (args[i] instanceof Component arg) {
+					args[i] = rebuild(arg, map);
+				}
+			}
+			contents = new TranslatableContents(t.getKey(), t.getFallback(), args);
+		}
+		MutableComponent self = MutableComponent.create(contents).setStyle(c.getStyle());
 		Component mapped = map.apply(self);
 		MutableComponent out = mapped instanceof MutableComponent m && mapped != self ? m.copy() : self;
 		for (Component sibling : c.getSiblings()) {

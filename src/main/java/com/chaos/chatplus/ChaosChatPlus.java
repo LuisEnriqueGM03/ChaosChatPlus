@@ -7,6 +7,7 @@ import com.chaos.chatplus.command.ChatPlusCommand;
 import com.chaos.chatplus.compat.ChaosRanksCompat;
 import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.EmojiRegistry;
+import com.chaos.chatplus.gif.GifRegistry;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.chaos.chatplus.pack.PackHost;
 import com.chaos.chatplus.server.ChatDecorator;
@@ -36,6 +37,11 @@ public class ChaosChatPlus implements ModInitializer {
 		PayloadTypeRegistry.playS2C().register(ChatPayloads.EmojiImage.TYPE, ChatPayloads.EmojiImage.CODEC);
 		PayloadTypeRegistry.playS2C().register(ChatPayloads.SelfPrefix.TYPE, ChatPayloads.SelfPrefix.CODEC);
 		PayloadTypeRegistry.playS2C().register(ChatPayloads.ShotData.TYPE, ChatPayloads.ShotData.CODEC);
+		PayloadTypeRegistry.playS2C().register(ChatPayloads.GifResults.TYPE, ChatPayloads.GifResults.CODEC);
+		PayloadTypeRegistry.playS2C().register(ChatPayloads.GifData.TYPE, ChatPayloads.GifData.CODEC);
+		PayloadTypeRegistry.playC2S().register(ChatPayloads.GifSearch.TYPE, ChatPayloads.GifSearch.CODEC);
+		PayloadTypeRegistry.playC2S().register(ChatPayloads.GifRequest.TYPE, ChatPayloads.GifRequest.CODEC);
+		PayloadTypeRegistry.playC2S().register(ChatPayloads.SendGif.TYPE, ChatPayloads.SendGif.CODEC);
 		PayloadTypeRegistry.playC2S().register(ChatPayloads.UploadEmoji.TYPE, ChatPayloads.UploadEmoji.CODEC);
 		PayloadTypeRegistry.playC2S().register(ChatPayloads.ShareItem.TYPE, ChatPayloads.ShareItem.CODEC);
 		PayloadTypeRegistry.playC2S().register(ChatPayloads.ShotPart.TYPE, ChatPayloads.ShotPart.CODEC);
@@ -51,6 +57,7 @@ public class ChaosChatPlus implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			ChatConfig.load();
 			EmojiRegistry.load();
+			GifRegistry.load();
 			PackHost.start(server);
 			ChaosRanksCompat.cleanOrphanTeams(server);
 		});

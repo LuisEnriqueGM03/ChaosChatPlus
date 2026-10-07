@@ -1,9 +1,15 @@
 package com.chaos.chatplus.client.ui;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.chaos.chatplus.client.ChaosChatPlusClient;
 import com.chaos.chatplus.client.ClientPrefs;
+import com.chaos.chatplus.client.GifCache;
+import com.chaos.chatplus.gif.GifInfo;
+import com.chaos.chatplus.gif.GifServer;
 import com.chaos.chatplus.mixin.client.ChatComponentAccessor;
 
 import net.minecraft.client.GuiMessage;
@@ -25,7 +31,41 @@ public final class ModernChat {
 	private static final float ENTER_TICKS = 3.0F;
 	private static final int ERROR_TAG = 0xFF5555;
 
+	/** Dónde se dibujó cada GIF en el último frame (en píxeles de la pantalla), para poder hacer clic. */
+	private record GifRect(GifInfo gif, int x0, int y0, int x1, int y1) {}
+
+	private static final List<GifRect> GIF_RECTS = new ArrayList<>();
+
 	private ModernChat() {}
+
+	/** El GIF bajo el ratón (o null). */
+	@Nullable
+	public static GifInfo gifAt(double mx, double my) {
+		if (!enabled()) {
+			return null;
+		}
+		for (GifRect r : GIF_RECTS) {
+			if (mx >= r.x0() && mx < r.x1() && my >= r.y0() && my < r.y1()) {
+				return r.gif();
+			}
+		}
+		return null;
+	}
+
+	/** La marca de GIF de una línea del chat (inserción "chaoschatplus:gif:..."), si la tiene. */
+	@Nullable
+	private static GifInfo gifMark(GuiMessage.Line line) {
+		String[] found = new String[1];
+		line.content().accept((index, style, codepoint) -> {
+			String ins = style.getInsertion();
+			if (ins != null && ins.startsWith(GifServer.MARK)) {
+				found[0] = ins.substring(GifServer.MARK.length());
+				return false;
+			}
+			return true;
+		});
+		return found[0] == null ? null : GifInfo.decode(found[0]);
+	}
 
 	public static boolean enabled() {
 		return ChaosChatPlusClient.ACTIVE && ClientPrefs.get().modernChat;
@@ -57,6 +97,7 @@ public final class ModernChat {
 		float partial = mc.getTimer().getGameTimeDeltaPartialTick(false);
 		boolean animate = ClientPrefs.get().animations;
 
+		GIF_RECTS.clear();
 		g.pose().pushPose();
 		g.pose().scale(scale, scale, 1.0F);
 		g.pose().translate(4.0F, 0.0F, 0.0F);
@@ -139,6 +180,19 @@ public final class ModernChat {
 			g.pose().pushPose();
 			g.pose().translate(slide, 0.0F, 50.0F);
 			g.drawString(mc.font, line.content(), 0, textY, 0xFFFFFF | (alpha << 24));
+			GifInfo gif = gifMark(line);
+			// El GIF ocupa esta línea y las 5 vacías de debajo: solo se dibuja si se ven todas.
+			if (gif != null && u >= GifServer.LINES - 1) {
+				int boxH = GifServer.LINES * lineHeight - 2;
+				int boxW = Math.min(width - 4, boxH * 2);
+				int top = lineBottom - lineHeight + 1;
+				Ui.round(g, 0, top, boxW, top + boxH, 4, Ui.alpha(0x000000, (int) (alpha * 0.35)));
+				g.setColor(1, 1, 1, alpha / 255F);
+				int used = GifCache.draw(g, gif, 2, top + 2, boxW - 4, boxH - 4, false);
+				g.setColor(1, 1, 1, 1);
+				GIF_RECTS.add(new GifRect(gif, (int) ((4 + slide) * scale), (int) (top * scale),
+						(int) ((4 + slide + used + 2) * scale), (int) ((top + boxH) * scale)));
+			}
 			g.pose().popPose();
 		}
 
