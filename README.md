@@ -1,3 +1,13 @@
+# Edición NeoForge — Minecraft 1.21.1
+
+Rama `neoforge-1.21.1`, Chaos ChatPlus 1.1.0 beta. El repositorio mantiene el código común y los adaptadores de los tres cargadores.
+
+Compila esta edición desde la raíz con `./gradlew -p platforms/neoforge build`. JAR instalable: `platforms/neoforge/build/libs/chaoschatplus-neoforge-1.21.1-1.1.0.jar`. Para ejecutar el mod necesitas Java 21; para compilar consulta las versiones de JDK en VALIDATION.md.
+
+[Descargar esta versión y sus fuentes](https://github.com/LuisEnriqueGM03/ChaosChatPlus/releases/tag/v1.1.0-1.21.1) · [Resultados y límites de pruebas](VALIDATION.md).
+
+---
+
 # Chaos ChatPlus (Minecraft 1.21.1)
 
 Chat moderno para servidores: emojis, emojis propios, mostrar ítems,
