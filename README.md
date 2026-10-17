@@ -1,3 +1,13 @@
+# Edición Forge — Minecraft 1.21.1
+
+Rama `forge-1.21.1`, Chaos ChatPlus 1.1.0 beta. El repositorio mantiene el código común y los adaptadores de los tres cargadores.
+
+Compila esta edición desde la raíz con `./gradlew -p platforms/forge build`. JAR instalable: `platforms/forge/build/libs/chaoschatplus-forge-1.21.1-1.1.0.jar`. Para ejecutar el mod necesitas Java 21; para compilar consulta las versiones de JDK en VALIDATION.md.
+
+[Descargar esta versión y sus fuentes](https://github.com/LuisEnriqueGM03/ChaosChatPlus/releases/tag/v1.1.0-1.21.1) · [Resultados y límites de pruebas](VALIDATION.md).
+
+---
+
 # Chaos ChatPlus (Minecraft 1.21.1)
 
 Chat moderno para servidores: emojis, emojis propios, mostrar ítems,
