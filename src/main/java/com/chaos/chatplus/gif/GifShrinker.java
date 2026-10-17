@@ -38,6 +38,7 @@ public final class GifShrinker {
 		if (out.length > MAX_BYTES) {
 			out = encode(reduce(GifDecoder.decode(original, SMALL_SIDE)));
 		}
+		if (out.length > MAX_BYTES) throw new java.io.IOException("GIF cannot fit the encoded byte budget");
 		return out;
 	}
 

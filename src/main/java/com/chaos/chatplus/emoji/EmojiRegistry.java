@@ -1,20 +1,16 @@
 package com.chaos.chatplus.emoji;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import com.chaos.chatplus.emoji.EmojiStore.Store;
+import com.chaos.chatplus.emoji.EmojiStore.Custom;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -24,14 +20,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.config.ChatConfig;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -52,23 +45,7 @@ public final class EmojiRegistry {
 	private static final int FIRST_CUSTOM = 0xE800;
 	private static final int LAST_CUSTOM = 0xF8FF;
 
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
-	/** Lo que se guarda en config/chaoschatplus/emojis.json. */
-	private static class Store {
-		List<Custom> custom = new ArrayList<>();
-		List<String> disabled = new ArrayList<>();
-		List<Pending> pending = new ArrayList<>();
-		/** Rangos que pueden usar cada emoji de serie (vacío o ausente = todos). */
-		Map<String, List<String>> builtinRanks = new LinkedHashMap<>();
-	}
-
-	private static class Custom {
-		String name;
-		int codepoint;
-		List<String> aliases = new ArrayList<>();
-		List<String> ranks = new ArrayList<>();
-	}
 
 	public static class Pending {
 		public String name;
@@ -79,18 +56,19 @@ public final class EmojiRegistry {
 	private static final List<Emoji> BUILTIN = readBuiltin();
 
 	private static Store store = new Store();
-	private static List<Emoji> all = List.of();
-	private static Map<String, Emoji> byName = Map.of();
-	private static Map<Integer, Emoji> byCodepoint = Map.of();
-	private static Map<String, Emoji> byUnicode = Map.of();
-	private static int maxUnicodeLength;
+	private record State(List<Emoji> all, Map<String, Emoji> names, Map<Integer, Emoji> codepoints,
+			Map<String, Emoji> unicode, int maxUnicodeLength, Map<String, byte[]> images,
+			Map<String, byte[]> defaults, int version) {}
+	private static volatile State state = new State(List.of(), Map.of(), Map.of(), Map.of(), 0, Map.of(), null, 0);
+	private static volatile List<Pending> pendingView = List.of();
+	private static volatile List<String> disabledView = List.of();
 	private static Map<String, byte[]> customPng = Map.of();
 	/** Categoría (subcarpeta) y archivo de cada emoji propio. */
 	private static Map<String, String> customCategory = Map.of();
 	private static Map<String, Path> customFile = Map.of();
 	/** Emojis de serie que están en emojis/default/ (con su PNG, por si el dueño lo cambió). Null = nunca se exportaron. */
 	@Nullable private static Map<String, byte[]> builtinFiles;
-	private static String snapshot = "";
+	private static volatile String snapshot = "";
 	private static final String EXPORTED = ".exportado";
 	private static int version;
 
@@ -99,24 +77,25 @@ public final class EmojiRegistry {
 	// ------------------------------------------------------------------ consultas
 
 	public static List<Emoji> all() {
-		return all;
+		return state.all();
 	}
 
 	@Nullable
 	public static Emoji byName(String nameOrAlias) {
-		return byName.get(nameOrAlias.toLowerCase(Locale.ROOT));
+		return state.names().get(nameOrAlias.toLowerCase(Locale.ROOT));
 	}
 
 	@Nullable
 	public static Emoji byCodepoint(int codepoint) {
-		return byCodepoint.get(codepoint);
+		return state.codepoints().get(codepoint);
 	}
 
 	/** Busca un emoji Unicode que empiece en {@code index}; devuelve el emoji y cuántos chars ocupa (o null). */
 	@Nullable
 	public static Map.Entry<Emoji, Integer> unicodeAt(String text, int index) {
-		for (int len = Math.min(maxUnicodeLength, text.length() - index); len > 0; len--) {
-			Emoji e = byUnicode.get(text.substring(index, index + len));
+		State view = state;
+		for (int len = Math.min(view.maxUnicodeLength(), text.length() - index); len > 0; len--) {
+			Emoji e = view.unicode().get(text.substring(index, index + len));
 			if (e != null) {
 				int end = index + len;
 				// Selector de variación (❤️ = ❤ + U+FE0F): se lo come también.
@@ -130,26 +109,27 @@ public final class EmojiRegistry {
 	}
 
 	public static Map<String, byte[]> customImages() {
-		return customPng;
+		return state.images();
 	}
 
 	public static List<Pending> pending() {
-		return Collections.unmodifiableList(store.pending);
+		return pendingView;
 	}
 
 	/** Cambia cada vez que cambia algo (para saber si hay que rehacer el pack). */
 	public static int version() {
-		return version;
+		return state.version();
 	}
 
 	/** PNG del emoji (de serie: el de emojis/default/ si está, si no el del jar; propio: el de su carpeta). */
 	@Nullable
 	public static byte[] png(Emoji emoji) {
 		if (!emoji.builtin()) {
-			return customPng.get(emoji.name());
+			return state.images().get(emoji.name());
 		}
-		if (builtinFiles != null && builtinFiles.containsKey(emoji.name())) {
-			return builtinFiles.get(emoji.name());
+		Map<String, byte[]> defaults = state.defaults();
+		if (defaults != null && defaults.containsKey(emoji.name())) {
+			return defaults.get(emoji.name());
 		}
 		return jarPng(emoji.name());
 	}
@@ -172,19 +152,12 @@ public final class EmojiRegistry {
 
 	public static synchronized void load() {
 		Path file = ChatConfig.dir().resolve("emojis.json");
-		Store loaded = null;
-		if (Files.exists(file)) {
-			try {
-				loaded = GSON.fromJson(Files.readString(file, StandardCharsets.UTF_8), Store.class);
-			} catch (Exception e) {
-				ChaosChatPlus.LOGGER.error("No se pudo leer {}", file, e);
-			}
+		try {
+			store = EmojiStore.read(file);
+		} catch (IOException e) {
+			ChaosChatPlus.LOGGER.error("No se pudo leer {}; se conservan los emojis y el archivo", file, e);
+			return;
 		}
-		store = loaded != null ? loaded : new Store();
-		if (store.custom == null) store.custom = new ArrayList<>();
-		if (store.disabled == null) store.disabled = new ArrayList<>();
-		if (store.pending == null) store.pending = new ArrayList<>();
-		if (store.builtinRanks == null) store.builtinRanks = new LinkedHashMap<>();
 
 		// Las carpetas mandan: emojis/default/<categoría>/ = los de serie (borrar uno lo quita), y cualquier otra
 		// subcarpeta (o la raíz) = emojis propios, con la subcarpeta como categoría.
@@ -201,8 +174,10 @@ public final class EmojiRegistry {
 			try {
 				if (first.equals("default")) {
 					if (defaults != null && BUILTIN.stream().anyMatch(b -> b.name().equals(name))) {
+						if (Files.size(p) > EmojiImages.MAX_FILE_BYTES) continue;
 						byte[] png = Files.readAllBytes(p);
-						defaults.put(name, normalize(png) != null ? png : jarPng(name));
+						byte[] normalized = EmojiImages.normalize(png);
+						defaults.put(name, normalized != null ? normalized : jarPng(name));
 					}
 					continue;
 				}
@@ -210,7 +185,8 @@ public final class EmojiRegistry {
 					ChaosChatPlus.LOGGER.warn("Emoji {} ignorado: el nombre debe ser [a-z0-9_] de 2 a 32 letras", rel);
 					continue;
 				}
-				byte[] png = normalize(Files.readAllBytes(p));
+				if (Files.size(p) > EmojiImages.MAX_FILE_BYTES) continue;
+				byte[] png = EmojiImages.normalize(Files.readAllBytes(p));
 				if (png == null) {
 					ChaosChatPlus.LOGGER.warn("Emoji {} ignorado: no es una imagen PNG válida", rel);
 					continue;
@@ -243,7 +219,7 @@ public final class EmojiRegistry {
 		rebuild();
 		save();
 		ChaosChatPlus.LOGGER.info("Emojis: {} activos ({} propios), {} pendientes de aprobar",
-				all.size(), store.custom.size(), store.pending.size());
+				state.all().size(), store.custom.size(), store.pending.size());
 	}
 
 	/** Copia los emojis de serie a emojis/default/&lt;categoría&gt;/ (solo los que nunca se copiaron). */
@@ -385,18 +361,17 @@ public final class EmojiRegistry {
 				names.putIfAbsent(a.toLowerCase(Locale.ROOT), e);
 			}
 		}
-		all = List.copyOf(list);
-		byName = names;
-		byCodepoint = cps;
-		byUnicode = unicode;
-		maxUnicodeLength = maxLen;
-		version++;
+		state = new State(List.copyOf(list), Map.copyOf(names), Map.copyOf(cps), Map.copyOf(unicode),
+				maxLen, Map.copyOf(customPng), builtinFiles == null ? null : Map.copyOf(builtinFiles), ++version);
+
 	}
 
 	private static void save() {
 		try {
 			Files.createDirectories(ChatConfig.dir());
-			Files.writeString(ChatConfig.dir().resolve("emojis.json"), GSON.toJson(store), StandardCharsets.UTF_8);
+			EmojiStore.write(ChatConfig.dir().resolve("emojis.json"), store);
+			pendingView = List.copyOf(store.pending);
+			disabledView = List.copyOf(store.disabled);
 		} catch (IOException e) {
 			ChaosChatPlus.LOGGER.error("No se pudo guardar emojis.json", e);
 		}
@@ -436,16 +411,17 @@ public final class EmojiRegistry {
 		if (!NAME.matcher(name).matches()) {
 			return Result.BAD_NAME;
 		}
-		if (byName.containsKey(name) || store.pending.stream().anyMatch(p -> p.name.equals(name))) {
+		if (state.names().containsKey(name) || store.pending.stream().anyMatch(p -> p.name.equals(name))) {
 			return Result.TAKEN;
 		}
 		if (png.length > MAX_UPLOAD_BYTES) {
 			return Result.TOO_BIG;
 		}
-		if (store.custom.size() >= ChatConfig.get().emojis.maxCustom) {
+		if (!UploadLimits.hasCapacity(store.custom.size(), store.pending.size(),
+				store.pending.stream().filter(p -> uploader.equals(p.uploader)).count(), approved, ChatConfig.get().emojis)) {
 			return Result.LIMIT;
 		}
-		byte[] clean = normalize(png);
+		byte[] clean = EmojiImages.normalize(png);
 		if (clean == null) {
 			return Result.BAD_IMAGE;
 		}
@@ -474,7 +450,7 @@ public final class EmojiRegistry {
 	@Nullable
 	public static synchronized Pending approve(String name) {
 		Pending p = findPending(name);
-		if (p == null) {
+		if (p == null || store.custom.size() >= ChatConfig.get().emojis.maxCustom) {
 			return null;
 		}
 		try {
@@ -546,7 +522,7 @@ public final class EmojiRegistry {
 	}
 
 	public static Collection<String> disabled() {
-		return Collections.unmodifiableList(store.disabled);
+		return disabledView;
 	}
 
 	public static synchronized Result addAlias(String name, String alias) {
@@ -558,7 +534,7 @@ public final class EmojiRegistry {
 		if (!NAME.matcher(a).matches()) {
 			return Result.BAD_NAME;
 		}
-		if (byName.containsKey(a)) {
+		if (state.names().containsKey(a)) {
 			return Result.TAKEN;
 		}
 		if (e.builtin()) {
@@ -608,46 +584,4 @@ public final class EmojiRegistry {
 		return n.substring(0, n.length() - 4).toLowerCase(Locale.ROOT);
 	}
 
-	/**
-	 * Comprueba que sea una imagen de verdad y la vuelve a codificar como PNG limpio (sin metadatos ni datos extra),
-	 * reducida a como mucho 32 px. Devuelve null si no es una imagen válida o es demasiado grande.
-	 */
-	@Nullable
-	static byte[] normalize(byte[] data) {
-		try {
-			BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
-			if (img == null || img.getWidth() < 1 || img.getHeight() < 1
-					|| img.getWidth() > MAX_UPLOAD_SIZE * 8 || img.getHeight() > MAX_UPLOAD_SIZE * 8) {
-				return null;
-			}
-			int w = img.getWidth();
-			int h = img.getHeight();
-			if (w > STORE_SIZE || h > STORE_SIZE) {
-				double scale = (double) STORE_SIZE / Math.max(w, h);
-				w = Math.max(1, (int) Math.round(w * scale));
-				h = Math.max(1, (int) Math.round(h * scale));
-			}
-			BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g = out.createGraphics();
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-			g.drawImage(img, 0, 0, w, h, null);
-			g.dispose();
-			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-			ImageIO.write(out, "png", bytes);
-			return bytes.toByteArray();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	/** Para los mensajes: comprueba la imagen de una subida antes de nada (dimensiones del original). */
-	public static boolean validUploadSize(byte[] data) {
-		try {
-			BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
-			return img != null && img.getWidth() <= MAX_UPLOAD_SIZE && img.getHeight() <= MAX_UPLOAD_SIZE;
-		} catch (Exception e) {
-			return false;
-		}
-	}
 }

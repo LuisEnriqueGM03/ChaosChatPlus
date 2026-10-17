@@ -11,7 +11,7 @@ import java.util.zip.GZIPOutputStream;
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.net.ChatPayloads;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import com.chaos.chatplus.platform.ServerNetwork;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -23,7 +23,7 @@ public final class FontSync {
 
 	/** Trozo máximo por paquete. */
 	private static final int PART = 900_000;
-	private static byte[] data = new byte[0];
+	private static volatile byte[] data = new byte[0];
 
 	private FontSync() {}
 
@@ -54,13 +54,13 @@ public final class FontSync {
 		int parts = Math.max(1, (all.length + PART - 1) / PART);
 		for (int i = 0; i < parts; i++) {
 			byte[] chunk = Arrays.copyOfRange(all, i * PART, Math.min(all.length, (i + 1) * PART));
-			ServerPlayNetworking.send(player, new ChatPayloads.FontPart(i, parts, chunk));
+			ServerNetwork.send(player, new ChatPayloads.FontPart(i, parts, chunk));
 		}
 	}
 
 	public static void sendAll(MinecraftServer server) {
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-			if (ServerPlayNetworking.canSend(player, ChatPayloads.FontPart.TYPE)) {
+			if (ServerNetwork.canSend(player, ChatPayloads.FontPart.TYPE)) {
 				send(player);
 			}
 		}

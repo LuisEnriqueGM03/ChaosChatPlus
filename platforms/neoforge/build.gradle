@@ -1,0 +1,35 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+repositories { mavenCentral() }
+neoForge {
+    version = '21.1.259'
+    runs {
+        client { client() }
+        server { server(); programArgument '--nogui' }
+    }
+    mods { chaoschatplus { sourceSet sourceSets.main } }
+}
+
+version = '1.1.0'
+group = 'com.chaos'
+base { archivesName = 'chaoschatplus-neoforge-1.21.1' }
+java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+sourceSets {
+    main {
+        java.setSrcDirs(['../../src/main/java', '../../src/client/java', 'src/main/java'])
+        resources.setSrcDirs(['../../src/main/resources', 'src/main/resources'])
+        resources.exclude 'fabric.mod.json'
+    }
+    test { java.srcDir '../../src/test/java' }
+}
+tasks.withType(JavaCompile).configureEach { options.release = 21; options.encoding = 'UTF-8' }
+processResources { filesMatching('META-INF/*.toml') { expand version: project.version } }
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'com.google.code.gson:gson:2.10.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+test { useJUnitPlatform() }
+jar { manifest.attributes('MixinConfigs': 'chaoschatplus.mixins.json') }

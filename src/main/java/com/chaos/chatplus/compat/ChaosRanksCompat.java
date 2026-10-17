@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.chaos.chatplus.ChaosChatPlus;
 
-import net.fabricmc.loader.api.FabricLoader;
+import com.chaos.chatplus.platform.Platform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.server.MinecraftServer;
@@ -46,7 +46,7 @@ public final class ChaosRanksCompat {
 	private static Field separatorColor;
 
 	static {
-		if (FabricLoader.getInstance().isModLoaded("chaosranks")) {
+		if (Platform.get().loaded("chaosranks")) {
 			try {
 				Class<?> store = Class.forName("com.chaos.ranks.rank.RankStore");
 				Class<?> def = Class.forName("com.chaos.ranks.rank.RankDef");
@@ -79,7 +79,7 @@ public final class ChaosRanksCompat {
 	 * como cuadros vacíos en los nombres.
 	 */
 	public static void cleanOrphanTeams(MinecraftServer server) {
-		if (present || FabricLoader.getInstance().isModLoaded("chaosranks")) {
+		if (present || Platform.get().loaded("chaosranks")) {
 			return;
 		}
 		ServerScoreboard board = server.getScoreboard();
@@ -101,9 +101,9 @@ public final class ChaosRanksCompat {
 		if (!present) {
 			return out;
 		}
-		FabricLoader.getInstance().getModContainer("chaosranks").ifPresent(mod -> {
+		{
 			for (String dir : new String[] {"assets/chaosranks/font", "assets/chaosranks/textures/font"}) {
-				mod.findPath(dir).ifPresent(root -> {
+				Platform.get().resource("chaosranks", dir).ifPresent(root -> {
 					try (Stream<Path> files = Files.walk(root)) {
 						for (Path p : files.filter(Files::isRegularFile).toList()) {
 							String rel = dir + "/" + root.relativize(p).toString().replace(java.io.File.separatorChar, '/');
@@ -114,7 +114,7 @@ public final class ChaosRanksCompat {
 					}
 				});
 			}
-		});
+		}
 		return out;
 	}
 

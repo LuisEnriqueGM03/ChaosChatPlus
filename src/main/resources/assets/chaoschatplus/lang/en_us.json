@@ -136,7 +136,7 @@
 	"chaoschatplus.shot.rejected": "The screenshot was blocked by the content filter.",
 	"chaoschatplus.shot.sending": "Sending screenshot…",
 	"chaoschatplus.shot.send_title": "Send this screenshot to chat?",
-	"chaoschatplus.shot.send_note": "Only game screenshots can be sent. Reports go to the OPs.",
+	"chaoschatplus.shot.send_note": "Game capture. The server applies its configured moderation.",
 	"chaoschatplus.shot.send": "Send",
 	"chaoschatplus.shot.send_to_chat": "[Send to chat]",
 	"chaoschatplus.shot.send_hover": "Send this screenshot to the server chat",
@@ -152,5 +152,6 @@
 	"chaoschatplus.shot.report_staff": "⚑ %s reported a screenshot by %s (%s) · click to review it",
 	"chaoschatplus.shot.deleted": "Screenshot %s deleted.",
 	"chaoschatplus.shot.not_found": "There is no screenshot %s.",
-	"chaoschatplus.shot.list": "Active screenshots (%s):"
+	"chaoschatplus.shot.list": "Active screenshots (%s):",
+	"chaoschatplus.config.invalid": "Invalid configuration: the file and previous settings were preserved. Check the server console."
 }

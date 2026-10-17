@@ -1,6 +1,5 @@
 package com.chaos.chatplus.command;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -107,7 +106,10 @@ public final class ChatPlusCommand {
 	}
 
 	private static int reload(CommandContext<CommandSourceStack> ctx) {
-		ChatConfig.load();
+		if (!ChatConfig.load()) {
+			ctx.getSource().sendFailure(Lang.tr("config.invalid"));
+			return 0;
+		}
 		EmojiRegistry.load();
 		GifRegistry.load();
 		ChatServer.resyncAll(ctx.getSource().getServer());
@@ -141,7 +143,7 @@ public final class ChatPlusCommand {
 
 	private static int list(CommandContext<CommandSourceStack> ctx) {
 		ServerPlayer player = ctx.getSource().getPlayer();
-		boolean glyphs = player != null && (ChatServer.isModded(player) || ChatServer.isModded(player));
+		boolean glyphs = player != null && ChatServer.isModded(player);
 		MutableComponent out = Lang.tr("emoji.list", EmojiRegistry.all().size()).withStyle(ChatFormatting.GOLD).append("\n");
 		boolean first = true;
 		for (Emoji e : EmojiRegistry.all()) {

@@ -12,7 +12,6 @@ import com.chaos.chatplus.compat.ChaosRanksCompat;
 import com.chaos.chatplus.config.ChatConfig;
 import com.chaos.chatplus.emoji.Emoji;
 import com.chaos.chatplus.emoji.EmojiRegistry;
-import com.chaos.chatplus.gif.GifRegistry;
 import com.chaos.chatplus.gif.GifServer;
 import com.chaos.chatplus.gif.OnlineGifs;
 import com.chaos.chatplus.net.ChatPayloads;
@@ -21,7 +20,7 @@ import com.chaos.chatplus.perm.Perms;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import com.chaos.chatplus.platform.ServerNetwork;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -36,31 +35,32 @@ public final class ChatServer {
 
 	private static final Map<UUID, Sent> SENT = new ConcurrentHashMap<>();
 	private static int ticks;
+	private static final Map<UUID, Long> LAST_UPLOAD = new ConcurrentHashMap<>();
 
 	private ChatServer() {}
 
 	public static void registerReceivers() {
-		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.ShareItem.TYPE, (payload, context) ->
+		ServerNetwork.registerGlobalReceiver(ChatPayloads.ShareItem.TYPE, (payload, context) ->
 				context.server().execute(() -> ItemShare.shareSlot(context.player(), payload.slot(), payload.target())));
-		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.ShotPart.TYPE, (payload, context) ->
+		ServerNetwork.registerGlobalReceiver(ChatPayloads.ShotPart.TYPE, (payload, context) ->
 				context.server().execute(() -> Shots.onPart(context.player(), payload)));
-		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.RequestShot.TYPE, (payload, context) ->
+		ServerNetwork.registerGlobalReceiver(ChatPayloads.RequestShot.TYPE, (payload, context) ->
 				context.server().execute(() -> Shots.send(context.player(), payload.id())));
-		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.ReportShot.TYPE, (payload, context) ->
+		ServerNetwork.registerGlobalReceiver(ChatPayloads.ReportShot.TYPE, (payload, context) ->
 				context.server().execute(() -> Shots.report(context.player(), payload.id())));
-		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.GifSearch.TYPE, (payload, context) ->
+		ServerNetwork.registerGlobalReceiver(ChatPayloads.GifSearch.TYPE, (payload, context) ->
 				context.server().execute(() -> GifServer.search(context.player(), payload.query())));
-		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.GifRequest.TYPE, (payload, context) ->
+		ServerNetwork.registerGlobalReceiver(ChatPayloads.GifRequest.TYPE, (payload, context) ->
 				context.server().execute(() -> GifServer.request(context.player(), payload.id())));
-		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.SendGif.TYPE, (payload, context) ->
+		ServerNetwork.registerGlobalReceiver(ChatPayloads.SendGif.TYPE, (payload, context) ->
 				context.server().execute(() -> GifServer.send(context.player(), payload.id(), payload.info(), payload.target())));
-		ServerPlayNetworking.registerGlobalReceiver(ChatPayloads.UploadEmoji.TYPE, (payload, context) ->
+		ServerNetwork.registerGlobalReceiver(ChatPayloads.UploadEmoji.TYPE, (payload, context) ->
 				context.server().execute(() -> upload(context.player(), payload)));
 	}
 
 	/** ¿Tiene el cliente Chaos ChatPlus? */
 	public static boolean isModded(ServerPlayer player) {
-		return ServerPlayNetworking.canSend(player, ChatPayloads.ServerInfo.TYPE);
+		return ServerNetwork.canSend(player, ChatPayloads.ServerInfo.TYPE);
 	}
 
 	public static void join(ServerPlayer player) {
@@ -80,6 +80,8 @@ public final class ChatServer {
 
 	public static void stop() {
 		SENT.clear();
+		ResourceReload.stop();
+		LAST_UPLOAD.clear();
 		Shots.clear();
 	}
 
@@ -94,21 +96,17 @@ public final class ChatServer {
 		}
 		Shots.tick(server);
 		// Las carpetas mandan: si se añadió, cambió o borró un emoji o GIF, se recarga solo.
-		if (ticks % 100 == 0) {
-			if (GifRegistry.changed()) {
-				GifRegistry.load();
-			}
-			if (EmojiRegistry.changed()) {
-				EmojiRegistry.load();
-				resyncAll(server);
-			}
-		}
+		if (ticks % 100 == 0) ResourceReload.poll(server);
 	}
 
 	/** Tras recargar o cambiar emojis: vuelve a mandar todo y las fuentes. */
 	public static void resyncAll(MinecraftServer server) {
-		SENT.clear();
 		FontSync.rebuild();
+		resyncPrepared(server);
+	}
+
+	public static void resyncPrepared(MinecraftServer server) {
+		SENT.clear();
 		FontSync.sendAll(server);
 		for (ServerPlayer player : server.getPlayerList().getPlayers()) {
 			if (isModded(player)) {
@@ -125,13 +123,13 @@ public final class ChatServer {
 		Component prefix = prefix(player);
 		String prefixKey = prefix == null ? "" : prefix.toString();
 		if (last == null || !last.permKey().equals(permKey) || last.emojiVersion() != version) {
-			ServerPlayNetworking.send(player, new ChatPayloads.ServerInfo(ChatPayloads.gzip(info(player).toString())));
+			ServerNetwork.send(player, new ChatPayloads.ServerInfo(ChatPayloads.gzip(info(player).toString())));
 			if (last == null || last.emojiVersion() != version) {
 				sendImages(player);
 			}
 		}
 		if (last == null || !last.prefixKey().equals(prefixKey)) {
-			ServerPlayNetworking.send(player, new ChatPayloads.SelfPrefix(Optional.ofNullable(prefix),
+			ServerNetwork.send(player, new ChatPayloads.SelfPrefix(Optional.ofNullable(prefix),
 					Optional.ofNullable(prefixFallback(player))));
 		}
 		SENT.put(player.getUUID(), new Sent(permKey, version, prefixKey));
@@ -185,9 +183,9 @@ public final class ChatServer {
 	}
 
 	private static void sendImages(ServerPlayer player) {
-		ServerPlayNetworking.send(player, new ChatPayloads.EmojiImage("*", new byte[0]));
+		ServerNetwork.send(player, new ChatPayloads.EmojiImage("*", new byte[0]));
 		for (Map.Entry<String, byte[]> e : EmojiRegistry.customImages().entrySet()) {
-			ServerPlayNetworking.send(player, new ChatPayloads.EmojiImage(e.getKey(), e.getValue()));
+			ServerNetwork.send(player, new ChatPayloads.EmojiImage(e.getKey(), e.getValue()));
 		}
 	}
 
@@ -227,7 +225,15 @@ public final class ChatServer {
 			player.sendSystemMessage(Lang.tr("emoji.no_permission").withStyle(ChatFormatting.RED));
 			return;
 		}
-		if (!EmojiRegistry.validUploadSize(payload.png())) {
+		long now = System.currentTimeMillis();
+		Long last = LAST_UPLOAD.get(player.getUUID());
+		long cooldown = ChatConfig.get().emojis.uploadCooldownSeconds * 1000L;
+		if (last != null && now - last < cooldown) {
+			player.sendSystemMessage(Lang.tr("cooldown", (cooldown - (now - last) + 999) / 1000).withStyle(ChatFormatting.RED));
+			return;
+		}
+		LAST_UPLOAD.put(player.getUUID(), now);
+		if (!com.chaos.chatplus.emoji.EmojiImages.validUploadSize(payload.png())) {
 			player.sendSystemMessage(Lang.tr("emoji.bad_image", EmojiRegistry.MAX_UPLOAD_SIZE).withStyle(ChatFormatting.RED));
 			return;
 		}

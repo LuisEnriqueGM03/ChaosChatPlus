@@ -3,7 +3,6 @@ package com.chaos.chatplus.server;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +36,7 @@ import com.chaos.chatplus.gif.GifServer;
 import com.chaos.chatplus.net.ChatPayloads;
 import com.chaos.chatplus.perm.Perms;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import com.chaos.chatplus.platform.ServerNetwork;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.ClickEvent;
@@ -48,7 +47,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
- * Capturas en el chat. Solo llegan capturas que el cliente hace del propio juego (no hay forma de elegir un archivo).
+ * Capturas en el chat. La interfaz ofrece capturas del juego; un cliente modificado puede enviar otras imágenes.
  * Aun así el servidor desconfía: vuelve a codificar la imagen (fuera metadatos y datos raros), aplica tamaño máximo,
  * cooldown y permisos, la puede pasar por un filtro NSFW externo, y los jugadores pueden reportarla.
  */
@@ -66,13 +65,14 @@ public final class Shots {
 			@Nullable UUID target) {}
 
 	private static final class Upload {
-		final byte[][] parts;
+		final com.chaos.chatplus.net.PartAssembly parts;
 		final String target;
-		int received;
 		final long started = System.currentTimeMillis();
 
-		Upload(int count, String target) {
-			parts = new byte[count][];
+		Upload(int count, String target, int maxBytes) {
+			parts = new com.chaos.chatplus.net.PartAssembly(count,
+					(maxBytes + ChatPayloads.SHOT_PART - 1) / ChatPayloads.SHOT_PART,
+					ChatPayloads.SHOT_PART, maxBytes);
 			this.target = target;
 		}
 	}
@@ -94,7 +94,7 @@ public final class Shots {
 	public static void onPart(ServerPlayer player, ChatPayloads.ShotPart part) {
 		ChatConfig.Screenshots cfg = ChatConfig.get().screenshots;
 		UUID id = player.getUUID();
-		int maxParts = (cfg.maxKilobytes * 1024) / ChatPayloads.SHOT_PART + 1;
+		int maxParts = (cfg.maxKilobytes * 1024 + ChatPayloads.SHOT_PART - 1) / ChatPayloads.SHOT_PART;
 		if (part.parts() < 1 || part.parts() > maxParts || part.part() < 0 || part.part() >= part.parts()) {
 			UPLOADS.remove(id);
 			if (part.part() == 0) {
@@ -103,6 +103,7 @@ public final class Shots {
 			return;
 		}
 		if (part.part() == 0) {
+			UPLOADS.remove(id);
 			if (!Perms.canShots(player)) {
 				player.sendSystemMessage(Lang.tr("shot.no_permission").withStyle(ChatFormatting.RED));
 				return;
@@ -115,27 +116,23 @@ public final class Shots {
 			if (PROCESSING.contains(id)) {
 				return;
 			}
-			UPLOADS.put(id, new Upload(part.parts(), part.target()));
+			UPLOADS.put(id, new Upload(part.parts(), part.target(), cfg.maxKilobytes * 1024));
 		}
 		Upload up = UPLOADS.get(id);
-		if (up == null || up.parts.length != part.parts() || up.parts[part.part()] != null) {
+		if (up == null) return;
+		try {
+			up.parts.accept(part.part(), part.parts(), part.data());
+		} catch (IllegalArgumentException e) {
+			UPLOADS.remove(id);
 			return;
 		}
-		up.parts[part.part()] = part.data();
-		up.received++;
-		if (up.received < up.parts.length) {
-			return;
-		}
+		if (!up.parts.complete()) return;
 		UPLOADS.remove(id);
-		ByteArrayOutputStream all = new ByteArrayOutputStream();
-		for (byte[] p : up.parts) {
-			all.writeBytes(p);
-		}
+		byte[] raw = up.parts.join();
 		LAST_SHOT.put(id, System.currentTimeMillis());
 		PROCESSING.add(id);
 		MinecraftServer server = player.server;
 		String name = player.getGameProfile().getName();
-		byte[] raw = all.toByteArray();
 		String targetName = up.target;
 		CompletableFuture.supplyAsync(() -> reencode(raw, cfg.maxKilobytes * 1024), Util.backgroundExecutor())
 				.thenCompose(clean -> clean == null
@@ -150,7 +147,7 @@ public final class Shots {
 						if (error != null) {
 							ChaosChatPlus.LOGGER.warn("Captura de {} descartada", name, error);
 						}
-						LAST_SHOT.remove(id);
+						// Keep the attempt cooldown even when decoding or moderation rejects the image.
 						if (owner != null) {
 							String key = verdict != null && verdict.error != null ? verdict.error : "shot.invalid";
 							owner.sendSystemMessage(Lang.tr(key).withStyle(ChatFormatting.RED));
@@ -183,7 +180,7 @@ public final class Shots {
 	@Nullable
 	static byte[] reencode(byte[] data, int maxBytes) {
 		try {
-			BufferedImage img = ImageIO.read(new ByteArrayInputStream(data));
+			BufferedImage img = com.chaos.chatplus.image.SafeImages.read(data, maxBytes, 4096, 4096L * 4096, null);
 			if (img == null || img.getWidth() < 16 || img.getHeight() < 16 || img.getWidth() > 4096 || img.getHeight() > 4096) {
 				return null;
 			}
@@ -311,13 +308,12 @@ public final class Shots {
 
 	public static void send(ServerPlayer player, String id) {
 		Shot shot = SHOTS.get(id);
-		boolean outsider = shot != null && shot.target() != null && !player.hasPermissions(2)
-				&& !shot.owner().equals(player.getUUID()) && !shot.target().equals(player.getUUID());
+		boolean outsider = shot != null && !ShotAccess.canView(shot.owner(), shot.target(), player.getUUID(), player.hasPermissions(2));
 		if (shot == null || outsider || (HIDDEN.contains(id) && !player.hasPermissions(2))) {
-			ServerPlayNetworking.send(player, new ChatPayloads.ShotData(id, "", new byte[0]));
+			ServerNetwork.send(player, new ChatPayloads.ShotData(id, "", new byte[0]));
 			return;
 		}
-		ServerPlayNetworking.send(player, new ChatPayloads.ShotData(id, shot.ownerName(), shot.jpeg()));
+		ServerNetwork.send(player, new ChatPayloads.ShotData(id, shot.ownerName(), shot.jpeg()));
 	}
 
 	/** /chatplus shot review (OP): sin el mod, texto con [Borrar]; con el mod lo intercepta el cliente. */
@@ -338,7 +334,8 @@ public final class Shots {
 
 	public static void report(ServerPlayer reporter, String id) {
 		Shot shot = SHOTS.get(id);
-		if (shot == null || shot.owner().equals(reporter.getUUID()) || !shot.reporters().add(reporter.getUUID())) {
+		if (shot == null || !ShotAccess.canReport(shot.owner(), shot.target(), reporter.getUUID(), reporter.hasPermissions(2))
+				|| !shot.reporters().add(reporter.getUUID())) {
 			return;
 		}
 		String who = reporter.getGameProfile().getName();
@@ -378,7 +375,7 @@ public final class Shots {
 	private static void revoke(MinecraftServer server, String id) {
 		for (ServerPlayer p : server.getPlayerList().getPlayers()) {
 			if (ChatServer.isModded(p)) {
-				ServerPlayNetworking.send(p, new ChatPayloads.ShotData(id, "", new byte[0]));
+				ServerNetwork.send(p, new ChatPayloads.ShotData(id, "", new byte[0]));
 			}
 		}
 	}
@@ -396,7 +393,7 @@ public final class Shots {
 				gone.add(s.id());
 			}
 		}
-		gone.forEach(HIDDEN::remove);
+		gone.forEach(id -> { HIDDEN.remove(id); revoke(server, id); });
 		UPLOADS.entrySet().removeIf(e -> now - e.getValue().started > 60_000);
 	}
 

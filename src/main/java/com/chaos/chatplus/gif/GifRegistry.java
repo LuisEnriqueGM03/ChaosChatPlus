@@ -44,11 +44,11 @@ public final class GifRegistry {
 	private record Builtin(String id, String name, List<String> tags, String category) {}
 
 	private static final String EXPORTED = ".exportado";
-	private static Map<String, Entry> gifs = Map.of();
-	private static List<String> categories = List.of();
+	private record State(Map<String, Entry> gifs, List<String> categories) {}
+	private static volatile State state = new State(Map.of(), List.of());
 	private static Map<String, Builtin> builtins;
 	private static Map<String, String> builtinSha1;
-	private static String snapshot = "";
+	private static volatile String snapshot = "";
 
 	private GifRegistry() {}
 
@@ -148,6 +148,7 @@ public final class GifRegistry {
 		List<Path> files = files(root);
 		for (Path p : files) {
 			try {
+				if (Files.size(p) > max) continue;
 				byte[] original = Files.readAllBytes(p);
 				if (original.length > max) {
 					ChaosChatPlus.LOGGER.warn("GIF {} demasiado grande ({} KB, máximo {} KB)", p.getFileName(), original.length / 1024, max / 1024);
@@ -181,10 +182,9 @@ public final class GifRegistry {
 				ChaosChatPlus.LOGGER.warn("No se pudo leer el GIF {}", p, e);
 			}
 		}
-		gifs = found;
-		categories = List.copyOf(cats);
+		state = new State(java.util.Collections.unmodifiableMap(new LinkedHashMap<>(found)), List.copyOf(cats));
 		snapshot = snapshot(files);
-		ChaosChatPlus.LOGGER.info("GIFs: {} en {} categorías ({})", gifs.size(), categories.size(), root);
+		ChaosChatPlus.LOGGER.info("GIFs: {} en {} categorías ({})", state.gifs().size(), state.categories().size(), root);
 	}
 
 	/** ¿Cambió algo en la carpeta desde la última carga? */
@@ -257,7 +257,7 @@ public final class GifRegistry {
 	}
 
 	public static List<String> categories() {
-		return categories;
+		return state.categories();
 	}
 
 	/** Categoría especial en la búsqueda: "@cat:nombre". */
@@ -268,7 +268,7 @@ public final class GifRegistry {
 		String q = Normalizer.normalize(query.toLowerCase(Locale.ROOT).strip(), Normalizer.Form.NFD).replaceAll("\\p{M}", "");
 		String category = q.startsWith(CATEGORY_QUERY) ? q.substring(CATEGORY_QUERY.length()) : null;
 		List<GifInfo> out = new ArrayList<>();
-		for (Entry e : gifs.values()) {
+		for (Entry e : state.gifs().values()) {
 			boolean match;
 			if (q.isEmpty()) {
 				match = true;
@@ -287,13 +287,13 @@ public final class GifRegistry {
 
 	@Nullable
 	public static GifInfo info(String id) {
-		Entry e = gifs.get(id);
+		Entry e = state.gifs().get(id);
 		return e == null ? null : e.info();
 	}
 
 	@Nullable
 	public static byte[] data(String id) {
-		Entry e = gifs.get(id);
+		Entry e = state.gifs().get(id);
 		return e == null ? null : e.data();
 	}
 }

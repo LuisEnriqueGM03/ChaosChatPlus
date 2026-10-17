@@ -10,6 +10,7 @@ LANG = os.path.join(ROOT, "src", "main", "resources", "assets", "chaoschatplus",
 
 # clave: (español, inglés)
 TEXTS = {
+    "config.invalid": ("Configuración inválida: se conserva el archivo y la configuración anterior. Revisa la consola.", "Invalid configuration: the file and previous settings were preserved. Check the server console."),
     "button.cancel": ("Cancelar", "Cancel"),
     "button.close": ("Cerrar", "Close"),
     "cooldown": ("Espera %s s antes de volver a hacerlo.", "Wait %s s before doing that again."),
@@ -163,8 +164,8 @@ TEXTS = {
                       "The screenshot was blocked by the content filter."),
     "shot.sending": ("Enviando captura…", "Sending screenshot…"),
     "shot.send_title": ("¿Enviar esta captura al chat?", "Send this screenshot to chat?"),
-    "shot.send_note": ("Solo se pueden enviar capturas del juego. Los reportes llegan a los OPs.",
-                       "Only game screenshots can be sent. Reports go to the OPs."),
+    "shot.send_note": ("Captura del juego. El servidor aplica su moderación configurada.",
+                       "Game capture. The server applies its configured moderation."),
     "shot.send": ("Enviar", "Send"),
     "shot.send_to_chat": ("[Enviar al chat]", "[Send to chat]"),
     "shot.send_hover": ("Mandar esta captura al chat del servidor", "Send this screenshot to the server chat"),

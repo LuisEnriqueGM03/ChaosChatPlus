@@ -1,12 +1,8 @@
 package com.chaos.chatplus.pack;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import com.chaos.chatplus.compat.ChaosRanksCompat;
 import com.chaos.chatplus.emoji.Emoji;
@@ -15,13 +11,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 /**
- * Monta el resource pack de los emojis: la fuente chaoschatplus:emoji (un proveedor bitmap por emoji, 8 px de alto)
- * y sus texturas. El zip sale siempre igual para los mismos emojis, así el hash no cambia y los clientes lo guardan.
+ * Prepara los archivos de fuentes de los emojis: la fuente chaoschatplus:emoji (un proveedor bitmap por emoji, 8 px de alto)
+ * y sus texturas. Estos archivos se sincronizan por el protocolo del mod.
  */
 public final class PackBuilder {
 
-	/** pack_format de la 1.21.1. */
-	private static final int PACK_FORMAT = 34;
 		private PackBuilder() {}
 
 	/** Fuentes del chat: ruta (assets/...) → contenido. */
@@ -49,7 +43,7 @@ public final class PackBuilder {
 			font.add("providers", providers);
 			zip.put("assets/chaoschatplus/font/emoji.json", font.toString().getBytes(StandardCharsets.UTF_8));
 
-			// Con Chaos Ranks: sus fuentes y texturas también van en el pack, así los clientes vanilla ven las etiquetas.
+			// Con Chaos Ranks: sus fuentes y texturas también van en el pack, para los clientes con el mod.
 			for (Map.Entry<String, byte[]> e : ChaosRanksCompat.clientAssets().entrySet()) {
 				zip.put(e.getKey(), e.getValue());
 			}

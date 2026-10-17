@@ -26,7 +26,7 @@ public final class ChatTransform {
 	/** " 📷" (espacio + emoji) si quien lo recibe puede ver ese emoji; si no, nada. */
 	public static Component icon(ServerPlayer viewer, String emojiName) {
 		Emoji emoji = EmojiRegistry.byName(emojiName);
-		if (emoji == null || !(ChatServer.isModded(viewer) || (ChatServer.isModded(viewer) && emoji.builtin()))) {
+		if (emoji == null || !ChatServer.isModded(viewer)) {
 			return Component.empty();
 		}
 		return Component.literal(" ").append(ChatMarks.icon(emoji));
@@ -36,7 +36,6 @@ public final class ChatTransform {
 		if (!ChatMarks.any(message, c -> ChatMarks.isEmoji(c.getStyle()) || ChatMarks.mentionToken(c) != null)) {
 			return message;
 		}
-		boolean pack = ChatServer.isModded(viewer);
 		boolean modded = ChatServer.isModded(viewer);
 		String me = "@" + viewer.getGameProfile().getName().toLowerCase(Locale.ROOT);
 		String rank = ChaosRanksCompat.present() ? ChaosRanksCompat.rankId(viewer) : null;
@@ -45,7 +44,7 @@ public final class ChatTransform {
 			if (ChatMarks.isEmoji(node.getStyle())) {
 				String text = ChatMarks.literal(node);
 				Emoji emoji = text == null || text.isEmpty() ? null : EmojiRegistry.byCodepoint(text.codePointAt(0));
-				boolean visible = pack || (modded && emoji != null && emoji.builtin());
+				boolean visible = modded;
 				if (visible) {
 					return node;
 				}

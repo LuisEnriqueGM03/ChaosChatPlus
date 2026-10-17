@@ -3,7 +3,7 @@
 	"id": "chaoschatplus",
 	"version": "${version}",
 	"name": "Chaos ChatPlus",
-	"description": "Chat moderno: emojis (también para clientes vanilla), emojis propios, mostrar ítems del inventario, menciones @nombre con aviso y capturas del juego moderadas. Con Chaos Ranks instalado muestra tu etiqueta de rango al escribir.",
+	"description": "Chat moderno para servidor y clientes Fabric: emojis, GIFs, mostrar ítems, menciones y capturas con moderación opcional. Integración opcional con Chaos Ranks.",
 	"authors": [
 		"Luis Enrique Gil Mayser"
 	],
@@ -12,10 +12,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.chaos.chatplus.ChaosChatPlus"
+			"com.chaos.chatplus.fabric.FabricBootstrap"
 		],
 		"client": [
-			"com.chaos.chatplus.client.ChaosChatPlusClient"
+			"com.chaos.chatplus.fabric.FabricClientBootstrap"
 		]
 	},
 	"depends": {

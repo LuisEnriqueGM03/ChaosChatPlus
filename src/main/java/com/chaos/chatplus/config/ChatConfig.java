@@ -1,8 +1,5 @@
 package com.chaos.chatplus.config;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +10,13 @@ import com.chaos.chatplus.Lang;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.fabricmc.loader.api.FabricLoader;
+import com.chaos.chatplus.platform.Platform;
 
 /** Configuración del servidor: config/chaoschatplus/config.json. */
 public final class ChatConfig {
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-	private static ChatConfig current = new ChatConfig();
+	private static volatile ChatConfig current = new ChatConfig();
 
 	/** Quién puede usar algo: OP de ese nivel (0 = todos) o alguno de esos rangos de Chaos Ranks. */
 	public static class Access {
@@ -52,6 +49,9 @@ public final class ChatConfig {
 		/** Las subidas esperan a /emoji approve. Si es false se publican al momento. */
 		public boolean requireApproval = true;
 		public int maxCustom = 500;
+		public int maxPending = 100;
+		public int maxPendingPerPlayer = 5;
+		public int uploadCooldownSeconds = 30;
 	}
 
 	public static class Mentions {
@@ -134,30 +134,21 @@ public final class ChatConfig {
 	}
 
 	public static Path dir() {
-		return FabricLoader.getInstance().getConfigDir().resolve(ChaosChatPlus.MOD_ID);
+		return Platform.get().configDir().resolve(ChaosChatPlus.MOD_ID);
 	}
 
-	public static void load() {
+	public static boolean load() {
 		Path file = dir().resolve("config.json");
-		ChatConfig loaded = null;
-		if (Files.exists(file)) {
-			try {
-				loaded = GSON.fromJson(Files.readString(file, StandardCharsets.UTF_8), ChatConfig.class);
-			} catch (Exception e) {
-				ChaosChatPlus.LOGGER.error("No se pudo leer {}; se usa la configuración por defecto", file, e);
-			}
-		}
-		if (loaded == null) {
-			loaded = new ChatConfig();
-		}
-		loaded.sanitize();
-		current = loaded;
-		Lang.setServerLanguage(current.language);
 		try {
-			Files.createDirectories(dir());
-			Files.writeString(file, GSON.toJson(current), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			ChaosChatPlus.LOGGER.error("No se pudo guardar config.json", e);
+			ChatConfig loaded = JsonFiles.read(file, GSON, ChatConfig.class, ChatConfig::new);
+			loaded.sanitize();
+			JsonFiles.write(file, GSON, loaded);
+			current = loaded;
+			Lang.setServerLanguage(current.language);
+			return true;
+		} catch (Exception e) {
+			ChaosChatPlus.LOGGER.error("No se pudo cargar {}; se conserva el archivo y la configuración anterior", file, e);
+			return false;
 		}
 	}
 
@@ -170,7 +161,10 @@ public final class ChatConfig {
 		if (emojis == null) emojis = new Emojis();
 		if (emojis.upload == null) emojis.upload = new Access(2);
 		emojis.upload.sanitize();
-		emojis.maxCustom = Math.max(0, Math.min(5000, emojis.maxCustom));
+		emojis.maxCustom = Math.max(0, Math.min(4352, emojis.maxCustom));
+		emojis.maxPending = Math.max(0, Math.min(1000, emojis.maxPending));
+		emojis.maxPendingPerPlayer = Math.max(0, Math.min(emojis.maxPending, emojis.maxPendingPerPlayer));
+		emojis.uploadCooldownSeconds = Math.max(0, Math.min(3600, emojis.uploadCooldownSeconds));
 		if (mentions == null) mentions = new Mentions();
 		if (mentions.everyone == null) mentions.everyone = new Access(2);
 		if (mentions.ranks == null) mentions.ranks = new Access(2);
@@ -185,9 +179,14 @@ public final class ChatConfig {
 		if (screenshots.access == null) screenshots.access = new Access(0);
 		screenshots.access.sanitize();
 		if (screenshots.moderation == null) screenshots.moderation = new Moderation();
+		if (screenshots.moderation.provider == null) screenshots.moderation.provider = "none";
+		if (screenshots.moderation.apiUser == null) screenshots.moderation.apiUser = "";
+		if (screenshots.moderation.apiSecret == null) screenshots.moderation.apiSecret = "";
+		if (!Double.isFinite(screenshots.moderation.threshold)) screenshots.moderation.threshold = 0.5;
+		screenshots.moderation.threshold = Math.max(0, Math.min(1, screenshots.moderation.threshold));
 		screenshots.cooldownSeconds = Math.max(0, screenshots.cooldownSeconds);
 		screenshots.minPlayMinutes = Math.max(0, screenshots.minPlayMinutes);
-		screenshots.maxKilobytes = Math.max(32, Math.min(4096, screenshots.maxKilobytes));
+		screenshots.maxKilobytes = Math.max(32, Math.min(900, screenshots.maxKilobytes));
 		screenshots.expireMinutes = Math.max(1, screenshots.expireMinutes);
 		screenshots.autoHideReports = Math.max(0, screenshots.autoHideReports);
 		if (language == null) language = "en_us";

@@ -16,7 +16,6 @@ import com.chaos.chatplus.emoji.EmojiRegistry;
 import com.chaos.chatplus.perm.Perms;
 import com.chaos.chatplus.text.ChatMarks;
 
-import net.fabricmc.fabric.api.message.v1.ServerMessageDecoratorEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -35,10 +34,6 @@ public final class ChatDecorator {
 
 	private ChatDecorator() {}
 
-	public static void register() {
-		ServerMessageDecoratorEvent.EVENT.register(ServerMessageDecoratorEvent.CONTENT_PHASE,
-				(sender, message) -> sender == null ? message : decorate(sender, message));
-	}
 
 	/** Lo que pasó al decorar un mensaje. */
 	private static final class Context {

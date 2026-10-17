@@ -29,8 +29,10 @@ public final class Moderation {
 	/** true = vale, false = NSFW, null = no se pudo comprobar. */
 	public static CompletableFuture<Boolean> check(byte[] jpeg) {
 		ChatConfig.Moderation cfg = ChatConfig.get().screenshots.moderation;
+		if ("none".equalsIgnoreCase(cfg.provider)) return CompletableFuture.completedFuture(true);
 		if (!"sightengine".equalsIgnoreCase(cfg.provider)) {
-			return CompletableFuture.completedFuture(true);
+			ChaosChatPlus.LOGGER.warn("Proveedor de moderación desconocido: captura rechazada");
+			return CompletableFuture.completedFuture(null);
 		}
 		if (cfg.apiUser.isBlank() || cfg.apiSecret.isBlank()) {
 			ChaosChatPlus.LOGGER.warn("moderation.provider es sightengine pero faltan apiUser/apiSecret: captura rechazada");
@@ -59,10 +61,16 @@ public final class Moderation {
 						return (Boolean) null;
 					}
 					JsonObject nudity = json.getAsJsonObject("nudity");
+					if (nudity == null) return (Boolean) null;
+					for (String key : NSFW_CLASSES) {
+						if (!nudity.has(key) || !nudity.get(key).isJsonPrimitive()) return (Boolean) null;
+					}
 					double score = 0;
 					for (String key : NSFW_CLASSES) {
 						if (nudity != null && nudity.has(key)) {
-							score = Math.max(score, nudity.get(key).getAsDouble());
+							double value = nudity.get(key).getAsDouble();
+							if (!Double.isFinite(value) || value < 0 || value > 1) return (Boolean) null;
+							score = Math.max(score, value);
 						}
 					}
 					return score < threshold;

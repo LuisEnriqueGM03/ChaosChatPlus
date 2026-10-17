@@ -4,9 +4,11 @@ plugins {
 }
 
 loom {
+	splitEnvironmentSourceSets()
 	mods {
 		"chaoschatplus" {
 			sourceSet sourceSets.main
+			sourceSet sourceSets.client
 		}
 	}
 
@@ -45,7 +47,12 @@ loom {
 	}
 }
 
+repositories { mavenCentral() }
+
 dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
@@ -72,3 +79,8 @@ java {
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = JavaVersion.VERSION_21
 }
+
+test { useJUnitPlatform() }
+
+sourceSets.main.java.srcDir "src/fabric/java"
+sourceSets.client.java.srcDir "src/fabricClient/java"

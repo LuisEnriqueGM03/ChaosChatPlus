@@ -136,7 +136,7 @@
 	"chaoschatplus.shot.rejected": "La captura fue bloqueada por el filtro de contenido.",
 	"chaoschatplus.shot.sending": "Enviando captura…",
 	"chaoschatplus.shot.send_title": "¿Enviar esta captura al chat?",
-	"chaoschatplus.shot.send_note": "Solo se pueden enviar capturas del juego. Los reportes llegan a los OPs.",
+	"chaoschatplus.shot.send_note": "Captura del juego. El servidor aplica su moderación configurada.",
 	"chaoschatplus.shot.send": "Enviar",
 	"chaoschatplus.shot.send_to_chat": "[Enviar al chat]",
 	"chaoschatplus.shot.send_hover": "Mandar esta captura al chat del servidor",
@@ -152,5 +152,6 @@
 	"chaoschatplus.shot.report_staff": "⚑ %s reportó una captura de %s (%s) · clic para revisarla",
 	"chaoschatplus.shot.deleted": "Captura %s borrada.",
 	"chaoschatplus.shot.not_found": "No hay ninguna captura %s.",
-	"chaoschatplus.shot.list": "Capturas activas (%s):"
+	"chaoschatplus.shot.list": "Capturas activas (%s):",
+	"chaoschatplus.config.invalid": "Configuración inválida: se conserva el archivo y la configuración anterior. Revisa la consola."
 }

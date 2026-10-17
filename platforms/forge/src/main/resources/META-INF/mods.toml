@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="[52,)"
+license="MIT"
+[[mods]]
+modId="chaoschatplus"
+version="${version}"
+displayName="Chaos ChatPlus"
+authors="Luis Enrique Gil Mayser"
+logoFile="assets/chaoschatplus/icon.png"
+description="Chat moderno: emojis, GIFs, objetos, menciones y capturas moderadas."
+[[dependencies.chaoschatplus]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.21.1]"
+ordering="NONE"
+side="BOTH"
+[[dependencies.chaoschatplus]]
+modId="forge"
+mandatory=true
+versionRange="[52.1.20,)"
+ordering="NONE"
+side="BOTH"

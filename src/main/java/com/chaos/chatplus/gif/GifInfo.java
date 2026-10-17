@@ -41,6 +41,8 @@ public record GifInfo(String id, String name, String url, int width, int height,
 			return null;
 		}
 		try {
+			int width = Integer.parseInt(p[1]), height = Integer.parseInt(p[2]);
+			if (width < 1 || height < 1 || width > 4096 || height > 4096) return null;
 			return new GifInfo(p[0], p[4], p[3], Integer.parseInt(p[1]), Integer.parseInt(p[2]), "");
 		} catch (NumberFormatException e) {
 			return null;

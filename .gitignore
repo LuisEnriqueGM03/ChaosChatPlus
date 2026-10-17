@@ -46,3 +46,11 @@ replay_*.log
 *.log
 
 *-console.log
+
+# Loader-specific build and development state
+platforms/*/.gradle/
+platforms/*/build/
+platforms/*/run/
+
+# Local release copies
+dist/

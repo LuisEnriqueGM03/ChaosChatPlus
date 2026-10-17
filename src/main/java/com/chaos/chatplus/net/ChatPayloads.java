@@ -45,7 +45,9 @@ public final class ChatPayloads {
 	public static String gunzip(byte[] data) {
 		try (GZIPInputStream in = new GZIPInputStream(new ByteArrayInputStream(data))) {
 			// Tope de 4 MB descomprimidos: que nadie mande una bomba de gzip.
-			return new String(in.readNBytes(4 * 1024 * 1024), StandardCharsets.UTF_8);
+			byte[] decoded = in.readNBytes(4 * 1024 * 1024 + 1);
+			if (decoded.length > 4 * 1024 * 1024) throw new IOException("Decompressed payload too large");
+			return new String(decoded, StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}

@@ -18,10 +18,9 @@ public final class Perms {
 		if (access == null || !access.enabled) {
 			return false;
 		}
-		if (player.hasPermissions(access.opLevel)) {
-			return true;
-		}
-		return inRanks(player, access.allowedRanks);
+		return AccessRules.allowed(access.enabled,
+				player.server.getProfilePermissions(player.getGameProfile()), access.opLevel,
+				ChaosRanksCompat.present() ? ChaosRanksCompat.rankId(player) : null, access.allowedRanks);
 	}
 
 	/** Lista vacía = cualquiera. */

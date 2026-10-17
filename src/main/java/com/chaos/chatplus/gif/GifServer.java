@@ -3,7 +3,6 @@ package com.chaos.chatplus.gif;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
@@ -18,12 +17,11 @@ import com.chaos.chatplus.server.Mentions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import com.chaos.chatplus.platform.ServerNetwork;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
@@ -59,7 +57,7 @@ public final class GifServer {
 		o.add("categories", cats);
 		o.add("local", array(GifRegistry.search(query)));
 		o.add("results", new JsonArray());
-		ServerPlayNetworking.send(player, new ChatPayloads.GifResults(ChatPayloads.gzip(o.toString())));
+		ServerNetwork.send(player, new ChatPayloads.GifResults(ChatPayloads.gzip(o.toString())));
 	}
 
 	private static JsonArray array(List<GifInfo> list) {
@@ -70,7 +68,7 @@ public final class GifServer {
 
 	public static void request(ServerPlayer player, String id) {
 		byte[] data = GifRegistry.data(id);
-		ServerPlayNetworking.send(player, new ChatPayloads.GifData(id, data == null ? new byte[0] : data));
+		ServerNetwork.send(player, new ChatPayloads.GifData(id, data == null ? new byte[0] : data));
 	}
 
 	public static void send(ServerPlayer player, String id, String klipyInfo, String targetName) {

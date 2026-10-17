@@ -1,0 +1,78 @@
+<h1>Chaos ChatPlus</h1>
+
+<p><strong>A modern chat for Fabric servers.</strong> Emojis, GIFs, item sharing, @mentions, private messages and safe in-game screenshots, all in a clean, minimalist chat that fits Minecraft's style.</p>
+
+<p><img src="IMAGE_URL_CHAT" alt="Chaos ChatPlus chat" width="800" /></p>
+
+<h2>✨ Features</h2>
+
+<h3>😀 Emojis</h3>
+<ul>
+<li><strong>197 built-in pixel-art emojis</strong> (32x32) in 10 categories: faces, hearts, gestures, symbols, objects, Minecraft, animals, food and nature.</li>
+<li>Emoji picker with <strong>Recent</strong> and <strong>Favorites</strong>, plus autocomplete: type <code>:fire</code> and pick it.</li>
+<li>Unicode emojis such as 😂 ❤️ 🔥 are converted automatically.</li>
+<li><strong>Custom server emojis:</strong> drop PNG files into <code>config/chaoschatplus/emojis/&lt;category&gt;/</code> and they appear in seconds, with no restart. Uploads by players can require approval with <code>/emoji approve</code>.</li>
+</ul>
+
+<h3>🎞️ GIFs</h3>
+<ul>
+<li><strong>360 built-in GIFs</strong> (text stickers, effects, troll and pranks, emojis, anime-style chibis), all original art.</li>
+<li><strong>Add your own:</strong> drop GIFs into <code>config/chaoschatplus/gifs/&lt;category&gt;/</code>. Each subfolder becomes a category, and big GIFs are shrunk automatically.</li>
+<li><strong>Favorites:</strong> right-click any GIF to save it.</li>
+<li><strong>Optional KLIPY search</strong> (the GIF API that replaced Tenor): add a free KLIPY API key to the server config to unlock the <em>Custom</em> tab and search millions of GIFs.</li>
+</ul>
+<p><img src="IMAGE_URL_GIFS" alt="GIF picker" width="800" /></p>
+
+<h3>🗡️ Item sharing</h3>
+<ul>
+<li>Show any item from your inventory with a clean <strong>[View item]</strong> link that shows enchantments, name and lore.</li>
+<li>You can also type <code>[item]</code> in chat.</li>
+</ul>
+
+<h3>📷 Safe screenshots</h3>
+<ul>
+<li>The interface offers <strong>in-game captures</strong>. Modified clients can bypass this interface; enable server-side moderation when content filtering is required.</li>
+<li><strong>Camera mode:</strong> move freely and scroll to zoom before you shoot.</li>
+<li>Report button, automatic hiding after several reports, and a moderation review screen for OPs.</li>
+<li>Optional automatic NSFW check with Sightengine.</li>
+</ul>
+<p><img src="IMAGE_URL_SCREENSHOT" alt="Screenshot viewer" width="800" /></p>
+
+<h3>💬 Mentions and private messages</h3>
+<ul>
+<li><strong>@name</strong> highlights the message and plays a sound for that player. <code>@everyone</code>, <code>@here</code> and <code>@rank</code> can be restricted by permission.</li>
+<li><strong>Private mode</strong> in the chat bar: pick a player (5 random players plus a search box) and your text, emojis, GIFs, items and screenshots go only to them.</li>
+</ul>
+
+<h3>☠️ Styled messages</h3>
+<ul>
+<li>Styled death messages and join/leave messages, with a special welcome for first-time players.</li>
+</ul>
+
+<h2>🏷️ Chaos Ranks support (optional)</h2>
+<p>If the server has <strong>Chaos Ranks</strong>, rank badges appear in the chat and in the chat bar, and permissions can be granted per rank. Without Chaos Ranks, everything works normally and no badges are shown.</p>
+
+<h2>📦 Requirements</h2>
+<ul>
+<li>Minecraft <strong>1.21.1</strong>, <strong>Fabric Loader</strong> and <strong>Fabric API</strong>.</li>
+<li><strong>Required on both the server and every client.</strong> Players without the mod are told which version to install when they try to join.</li>
+<li>No resource pack needed: the emojis and rank badges added by the server are sent through the mod.</li>
+</ul>
+
+<h2>⚙️ Configuration</h2>
+<p>Everything is set in <code>config/chaoschatplus/config.json</code>:</p>
+<ul>
+<li>Who can use each feature, by OP level and/or Chaos Ranks rank.</li>
+<li>Cooldowns, screenshot size and expiry, mention color and sound.</li>
+<li>KLIPY API key (optional).</li>
+</ul>
+<p>Commands: <code>/chatplus reload</code>, <code>/chatplus restore</code>, <code>/chatplus shot list|view|delete</code>, <code>/emoji list|approve|deny|remove|alias</code>.</p>
+
+<h2>🔎 About KLIPY</h2>
+<p>GIF search in the <em>Custom</em> tab is <strong>Powered by KLIPY</strong>. To follow KLIPY's integration requirements, searches and GIFs are loaded directly from KLIPY on each player's game using the server's key, results are shown as provided, and KLIPY GIFs are never stored on disk. Content filtering is configured in the KLIPY Partner Panel. Get a free key at <a href="https://partner.klipy.com/api-keys" rel="nofollow">partner.klipy.com</a>.</p>
+
+<h2>📜 Notes</h2>
+<ul>
+<li>All emojis, GIFs and icons included are original art made for this mod.</li>
+<li>Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.</li>
+</ul>

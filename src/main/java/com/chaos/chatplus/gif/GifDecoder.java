@@ -29,7 +29,7 @@ public final class GifDecoder {
 	private GifDecoder() {}
 
 	public static Frames decode(byte[] data, int maxSize) throws Exception {
-		try (ImageInputStream in = ImageIO.createImageInputStream(new ByteArrayInputStream(data))) {
+		try (ImageInputStream in = new javax.imageio.stream.MemoryCacheImageInputStream(new ByteArrayInputStream(data))) {
 			Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("gif");
 			ImageReader reader = readers.next();
 			try {
@@ -51,6 +51,12 @@ public final class GifDecoder {
 						height = Math.max(height, attr(screen, "logicalScreenHeight", height));
 					}
 				}
+				com.chaos.chatplus.image.SafeImages.checkDimensions(width, height, 2048, 4_194_304);
+				if (maxSize < 1 || count < 1) throw new java.io.IOException("Empty GIF or invalid target size");
+				// Bound all retained frames, including the unscaled path used by the server shrinker.
+				if ((long) Math.min(width, maxSize) * Math.min(height, maxSize) * count > 16_777_216L) {
+					throw new java.io.IOException("GIF exceeds decoded frame budget");
+				}
 				BufferedImage canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 				List<BufferedImage> frames = new ArrayList<>();
 				int[] delays = new int[count];
@@ -58,6 +64,7 @@ public final class GifDecoder {
 					BufferedImage frame;
 					javax.imageio.metadata.IIOMetadata frameMeta;
 					try {
+						com.chaos.chatplus.image.SafeImages.checkDimensions(reader.getWidth(i), reader.getHeight(i), 2048, 4_194_304);
 						frame = reader.read(i);
 						frameMeta = reader.getImageMetadata(i);
 					} catch (Exception e) {
