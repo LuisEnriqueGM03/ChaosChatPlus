@@ -1,40 +1,40 @@
-plugins {
-    id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.148'
+plugins { id 'java-library'; id 'net.neoforged.moddev.legacyforge' version '2.0.148' }
+legacyForge {
+ enable { neoForgeVersion = '1.20.1-47.1.106'; disableRecompilation = true }
+ runs {
+  client { client(); gameDirectory = file('run') }
+  server { server(); gameDirectory = file('run'); programArgument '--nogui' }
+ }
+ mods { chaoschatplus { sourceSet sourceSets.main } }
 }
-repositories { mavenCentral() }
-neoForge {
-    version = '21.1.259'
-    runs {
-        client { client() }
-        server { server(); programArgument '--nogui' }
-    }
-    mods { chaoschatplus { sourceSet sourceSets.main } }
-}
-
 version = '1.1.1'
 group = 'com.chaos'
-base { archivesName = 'chaoschatplus-neoforge-1.21.1' }
+base { archivesName = 'chaoschatplus-neoforge-1.20.1' }
 java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+repositories { mavenCentral() }
 sourceSets {
-    main {
-        java.setSrcDirs(['../../src/main/java', '../../src/client/java', 'src/main/java'])
-        resources.setSrcDirs(['../../src/main/resources', 'src/main/resources'])
-        resources.exclude 'fabric.mod.json'
-    }
-    test { java.srcDir '../../src/test/java' }
+ main {
+  java.setSrcDirs(['../../src/main/java', '../../src/client/java', 'src/main/java'])
+  resources.setSrcDirs(['../../src/main/resources', 'src/main/resources'])
+  resources.exclude 'fabric.mod.json'
+ }
+ test { java.srcDir '../../src/test/java' }
 }
-tasks.withType(JavaCompile).configureEach { options.release = 21; options.encoding = 'UTF-8' }
-processResources {
-    inputs.property 'version', project.version
-    filesMatching('META-INF/*.toml') { expand version: project.version }
-}
+tasks.withType(JavaCompile).configureEach { options.release = 17; options.encoding = 'UTF-8' }
+processResources { inputs.property 'version', project.version; filesMatching('META-INF/*.toml') { expand version: project.version } }
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
-    testImplementation 'com.google.code.gson:gson:2.10.1'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+ compileOnly 'org.jetbrains:annotations:24.1.0'
+ compileOnly 'io.github.llamalad7:mixinextras-common:0.5.0'
+ annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+ implementation 'io.github.llamalad7:mixinextras-forge:0.5.0'
+ jarJar(implementation('io.github.llamalad7:mixinextras-forge:0.5.0')) { version { strictly '[0.5.0,0.6)'; prefer '0.5.0' } }
+ testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+ testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
+mixin { add sourceSets.main, 'chaoschatplus.refmap.json'; config 'chaoschatplus.mixins.json' }
 test { useJUnitPlatform() }
 jar { manifest.attributes('MixinConfigs': 'chaoschatplus.mixins.json') }
-
 apply from: '../../tools/runtime-runs.gradle'
+
+sourceSets.test.compileClasspath += sourceSets.main.compileClasspath
+sourceSets.test.runtimeClasspath += sourceSets.main.runtimeClasspath

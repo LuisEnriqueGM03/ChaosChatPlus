@@ -115,7 +115,7 @@ public final class ChatBar {
 	private Component dmChip() {
 		String target = ClientState.dmTarget();
 		return target == null || commandMode() ? null
-				: Component.literal("✉ " + target + "  ✕").withColor(GIF_PRIVATE);
+				: Component.literal("✉ " + target + "  ✕").withStyle(style -> style.withColor(GIF_PRIVATE));
 	}
 
 	private static final int GIF_PRIVATE = 0xD6B4FF;
@@ -128,7 +128,7 @@ public final class ChatBar {
 		}
 		Component p = ClientState.prefix();
 		if (p == null && Minecraft.getInstance().player != null) {
-			p = Component.literal(Minecraft.getInstance().player.getGameProfile().getName()).withColor(0xC9CDD6);
+			p = Component.literal(Minecraft.getInstance().player.getGameProfile().getName()).withStyle(style -> style.withColor(0xC9CDD6));
 		}
 		return p;
 	}

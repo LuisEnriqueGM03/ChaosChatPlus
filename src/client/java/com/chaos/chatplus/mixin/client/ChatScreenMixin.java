@@ -98,13 +98,6 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
 		}
 	}
 
-	@WrapOperation(method = "render", at = @At(value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/components/ChatComponent;render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V"))
-	private void chaoschatplus$chatMouse(ChatComponent chat, GuiGraphics g, int tick, int mx, int my, boolean focused,
-			Operation<Void> original) {
-		boolean blocked = chaoschatplus$bar != null && chaoschatplus$bar.blocksMouse(mx, my);
-		original.call(chat, g, tick, blocked ? -1000 : mx, blocked ? -1000 : my, focused);
-	}
 
 	@WrapOperation(method = "render", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/client/gui/components/ChatComponent;getMessageTagAt(DD)Lnet/minecraft/client/GuiMessageTag;"))
@@ -144,7 +137,7 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
 	}
 
 	@Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-	private void chaoschatplus$scroll(double mx, double my, double h, double v, CallbackInfoReturnable<Boolean> cir) {
+	private void chaoschatplus$scroll(double mx, double my, double v, CallbackInfoReturnable<Boolean> cir) {
 		if (chaoschatplus$bar != null && chaoschatplus$bar.mouseScrolled(mx, my, v)) {
 			cir.setReturnValue(true);
 		}

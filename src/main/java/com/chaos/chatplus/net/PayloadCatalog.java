@@ -1,12 +1,19 @@
 package com.chaos.chatplus.net;
 import java.util.List;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+
+
+import com.chaos.chatplus.net.CustomPacketPayload;
 public final class PayloadCatalog {
     public record Entry<T extends CustomPacketPayload>(Class<T> javaType, CustomPacketPayload.Type<T> type,
-            StreamCodec<? super RegistryFriendlyByteBuf, T> codec, boolean toServer) {}
+            PacketCodec<T> codec, boolean toServer) {}
     private PayloadCatalog() {}
+    public static net.minecraft.network.FriendlyByteBuf encode(CustomPacketPayload value) {
+        var buffer=new net.minecraft.network.FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
+        for(var entry:ALL) if(entry.type().equals(value.type())) { encode(entry,buffer,value); return buffer; }
+        throw new IllegalArgumentException("Unknown payload "+value.type());
+    }
+    private static <T extends CustomPacketPayload> void encode(Entry<T> entry,net.minecraft.network.FriendlyByteBuf buffer,CustomPacketPayload value) {entry.codec().encode(buffer,entry.javaType().cast(value));}
+
     public static final List<Entry<?>> ALL = List.of(
         new Entry<>(ChatPayloads.ServerInfo.class, ChatPayloads.ServerInfo.TYPE, ChatPayloads.ServerInfo.CODEC, false),
         new Entry<>(ChatPayloads.EmojiImage.class, ChatPayloads.EmojiImage.TYPE, ChatPayloads.EmojiImage.CODEC, false),

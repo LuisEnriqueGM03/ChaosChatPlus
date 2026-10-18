@@ -31,7 +31,7 @@ public final class ForgeBootstrap {
     private void commands(RegisterCommandsEvent event) { ChatPlusCommand.register(event.getDispatcher()); }
     private void started(ServerStartedEvent event) { ChaosChatPlus.serverStarted(event.getServer()); }
     private void stopped(ServerStoppedEvent event) { ChatServer.stop(); }
-    private void tick(TickEvent.ServerTickEvent.Post event) { ChatServer.tick(event.getServer()); }
+    private void tick(TickEvent.ServerTickEvent event) { if(event.phase==TickEvent.Phase.END) ChatServer.tick(event.getServer()); }
     private void join(PlayerEvent.PlayerLoggedInEvent event) { if (event.getEntity() instanceof ServerPlayer player) ChatServer.join(player); }
     private void leave(PlayerEvent.PlayerLoggedOutEvent event) { if (event.getEntity() instanceof ServerPlayer player) ChatServer.leave(player); }
     private void chat(ServerChatEvent event) { event.setMessage(ChatDecorator.decorate(event.getPlayer(), event.getMessage())); }

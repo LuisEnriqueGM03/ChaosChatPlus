@@ -1,27 +1,29 @@
 {
-	"required": true,
-	"package": "com.chaos.chatplus.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-		"MsgCommandMixin",
-		"PlayerListMixin",
-		"ServerGamePacketListenerImplMixin",
-		"ServerPlayerMixin"
-	],
-	"client": [
-		"client.CameraZoomMixin",
-		"client.ChatComponentAccessor",
-		"client.ChatComponentMixin",
-		"client.ChatScreenMixin",
-		"client.EditBoxAccessor",
-		"client.FontManagerAccessor",
-		"client.GuiMixin",
-		"client.KeyboardHandlerMixin",
-		"client.MinecraftAccessor",
-		"client.MouseHandlerMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"minVersion": "0.8.7"
+  "required": true,
+  "package": "com.chaos.chatplus.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MsgCommandMixin",
+    "PlayerListMixin",
+    "ServerGamePacketListenerImplMixin",
+    "ServerPlayerMixin"
+  ],
+  "client": [
+    "client.CameraZoomMixin",
+    "client.ChatComponentAccessor",
+    "client.ChatComponentMixin",
+    "client.ChatScreenMixin",
+    "client.EditBoxAccessor",
+    "client.FontManagerAccessor",
+    "client.GuiMixin",
+    "client.KeyboardHandlerMixin",
+    "client.MinecraftAccessor",
+    "client.MouseHandlerMixin",
+    "client.ToastComponentMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8.5",
+  "refmap": "chaoschatplus.refmap.json"
 }

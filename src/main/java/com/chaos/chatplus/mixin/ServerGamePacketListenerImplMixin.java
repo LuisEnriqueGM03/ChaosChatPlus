@@ -34,7 +34,7 @@ abstract class ServerGamePacketListenerImplMixin {
 		return adapted == unsigned ? message : message.withUnsignedContent(adapted);
 	}
 
-	@ModifyArg(method = "removePlayerFromWorld", at = @At(value = "INVOKE",
+	@ModifyArg(method = "onDisconnect", at = @At(value = "INVOKE",
 			target = "Lnet/minecraft/server/players/PlayerList;broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"),
 			index = 0)
 	private Component chaoschatplus$leave(Component message) {

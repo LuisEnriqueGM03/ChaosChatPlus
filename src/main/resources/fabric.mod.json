@@ -1,33 +1,33 @@
 {
-	"schemaVersion": 1,
-	"id": "chaoschatplus",
-	"version": "${version}",
-	"name": "Chaos ChatPlus",
-	"description": "Chat moderno para servidor y clientes Fabric: emojis, GIFs, mostrar ítems, menciones y capturas con moderación opcional. Integración opcional con Chaos Ranks.",
-	"authors": [
-		"Luis Enrique Gil Mayser"
-	],
-	"license": "MIT",
-	"icon": "assets/chaoschatplus/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"com.chaos.chatplus.fabric.FabricBootstrap"
-		],
-		"client": [
-			"com.chaos.chatplus.fabric.FabricClientBootstrap"
-		]
-	},
-	"depends": {
-		"fabricloader": ">=0.16.0",
-		"minecraft": "~1.21.1",
-		"java": ">=21",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"chaosranks": "*"
-	},
-	"mixins": [
-		"chaoschatplus.mixins.json"
-	]
+  "schemaVersion": 1,
+  "id": "chaoschatplus",
+  "version": "${version}",
+  "name": "Chaos ChatPlus",
+  "description": "Chat moderno para servidor y clientes Fabric: emojis, GIFs, mostrar \u00edtems, menciones y capturas con moderaci\u00f3n opcional. Integraci\u00f3n opcional con Chaos Ranks.",
+  "authors": [
+    "Luis Enrique Gil Mayser"
+  ],
+  "license": "MIT",
+  "icon": "assets/chaoschatplus/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.chaos.chatplus.fabric.FabricBootstrap"
+    ],
+    "client": [
+      "com.chaos.chatplus.fabric.FabricClientBootstrap"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "chaosranks": "*"
+  },
+  "mixins": [
+    "chaoschatplus.mixins.json"
+  ]
 }

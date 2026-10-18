@@ -45,10 +45,10 @@ public final class ServerMessages {
 		}
 		Object[] args = t.getArgs().clone();
 		if (args[0] instanceof Component victim) {
-			args[0] = Component.empty().append(victim).append(Component.literal(" ☠").withColor(SKULL));
+			args[0] = Component.empty().append(victim).append(Component.literal(" ☠").withStyle(style -> style.withColor(SKULL)));
 		}
 		if (args.length > 1 && args[1] instanceof Component killer) {
-			args[1] = Component.empty().withColor(KILLER).append(killer);
+			args[1] = Component.empty().withStyle(style -> style.withColor(KILLER)).append(killer);
 		}
 		if (args.length > 2 && args[2] instanceof Component weapon) {
 			ItemStack stack = itemOf(weapon);
@@ -84,16 +84,16 @@ public final class ServerMessages {
 		boolean first = player.getStats().getValue(Stats.CUSTOM.get(Stats.LEAVE_GAME)) == 0
 				&& player.getStats().getValue(Stats.CUSTOM.get(Stats.PLAY_TIME)) < 20;
 		if (first) {
-			return Component.literal("✦ ").withColor(FIRST_JOIN)
-					.append(Lang.tr("join.first", player.getDisplayName()).withColor(FIRST_JOIN));
+			return Component.literal("✦ ").withStyle(style -> style.withColor(FIRST_JOIN))
+					.append(Lang.tr("join.first", player.getDisplayName()).withStyle(style -> style.withColor(FIRST_JOIN)));
 		}
-		return Component.literal("➜ ").withColor(JOIN).append(Lang.tr("join.joined", player.getDisplayName()).withColor(JOIN));
+		return Component.literal("➜ ").withStyle(style -> style.withColor(JOIN)).append(Lang.tr("join.joined", player.getDisplayName()).withStyle(style -> style.withColor(JOIN)));
 	}
 
 	public static Component leave(Component original, ServerPlayer player) {
 		if (!ChatConfig.get().messages.joinLeave) {
 			return original;
 		}
-		return Component.literal("← ").withColor(LEAVE).append(Lang.tr("join.left", player.getDisplayName()).withColor(LEAVE));
+		return Component.literal("← ").withStyle(style -> style.withColor(LEAVE)).append(Lang.tr("join.left", player.getDisplayName()).withStyle(style -> style.withColor(LEAVE)));
 	}
 }

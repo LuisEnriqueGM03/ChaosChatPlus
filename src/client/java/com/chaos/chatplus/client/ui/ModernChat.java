@@ -94,7 +94,7 @@ public final class ModernChat {
 		double spacing = mc.options.chatLineSpacing().get();
 		int lineHeight = acc.chaoschatplus$lineHeight();
 		int textOffset = (int) Math.round(-8.0 * (spacing + 1.0) + 4.0 * spacing);
-		float partial = mc.getTimer().getGameTimeDeltaPartialTick(false);
+		float partial = mc.getFrameTime();
 		boolean animate = ClientPrefs.get().animations;
 
 		GIF_RECTS.clear();

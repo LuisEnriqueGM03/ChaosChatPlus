@@ -1,4 +1,4 @@
-# Chaos ChatPlus (Minecraft 1.21.1)
+# Chaos ChatPlus (Minecraft 1.20.1)
 
 Chat moderno para servidores: emojis, emojis propios, mostrar ítems,
 menciones `@nombre` y capturas del juego moderadas. Se instala en el servidor y en cada cliente; incluye el diseño nuevo, el selector de emojis, los botones y el visor de capturas.
@@ -80,13 +80,12 @@ misma instalación. Chaos Ranks continúa siendo opcional y necesita una edició
 | Edición | Compilación desde la raíz | Archivo instalable |
 | --- | --- | --- |
 | Fabric | `./gradlew build` | `build/libs/chaoschatplus-1.1.1.jar` |
-| Forge 52.1.20+ | `./gradlew -p platforms/forge build` | `platforms/forge/build/libs/chaoschatplus-forge-1.21.1-1.1.1.jar` |
-| NeoForge 21.1.259+ | `./gradlew -p platforms/neoforge build` | `platforms/neoforge/build/libs/chaoschatplus-neoforge-1.21.1-1.1.1.jar` |
+| Forge 47.4.26+ | `./gradlew -p platforms/forge build` | `platforms/forge/build/libs/chaoschatplus-forge-1.20.1-1.1.1.jar` |
+| NeoForge 47.1.106+ | `./gradlew -p platforms/neoforge build` | `platforms/neoforge/build/libs/chaoschatplus-neoforge-1.20.1-1.1.1.jar` |
 
 Para compilar, usa JDK 25 para ejecutar Gradle: la versión actual de Loom lo requiere. Forge y NeoForge compilan
 con una toolchain JDK 21; instala ambos JDK o configura su detección mediante Gradle. Los tres mods generan
-bytecode Java 21 para Minecraft 1.21.1. La edición Forge incluye MixinExtras dentro del archivo instalable;
-el archivo con sufijo `slim` es intermedio y no es el que debes distribuir.
+bytecode Java 17 para Minecraft 1.20.1. Las ediciones Forge y NeoForge incluyen MixinExtras dentro del archivo instalable.
 
 - `src/fabric/java` y `src/fabricClient/java`: conexiones y eventos exclusivos de Fabric.
 - `platforms/forge`: compilación y adaptadores nativos Forge.
@@ -96,4 +95,4 @@ el archivo con sufijo `slim` es intermedio y no es el que debes distribuir.
 
 ## Validación multijugador
 
-La 1.1.1 estable pasa 31 pruebas automáticas y 45 comprobaciones dentro del juego por cargador, con tres clientes gráficos y un servidor dedicado. Consulta [VALIDATION.md](VALIDATION.md) para cobertura, resultados y reproducción con `tools/runtime-prepare.py` y `tools/runtime-tests.py`.
+La 1.1.1 para 1.20.1 pasa 34 pruebas automáticas y 45 comprobaciones dentro del juego por cargador, con tres clientes gráficos y un servidor dedicado. Consulta [VALIDATION.md](VALIDATION.md) para cobertura, resultados y reproducción con `tools/runtime-prepare.py` y `tools/runtime-tests.py`.

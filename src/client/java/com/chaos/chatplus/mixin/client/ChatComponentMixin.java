@@ -9,10 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.chaos.chatplus.client.ShotCapture;
 import com.chaos.chatplus.client.ui.ChatTags;
 import com.chaos.chatplus.client.ui.ModernChat;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -24,9 +21,10 @@ import net.minecraft.network.chat.MessageSignature;
 abstract class ChatComponentMixin {
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
-	private void chaoschatplus$modern(GuiGraphics g, int tick, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+	private void chaoschatplus$modern(GuiGraphics g, int tick, int mouseX, int mouseY, CallbackInfo ci) {
 		if (ModernChat.enabled()) {
-			ModernChat.render((ChatComponent) (Object) this, g, tick, mouseX, mouseY, focused);
+			ModernChat.render((ChatComponent) (Object) this, g, tick, mouseX, mouseY,
+					net.minecraft.client.Minecraft.getInstance().screen instanceof net.minecraft.client.gui.screens.ChatScreen);
 			ci.cancel();
 		}
 	}
@@ -37,10 +35,10 @@ abstract class ChatComponentMixin {
 		return ShotCapture.decorateScreenshotMessage(message);
 	}
 
-	@WrapOperation(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V",
-			at = @At(value = "NEW", target = "(ILnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)Lnet/minecraft/client/GuiMessage;"))
-	private GuiMessage chaoschatplus$mentionTag(int tick, Component message, MessageSignature signature, GuiMessageTag tag,
-			Operation<GuiMessage> original) {
-		return original.call(tick, message, signature, ChatTags.tagFor(message, tag));
-	}
+	@ModifyVariable(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V",
+            at = @At("HEAD"), argsOnly = true)
+    private GuiMessageTag chaoschatplus$mentionTag(GuiMessageTag tag, Component message,
+            MessageSignature signature, GuiMessageTag original) {
+        return ChatTags.tagFor(message, tag);
+    }
 }

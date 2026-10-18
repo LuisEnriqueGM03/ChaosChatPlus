@@ -2,7 +2,7 @@ package com.chaos.chatplus.platform;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.chaos.chatplus.net.CustomPacketPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 

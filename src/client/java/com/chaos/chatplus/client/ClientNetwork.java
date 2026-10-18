@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.BiConsumer;
 import com.chaos.chatplus.platform.ClientDispatch;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.chaos.chatplus.net.CustomPacketPayload;
 
 public final class ClientNetwork {
     public interface Transport {

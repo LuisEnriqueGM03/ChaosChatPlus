@@ -60,3 +60,7 @@ dist/
 # Python tooling caches
 __pycache__/
 *.pyc
+
+# Generated loader startup logs
+logs/
+*.log.gz

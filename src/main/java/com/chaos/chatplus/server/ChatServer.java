@@ -198,7 +198,7 @@ public final class ChatServer {
 		MutableComponent out = Component.empty().append(rank.badge()).append(" ")
 				.append(Component.literal(player.getGameProfile().getName()).setStyle(rank.nameStyle()));
 		if (rank.separator() != null && !rank.separator().isEmpty()) {
-			out.append(" ").append(Component.literal(rank.separator()).withColor(rank.separatorColor()));
+			out.append(" ").append(Component.literal(rank.separator()).withStyle(style -> style.withColor(rank.separatorColor())));
 		}
 		return out;
 	}
@@ -215,7 +215,7 @@ public final class ChatServer {
 		}
 		out.append(Component.literal(player.getGameProfile().getName()).setStyle(rank.nameStyle()));
 		if (rank.separator() != null && !rank.separator().isEmpty()) {
-			out.append(" ").append(Component.literal(rank.separator()).withColor(rank.separatorColor()));
+			out.append(" ").append(Component.literal(rank.separator()).withStyle(style -> style.withColor(rank.separatorColor())));
 		}
 		return out;
 	}

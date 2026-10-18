@@ -21,7 +21,7 @@ import com.mojang.serialization.JsonOps;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.font.FontManager;
-import net.minecraft.client.gui.font.FontOption;
+
 import net.minecraft.client.gui.font.FontSet;
 import net.minecraft.client.gui.font.providers.GlyphProviderDefinition;
 import net.minecraft.resources.ResourceLocation;
@@ -82,20 +82,20 @@ public final class FontInjector {
 			if (p.length != 4 || !p[0].equals("assets") || !p[2].equals("font") || !p[3].endsWith(".json")) {
 				continue;
 			}
-			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(p[1], p[3].substring(0, p[3].length() - 5));
+			ResourceLocation id = new ResourceLocation(p[1], p[3].substring(0, p[3].length() - 5));
 			JsonObject json = JsonParser.parseString(new String(f.getValue(), StandardCharsets.UTF_8)).getAsJsonObject();
-			List<GlyphProvider.Conditional> providers = new ArrayList<>();
+			List<GlyphProvider> providers = new ArrayList<>();
 			for (JsonElement el : json.getAsJsonArray("providers")) {
-				GlyphProviderDefinition def = GlyphProviderDefinition.MAP_CODEC.codec().parse(JsonOps.INSTANCE, el).getOrThrow();
+				GlyphProviderDefinition def = GlyphProviderDefinition.CODEC.parse(JsonOps.INSTANCE, el).getOrThrow(false, error -> { throw new IllegalArgumentException(error); });
 				Optional<GlyphProviderDefinition.Loader> loader = def.unpack().left();
 				if (loader.isPresent()) {
 					GlyphProvider provider = loader.get().load(resources);
-					providers.add(new GlyphProvider.Conditional(provider, FontOption.Filter.ALWAYS_PASS));
+					providers.add(provider);
 				}
 			}
 			FontSet set = new FontSet(access.chaoschatplus$textureManager(), ChaosChatPlus.id("server_font/" + (++fontGeneration)));
 			try {
-				set.reload(providers, Set.of());
+				set.reload(providers);
 				FontSet previous = access.chaoschatplus$fontSets().put(id, set);
 				if (previous != null) ORIGINALS.put(id, previous);
 				INJECTED.add(id);

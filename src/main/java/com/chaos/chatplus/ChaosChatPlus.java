@@ -15,7 +15,7 @@ import com.chaos.chatplus.compat.ChaosRanksCompat;
 public final class ChaosChatPlus {
     public static final String MOD_ID = "chaoschatplus";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }
+    public static ResourceLocation id(String path) { return new ResourceLocation(MOD_ID, path); }
     public static void initialize() { ChatServer.registerReceivers(); }
     public static void serverStarted(MinecraftServer server) {
         if (!ChatConfig.load()) throw new IllegalStateException("Corrige config/chaoschatplus/config.json antes de iniciar el servidor");

@@ -94,7 +94,7 @@ public class ItemPickerScreen extends Screen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void renderBackground(GuiGraphics g) {
 		g.fill(0, 0, width, height, 0x88000000);
 	}
 

@@ -38,7 +38,7 @@ public class ItemPreviewScreen extends Screen {
 		left = (width - W) / 2;
 		top = (height - H) / 2;
 		List<Component> tooltip = minecraft != null && minecraft.player != null
-				? stack.getTooltipLines(Item.TooltipContext.of(minecraft.level), minecraft.player,
+				? stack.getTooltipLines(minecraft.player,
 						minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL)
 				: List.of(stack.getHoverName());
 		lines = tooltip.stream().flatMap(c -> font.split(c, W - 96).stream()).toList();
@@ -75,7 +75,7 @@ public class ItemPreviewScreen extends Screen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void renderBackground(GuiGraphics g) {
 		g.fill(0, 0, width, height, 0x88000000);
 	}
 

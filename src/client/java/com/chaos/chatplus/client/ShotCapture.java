@@ -41,6 +41,7 @@ public final class ShotCapture {
 	private static boolean cameraMode;
 	private static double zoom = 1.0;
 	private static int countdown = -1;
+	private static int hudFrames;
 
 	private ShotCapture() {}
 
@@ -52,6 +53,7 @@ public final class ShotCapture {
 		Minecraft mc = Minecraft.getInstance();
 		mc.setScreen(null);
 		cameraMode = true;
+		hudFrames = 0;
 		countdown = -1;
 		zoom = 1.0;
 	}
@@ -122,6 +124,7 @@ public final class ShotCapture {
 
 	/** Visor del modo cámara (esquinas, título y ayuda). No se pinta en el frame que se captura. */
 	public static void renderViewfinder(GuiGraphics g) {
+		if (cameraMode) hudFrames++;
 		if (!cameraMode || countdown >= 0) {
 			return;
 		}

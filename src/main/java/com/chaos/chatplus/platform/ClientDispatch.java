@@ -1,6 +1,6 @@
 package com.chaos.chatplus.platform;
 import java.util.function.Consumer;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import com.chaos.chatplus.net.CustomPacketPayload;
 public final class ClientDispatch {
     private static Consumer<CustomPacketPayload> receiver = payload -> {};
     private ClientDispatch() {}

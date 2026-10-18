@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.chaos.chatplus.client.ShotCapture;
 
-import net.minecraft.client.DeltaTracker;
+
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -16,7 +16,7 @@ import net.minecraft.client.gui.GuiGraphics;
 abstract class GuiMixin {
 
 	@Inject(method = "render", at = @At("HEAD"), cancellable = true)
-	private void chaoschatplus$camera(GuiGraphics g, DeltaTracker delta, CallbackInfo ci) {
+	private void chaoschatplus$camera(GuiGraphics g, float partial, CallbackInfo ci) {
 		if (ShotCapture.hideHud()) {
 			ShotCapture.renderViewfinder(g);
 			ci.cancel();

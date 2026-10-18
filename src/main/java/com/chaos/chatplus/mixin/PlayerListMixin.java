@@ -12,7 +12,7 @@ import com.chaos.chatplus.server.ServerMessages;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.CommonListenerCookie;
+
 import net.minecraft.server.players.PlayerList;
 
 /** «➜ Luis entró al servidor» en lugar del aviso amarillo de vanilla. */
@@ -23,12 +23,12 @@ abstract class PlayerListMixin {
 	private static final ThreadLocal<ServerPlayer> chaoschatplus$joining = new ThreadLocal<>();
 
 	@Inject(method = "placeNewPlayer", at = @At("HEAD"))
-	private void chaoschatplus$remember(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
+	private void chaoschatplus$remember(Connection connection, ServerPlayer player, CallbackInfo ci) {
 		chaoschatplus$joining.set(player);
 	}
 
 	@Inject(method = "placeNewPlayer", at = @At("RETURN"))
-	private void chaoschatplus$forget(Connection connection, ServerPlayer player, CommonListenerCookie cookie, CallbackInfo ci) {
+	private void chaoschatplus$forget(Connection connection, ServerPlayer player, CallbackInfo ci) {
 		chaoschatplus$joining.remove();
 	}
 

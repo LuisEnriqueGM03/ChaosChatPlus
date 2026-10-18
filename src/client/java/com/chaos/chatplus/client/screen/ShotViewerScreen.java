@@ -145,7 +145,7 @@ public class ShotViewerScreen extends Screen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void renderBackground(GuiGraphics g) {
 		g.fill(0, 0, width, height, 0xE00B0C10);
 	}
 

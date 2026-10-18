@@ -15,7 +15,7 @@ import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 
@@ -72,7 +72,7 @@ public final class ChatMarks {
 	/** Texto propio del nodo si es literal (sin hijos), o null. */
 	@Nullable
 	public static String literal(Component c) {
-		return c.getContents() instanceof PlainTextContents.LiteralContents lit ? lit.text() : null;
+		return c.getContents() instanceof LiteralContents lit ? lit.text() : null;
 	}
 
 	/**

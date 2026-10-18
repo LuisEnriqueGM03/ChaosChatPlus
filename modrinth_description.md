@@ -45,7 +45,7 @@
 If the server has **Chaos Ranks**, rank badges appear in the chat and in the chat bar, and permissions can be granted per rank. Without Chaos Ranks, everything works normally and no badges are shown.
 
 ## 📦 Requirements
-- Minecraft **1.21.1**, **Fabric Loader** and **Fabric API**.
+- Minecraft **1.20.1**, **Java 17**, and the matching Fabric, Forge or NeoForge edition. Fabric also requires **Fabric API**.
 - **Required on both the server and every client.** Players without the mod are told which version to install when they try to join.
 - No resource pack needed: the emojis and rank badges added by the server are sent through the mod.
 
