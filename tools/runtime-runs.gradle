@@ -1,0 +1,39 @@
+// Opt-in development runs against isolated local worlds; normal run configurations are unchanged.
+def fabric = plugins.hasPlugin('net.fabricmc.fabric-loom-remap')
+def loader = fabric ? 'fabric' : (plugins.hasPlugin('net.minecraftforge.gradle') ? 'forge' : 'neoforge')
+def sharedRoot = fabric ? projectDir : file('../..')
+def runtimeHome = new File(sharedRoot, ".verification/runtime/${loader}")
+def role = providers.gradleProperty('runtimeRole').getOrElse('Luis')
+def port = providers.gradleProperty('runtimePort').getOrElse('25631')
+def props = ['chaoschatplus.runtimeTest': 'true', 'chaoschatplus.runtimeDir': new File(runtimeHome, 'signals').absolutePath]
+def clientArgs = ['--username', role, '--quickPlayMultiplayer', "127.0.0.1:${port}", '--width', '1280', '--height', '720']
+if (fabric) {
+    loom.runs {
+        runtimeClient {
+            client(); runDir new File(runtimeHome, role).absolutePath
+            programArgs clientArgs
+            props.each { k, v -> vmArg "-D${k}=${v}" }
+        }
+        runtimeServer { server(); runDir new File(runtimeHome, 'server').absolutePath; programArg '--nogui' }
+    }
+} else if (loader == 'forge') {
+    if (project.hasProperty('runtimeExport')) minecraft.runs {
+        named('client') {
+            workingDir = layout.projectDirectory.dir(new File(runtimeHome, role).absolutePath)
+            args clientArgs
+            props.each { k, v -> systemProperty k, v }
+        }
+        named('server') {
+            workingDir = layout.projectDirectory.dir(new File(runtimeHome, 'server').absolutePath)
+        }
+    }
+} else {
+    neoForge.runs {
+        runtimeClient {
+            client(); gameDirectory = new File(runtimeHome, role)
+            programArguments.addAll(clientArgs)
+            props.each { k, v -> systemProperty k, v }
+        }
+        runtimeServer { server(); gameDirectory = new File(runtimeHome, 'server'); programArgument '--nogui' }
+    }
+}

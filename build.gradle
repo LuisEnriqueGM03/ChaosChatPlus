@@ -84,3 +84,5 @@ test { useJUnitPlatform() }
 
 sourceSets.main.java.srcDir "src/fabric/java"
 sourceSets.client.java.srcDir "src/fabricClient/java"
+
+apply from: 'tools/runtime-runs.gradle'

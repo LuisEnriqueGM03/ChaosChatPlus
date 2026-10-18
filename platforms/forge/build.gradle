@@ -19,7 +19,7 @@ repositories {
 }
 dependencies { implementation minecraft.dependency('net.minecraftforge:forge:1.21.1-52.1.20') }
 
-version = '1.1.0'
+version = '1.1.1'
 group = 'com.chaos'
 base { archivesName = 'chaoschatplus-forge-1.21.1' }
 java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
@@ -32,7 +32,10 @@ sourceSets {
     test { java.srcDir '../../src/test/java' }
 }
 tasks.withType(JavaCompile).configureEach { options.release = 21; options.encoding = 'UTF-8' }
-processResources { filesMatching('META-INF/*.toml') { expand version: project.version } }
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/*.toml') { expand version: project.version }
+}
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testImplementation 'com.google.code.gson:gson:2.10.1'
@@ -49,3 +52,5 @@ dependencies {
     implementation 'io.github.llamalad7:mixinextras-forge:0.5.0'
     jarJar 'io.github.llamalad7:mixinextras-forge:0.5.0'
 }
+
+apply from: '../../tools/runtime-runs.gradle'
