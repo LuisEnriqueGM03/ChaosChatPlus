@@ -39,6 +39,7 @@ public class ChaosChatPlusClient  {
     }
     public static void startTick(net.minecraft.client.Minecraft client) { if (ACTIVE) ShotCapture.startTick(client); }
     public static void endTick(net.minecraft.client.Minecraft client) {
+        RuntimeTest.tick(client);
         if (SelfTest.enabled()) SelfTest.tick(client);
         if (ACTIVE) { ShotCapture.tick(client); GifCache.tick(); }
 
