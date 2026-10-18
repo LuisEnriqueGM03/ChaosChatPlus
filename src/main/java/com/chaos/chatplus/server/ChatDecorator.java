@@ -50,6 +50,15 @@ public final class ChatDecorator {
 	}
 
 	public static Component decorate(ServerPlayer sender, Component message) {
+		return decorate(sender, message, null);
+	}
+
+	/** Native loader chat events do not decorate commands. Restrict private mention notifications to recipients. */
+	public static Component decoratePrivate(ServerPlayer sender, Component message, java.util.Collection<ServerPlayer> recipients) {
+		return decorate(sender, message, recipients);
+	}
+
+	private static Component decorate(ServerPlayer sender, Component message, java.util.Collection<ServerPlayer> recipients) {
 		Context ctx = new Context(sender);
 		MutableComponent out = Component.empty();
 		message.visit((style, text) -> {
@@ -65,6 +74,7 @@ public final class ChatDecorator {
 			}
 		}
 		ctx.pinged.remove(sender);
+		if (recipients != null) ctx.pinged.retainAll(recipients);
 		for (ServerPlayer target : ctx.pinged) {
 			Mentions.ping(target, sender);
 		}
