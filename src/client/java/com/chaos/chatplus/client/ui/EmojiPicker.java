@@ -14,7 +14,7 @@ import com.chaos.chatplus.client.ClientState;
 import com.chaos.chatplus.client.EmojiTextures;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -100,7 +100,7 @@ public final class EmojiPicker {
 		return gifMode && gifs != null && gifs.keyPressed(key);
 	}
 
-	private void renderModes(GuiGraphics g, Font font, int mouseX, int mouseY) {
+	private void renderModes(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY) {
 		int half = (WIDTH - PAD * 2) / (gifs == null ? 1 : 2);
 		String[] keys = gifs == null ? new String[] {"picker.tab_emojis"} : new String[] {"picker.tab_emojis", "picker.tab_gifs"};
 		for (int i = 0; i < keys.length; i++) {
@@ -113,7 +113,7 @@ public final class EmojiPicker {
 				Ui.round(g, tx, top + PAD, tx + half - 2, top + PAD + 12, 3, Ui.HOVER);
 			}
 			Component label = Lang.tr(keys[i]);
-			g.drawString(font, label, tx + (half - 2 - font.width(label)) / 2, top + PAD + 2, sel ? 0xFFFFFFFF : Ui.MUTED, false);
+			g.text(font, label, tx + (half - 2 - font.width(label)) / 2, top + PAD + 2, sel ? 0xFFFFFFFF : Ui.MUTED, false);
 		}
 	}
 
@@ -153,7 +153,7 @@ public final class EmojiPicker {
 		return Math.max(0, (count + COLS - 1) / COLS - ROWS);
 	}
 
-	public void render(GuiGraphics g, Font font, int mouseX, int mouseY) {
+	public void render(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY) {
 		Ui.roundBordered(g, x, top, x + WIDTH, top + HEIGHT, 5, Ui.POPUP, Ui.POPUP_BORDER);
 		renderModes(g, font, mouseX, mouseY);
 		if (gifMode && gifs != null) {
@@ -179,7 +179,7 @@ public final class EmojiPicker {
 			if (icon != null) {
 				EmojiTextures.draw(g, icon, tx + 1, y + PAD + 1, 10);
 			} else {
-				g.drawString(font, t.icon(), tx + (TAB - font.width(t.icon())) / 2 + 1, y + PAD + 2, sel ? Ui.MENTION : Ui.MUTED, false);
+				g.text(font, t.icon(), tx + (TAB - font.width(t.icon())) / 2 + 1, y + PAD + 2, sel ? Ui.MENTION : Ui.MUTED, false);
 			}
 			tx += TAB + 1;
 		}
@@ -208,7 +208,7 @@ public final class EmojiPicker {
 		}
 		if (list.isEmpty()) {
 			Component empty = Lang.tr(tab.equals("favorites") ? "picker.no_favorites" : "picker.no_recent");
-			g.drawCenteredString(font, empty, x + WIDTH / 2, gy + ROWS * CELL / 2 - 4, Ui.MUTED);
+			g.centeredText(font, empty, x + WIDTH / 2, gy + ROWS * CELL / 2 - 4, Ui.MUTED);
 		}
 		// Barra de scroll.
 		int max = maxScroll(list.size());
@@ -222,11 +222,11 @@ public final class EmojiPicker {
 		// Pie: nombre del emoji bajo el ratón o de la pestaña.
 		int fy = top + HEIGHT - PAD - 9;
 		if (hovered != null) {
-			g.drawString(font, hovered.code(), x + PAD, fy, Ui.TEXT, false);
+			g.text(font, hovered.code(), x + PAD, fy, Ui.TEXT, false);
 			Component hint = Lang.tr("picker.fav_hint");
 			int hw = font.width(hint);
 			if (font.width(hovered.code()) + hw + 8 < WIDTH - PAD * 2) {
-				g.drawString(font, hint, x + WIDTH - PAD - hw, fy, Ui.MUTED, false);
+				g.text(font, hint, x + WIDTH - PAD - hw, fy, Ui.MUTED, false);
 			}
 		} else {
 			Tab t = hoveredTab;
@@ -234,7 +234,7 @@ public final class EmojiPicker {
 				t = tabs.stream().filter(tt -> tt.id().equals(tab)).findFirst().orElse(null);
 			}
 			if (t != null) {
-				g.drawString(font, t.key().isEmpty() ? Component.literal(t.id()) : Lang.tr(t.key()), x + PAD, fy, Ui.MUTED, false);
+				g.text(font, t.key().isEmpty() ? Component.literal(t.id()) : Lang.tr(t.key()), x + PAD, fy, Ui.MUTED, false);
 			}
 		}
 	}

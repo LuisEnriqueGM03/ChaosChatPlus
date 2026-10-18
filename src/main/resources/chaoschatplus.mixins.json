@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "com.chaos.chatplus.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
     "MsgCommandMixin",
     "PlayerListMixin",
@@ -15,6 +15,8 @@
     "client.ChatScreenMixin",
     "client.EditBoxAccessor",
     "client.FontManagerAccessor",
+    "client.FontAccessor",
+    "client.FontCacheAccessor",
     "client.GuiMixin",
     "client.KeyboardHandlerMixin",
     "client.MinecraftAccessor",

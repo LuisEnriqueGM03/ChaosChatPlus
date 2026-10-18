@@ -38,7 +38,7 @@ import com.chaos.chatplus.perm.Perms;
 
 import com.chaos.chatplus.platform.ServerNetwork;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -131,8 +131,8 @@ public final class Shots {
 		byte[] raw = up.parts.join();
 		LAST_SHOT.put(id, System.currentTimeMillis());
 		PROCESSING.add(id);
-		MinecraftServer server = player.server;
-		String name = player.getGameProfile().getName();
+		MinecraftServer server = player.level().getServer();
+		String name = player.getGameProfile().name();
 		String targetName = up.target;
 		CompletableFuture.supplyAsync(() -> reencode(raw, cfg.maxKilobytes * 1024), Util.backgroundExecutor())
 				.thenCompose(clean -> clean == null
@@ -164,7 +164,7 @@ public final class Shots {
 	private record Verdict(@Nullable byte[] jpeg, @Nullable String error) {}
 
 	private static long cooldownLeft(ServerPlayer player) {
-		if (player.hasPermissions(2)) {
+		if (player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)) {
 			return 0;
 		}
 		Long last = LAST_SHOT.get(player.getUUID());
@@ -263,12 +263,11 @@ public final class Shots {
 		MutableComponent view = Lang.tr("shot.view").withStyle(s -> s
 				.withColor(0x7AD7FF)
 				.withUnderlined(true)
-				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, VIEW_COMMAND + id))
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-						Lang.tr(ChatServer.isModded(viewer) ? "shot.hover" : "shot.hover_vanilla"))));
+				.withClickEvent(new ClickEvent.RunCommand(VIEW_COMMAND + id))
+				.withHoverEvent(new HoverEvent.ShowText(Lang.tr(ChatServer.isModded(viewer) ? "shot.hover" : "shot.hover_vanilla"))));
 		return Component.literal("✉ ").append(text).append(" ").append(view).withStyle(s -> s
 				.withColor(GifServer.PRIVATE_COLOR)
-				.withInsertion(other == null ? null : "/msg " + other.getGameProfile().getName() + " "));
+				.withInsertion(other == null ? null : "/msg " + other.getGameProfile().name() + " "));
 	}
 
 	/** "Luis 📷 envió una captura [Ver]" (el icono es el emoji si quien lo recibe puede verlo). */
@@ -276,9 +275,8 @@ public final class Shots {
 		MutableComponent view = Lang.tr("shot.view").withStyle(s -> s
 				.withColor(0x7AD7FF)
 				.withUnderlined(true)
-				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, VIEW_COMMAND + id))
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-						Lang.tr(ChatServer.isModded(viewer) ? "shot.hover" : "shot.hover_vanilla"))));
+				.withClickEvent(new ClickEvent.RunCommand(VIEW_COMMAND + id))
+				.withHoverEvent(new HoverEvent.ShowText(Lang.tr(ChatServer.isModded(viewer) ? "shot.hover" : "shot.hover_vanilla"))));
 		return Component.empty().append(Lang.tr("shot.sent", name, ChatTransform.icon(viewer, "camara"))).append(" ").append(view);
 	}
 
@@ -308,8 +306,8 @@ public final class Shots {
 
 	public static void send(ServerPlayer player, String id) {
 		Shot shot = SHOTS.get(id);
-		boolean outsider = shot != null && !ShotAccess.canView(shot.owner(), shot.target(), player.getUUID(), player.hasPermissions(2));
-		if (shot == null || outsider || (HIDDEN.contains(id) && !player.hasPermissions(2))) {
+		boolean outsider = shot != null && !ShotAccess.canView(shot.owner(), shot.target(), player.getUUID(), player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER));
+		if (shot == null || outsider || (HIDDEN.contains(id) && !player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))) {
 			ServerNetwork.send(player, new ChatPayloads.ShotData(id, "", new byte[0]));
 			return;
 		}
@@ -329,29 +327,29 @@ public final class Shots {
 		player.sendSystemMessage(Lang.tr("shot.review_text", id, shot.ownerName(), shot.reporters().size())
 				.withStyle(ChatFormatting.GOLD).append(" ")
 				.append(Lang.tr("shot.delete_button").withStyle(s -> s.withColor(ChatFormatting.RED)
-						.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chatplus shot delete " + id)))));
+						.withClickEvent(new ClickEvent.RunCommand("/chatplus shot delete " + id)))));
 	}
 
 	public static void report(ServerPlayer reporter, String id) {
 		Shot shot = SHOTS.get(id);
-		if (shot == null || !ShotAccess.canReport(shot.owner(), shot.target(), reporter.getUUID(), reporter.hasPermissions(2))
+		if (shot == null || !ShotAccess.canReport(shot.owner(), shot.target(), reporter.getUUID(), reporter.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 				|| !shot.reporters().add(reporter.getUUID())) {
 			return;
 		}
-		String who = reporter.getGameProfile().getName();
+		String who = reporter.getGameProfile().name();
 		log("REPORTE de " + who + ": captura " + id + " de " + shot.ownerName() + " (" + shot.reporters().size() + " reportes)");
 		reporter.sendSystemMessage(Lang.tr("shot.reported").withStyle(ChatFormatting.GREEN));
 		MutableComponent note = Lang.tr("shot.report_staff", who, shot.ownerName(), id).withStyle(s -> s
 				.withColor(ChatFormatting.GOLD)
-				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, REVIEW_COMMAND + id)));
-		for (ServerPlayer p : reporter.server.getPlayerList().getPlayers()) {
-			if (p.hasPermissions(2)) {
+				.withClickEvent(new ClickEvent.RunCommand(REVIEW_COMMAND + id)));
+		for (ServerPlayer p : reporter.level().getServer().getPlayerList().getPlayers()) {
+			if (p.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)) {
 				p.sendSystemMessage(note);
 			}
 		}
 		int limit = ChatConfig.get().screenshots.autoHideReports;
 		if (limit > 0 && shot.reporters().size() >= limit) {
-			hide(reporter.server, id);
+			hide(reporter.level().getServer(), id);
 			log("Captura " + id + " ocultada automáticamente por reportes");
 		}
 	}

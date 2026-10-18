@@ -15,7 +15,8 @@ import net.minecraft.client.KeyboardHandler;
 abstract class KeyboardHandlerMixin {
 
 	@Inject(method = "keyPress", at = @At("HEAD"), cancellable = true)
-	private void chaoschatplus$camera(long window, int key, int scan, int action, int modifiers, CallbackInfo ci) {
+	private void chaoschatplus$camera(long window, int action, net.minecraft.client.input.KeyEvent event, CallbackInfo ci) {
+        int key = event.key();
 		if (!ShotCapture.cameraMode() || Minecraft.getInstance().screen != null || action != 1) {
 			return;
 		}

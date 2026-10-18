@@ -1,7 +1,7 @@
 package com.chaos.chatplus.client.ui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -22,7 +22,7 @@ public class FlatButton extends Button {
 	}
 
 	@Override
-	protected void renderWidget(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+	protected void extractContents(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
 		boolean hover = isHoveredOrFocused() && active;
 		int fill;
 		if (!active) {
@@ -37,7 +37,7 @@ public class FlatButton extends Button {
 		Ui.round(g, getX(), getY(), getX() + getWidth(), getY() + getHeight(), 4, fill);
 		int color = !active ? 0xFF6C717B : danger && !hover ? 0xFFFF8A8A : 0xFFFFFFFF;
 		var font = Minecraft.getInstance().font;
-		g.drawString(font, getMessage(), getX() + (getWidth() - font.width(getMessage())) / 2,
+		g.text(font, getMessage(), getX() + (getWidth() - font.width(getMessage())) / 2,
 				getY() + (getHeight() - 8) / 2, color, false);
 	}
 }

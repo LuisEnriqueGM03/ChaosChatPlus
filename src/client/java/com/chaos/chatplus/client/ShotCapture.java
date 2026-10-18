@@ -19,10 +19,10 @@ import com.mojang.blaze3d.platform.NativeImage;
 
 import com.chaos.chatplus.client.ClientNetwork;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -117,15 +117,19 @@ public final class ShotCapture {
 		if (--countdown > 0) {
 			return;
 		}
-		NativeImage image = Screenshot.takeScreenshot(mc.getMainRenderTarget());
-		cancel();
-		mc.setScreen(new ShotSendScreen(image));
+        countdown = -2;
+        Screenshot.takeScreenshot(mc.getMainRenderTarget(), image -> mc.execute(() -> {
+            boolean active = cameraMode;
+            cancel();
+            if (active && mc.player != null) mc.setScreen(new ShotSendScreen(image));
+            else image.close();
+        }));
 	}
 
 	/** Visor del modo cámara (esquinas, título y ayuda). No se pinta en el frame que se captura. */
-	public static void renderViewfinder(GuiGraphics g) {
+	public static void renderViewfinder(GuiGraphicsExtractor g) {
 		if (cameraMode) hudFrames++;
-		if (!cameraMode || countdown >= 0) {
+		if (!cameraMode || countdown != -1) {
 			return;
 		}
 		Minecraft mc = Minecraft.getInstance();
@@ -154,14 +158,14 @@ public final class ShotCapture {
 		Ui.round(g, w / 2 - tw / 2, m + 2, w / 2 + tw / 2, m + 16, 5, 0xAA111318);
 		com.chaos.chatplus.client.ui.Ui.smooth(ChaosChatPlus.id("textures/gui/btn_shot.png"));
 		com.chaos.chatplus.client.ui.Ui.blit(g, ChaosChatPlus.id("textures/gui/btn_shot.png"), w / 2 - tw / 2 + 5, m + 5, 8, 8, 0, 0, 32, 32, 32, 32);
-		g.drawString(mc.font, title, w / 2 - tw / 2 + 16, m + 5, 0xFFFFFFFF, false);
+		g.text(mc.font, title, w / 2 - tw / 2 + 16, m + 5, 0xFFFFFFFF, false);
 		Component hint = Lang.tr("camera.hint");
 		int hw = mc.font.width(hint) + 16;
 		Ui.round(g, w / 2 - hw / 2, h - m - 18, w / 2 + hw / 2, h - m - 4, 5, 0xAA111318);
-		g.drawString(mc.font, hint, w / 2 - hw / 2 + 8, h - m - 15, 0xFFE6E8EE, false);
+		g.text(mc.font, hint, w / 2 - hw / 2 + 8, h - m - 15, 0xFFE6E8EE, false);
 	}
 
-	private static void fillLine(GuiGraphics g, int x0, int y0, int x1, int y1, int color) {
+	private static void fillLine(GuiGraphicsExtractor g, int x0, int y0, int x1, int y1, int color) {
 		g.fill(Math.min(x0, x1), Math.min(y0, y1), Math.max(x0, x1), Math.max(y0, y1), color);
 	}
 
@@ -190,14 +194,14 @@ public final class ShotCapture {
 			return message;
 		}
 		ClickEvent open = file.getStyle().getClickEvent();
-		if (open == null || open.getAction() != ClickEvent.Action.OPEN_FILE) {
+		if (!(open instanceof ClickEvent.OpenFile fileEvent)) {
 			return message;
 		}
 		return message.copy().append(" ").append(Lang.tr("shot.send_to_chat").withStyle(s -> s
 				.withColor(0x7AD7FF)
 				.withUnderlined(true)
-				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, SEND_FILE_COMMAND + open.getValue()))
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Lang.tr("shot.send_hover")))));
+				.withClickEvent(new ClickEvent.RunCommand(SEND_FILE_COMMAND + fileEvent.path()))
+				.withHoverEvent(new HoverEvent.ShowText(Lang.tr("shot.send_hover")))));
 	}
 
 	/** Reduce, codifica en JPEG y sube la captura en trozos. Libera la imagen. */
@@ -244,7 +248,7 @@ public final class ShotCapture {
 		Minecraft mc = Minecraft.getInstance();
 		if (jpeg == null) {
 			if (mc.player != null) {
-				mc.player.displayClientMessage(Lang.tr("shot.too_big", ClientState.maxShotKb()).withStyle(ChatFormatting.RED), false);
+				Minecraft.getInstance().gui.getChat().addClientSystemMessage(Lang.tr("shot.too_big", ClientState.maxShotKb()).withStyle(ChatFormatting.RED));
 			}
 			return;
 		}
@@ -259,7 +263,7 @@ public final class ShotCapture {
 			ClientNetwork.send(new ChatPayloads.ShotPart(i, parts, chunk, target));
 		}
 		if (mc.player != null) {
-			mc.player.displayClientMessage(Lang.tr("shot.sending").withStyle(ChatFormatting.GRAY), true);
+			Minecraft.getInstance().gui.setOverlayMessage(Lang.tr("shot.sending").withStyle(ChatFormatting.GRAY), false);
 		}
 	}
 

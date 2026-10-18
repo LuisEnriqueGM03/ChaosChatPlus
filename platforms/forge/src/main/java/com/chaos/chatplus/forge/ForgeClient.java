@@ -4,14 +4,16 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-@EventBusSubscriber(modid = "chaoschatplus", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+
 public final class ForgeClient {
-    @SubscribeEvent
+    public static void register(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext context) {
+        FMLClientSetupEvent.getBus(context.getModBusGroup()).addListener(ForgeClient::setup);
+    }
     public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             ClientNetwork.install(new ClientNetwork.Transport() {
@@ -21,9 +23,9 @@ public final class ForgeClient {
             }
             });
             ChaosChatPlusClient.initialize();
-            MinecraftForge.EVENT_BUS.addListener(ForgeClient::start);
-            MinecraftForge.EVENT_BUS.addListener(ForgeClient::end);
-            MinecraftForge.EVENT_BUS.addListener(ForgeClient::logout);
+            TickEvent.ClientTickEvent.Pre.BUS.addListener(ForgeClient::start);
+            TickEvent.ClientTickEvent.Post.BUS.addListener(ForgeClient::end);
+            ClientPlayerNetworkEvent.LoggingOut.BUS.addListener(ForgeClient::logout);
         });
     }
     private static void start(TickEvent.ClientTickEvent.Pre event) { ChaosChatPlusClient.startTick(Minecraft.getInstance()); }

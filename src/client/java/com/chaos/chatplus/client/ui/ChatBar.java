@@ -13,14 +13,14 @@ import com.chaos.chatplus.client.ShotCapture;
 import com.chaos.chatplus.client.screen.ItemPickerScreen;
 import com.chaos.chatplus.mixin.client.EditBoxAccessor;
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * La barra de escribir (tecla T) con el diseño moderno: barra redondeada, tu prefijo de rango a la izquierda
@@ -57,7 +57,7 @@ public final class ChatBar {
 		this.input = input;
 		this.suggest = new Suggest(input);
 		rebuildButtons();
-		input.setFormatter(EmojiInput.wrap(((EditBoxAccessor) input).chaoschatplus$formatter()));
+		input.addFormatter((text, offset) -> EmojiInput.format(text, offset));
 		layout();
 	}
 
@@ -128,7 +128,7 @@ public final class ChatBar {
 		}
 		Component p = ClientState.prefix();
 		if (p == null && Minecraft.getInstance().player != null) {
-			p = Component.literal(Minecraft.getInstance().player.getGameProfile().getName()).withColor(0xC9CDD6);
+			p = Component.literal(Minecraft.getInstance().player.getGameProfile().name()).withColor(0xC9CDD6);
 		}
 		return p;
 	}
@@ -154,7 +154,7 @@ public final class ChatBar {
 	}
 
 	/** Fondo de la barra, prefijo y botones (va donde vanilla pintaba su franja negra). */
-	public void renderBar(GuiGraphics g, int mouseX, int mouseY) {
+	public void renderBar(GuiGraphicsExtractor g, int mouseX, int mouseY) {
 		layout();
 		Font font = Minecraft.getInstance().font;
 		int bg = Minecraft.getInstance().options.getBackgroundColor(Integer.MIN_VALUE);
@@ -164,22 +164,22 @@ public final class ChatBar {
 		if (commandMode()) {
 			int w = font.width("/") + 6;
 			Ui.round(g, 5, barTop + 2, 5 + w, barBottom - 2, 3, 0x447AA2FF);
-			g.drawString(font, "/", 8, textY, Ui.ACCENT, false);
+			g.text(font, "/", 8, textY, Ui.ACCENT, false);
 		} else if (dmChip() != null) {
 			Component chip = dmChip();
 			int w = font.width(chip) + 8;
 			Ui.round(g, 5, barTop + 2, 5 + w, barBottom - 2, 4, 0x55734A9E);
-			g.drawString(font, chip, 9, textY, 0xFFFFFFFF, false);
+			g.text(font, chip, 9, textY, 0xFFFFFFFF, false);
 		} else {
 			Component p = prefix();
 			if (p != null) {
-				g.drawString(font, p, 7, textY, 0xFFFFFFFF, true);
+				g.text(font, p, 7, textY, 0xFFFFFFFF, true);
 			}
 		}
 		if (input.getValue().isEmpty()) {
 			Component hint = ClientState.dmTarget() != null && !commandMode()
 					? Lang.tr("dm.placeholder", ClientState.dmTarget()) : Lang.tr("bar.placeholder");
-			g.drawString(font, hint, input.getX(), textY, 0xFF6C717B, false);
+			g.text(font, hint, input.getX(), textY, 0xFF6C717B, false);
 		}
 
 		Button hovered = null;
@@ -194,29 +194,26 @@ public final class ChatBar {
 			int fill = active ? 0x447AA2FF : hover ? 0x33FFFFFF : 0x22000000;
 			Ui.roundBordered(g, x, by, x + BOX, by + BOX, 3, fill, border);
 			Ui.smooth(icon(b.icon()));
-			com.mojang.blaze3d.systems.RenderSystem.enableBlend();
-			com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
 			com.chaos.chatplus.client.ui.Ui.blit(g, icon(b.icon()), x + (BOX - ICON) / 2, by + (BOX - ICON) / 2, ICON, ICON, 0, 0, 32, 32, 32, 32, hover || active ? 0xFFFFFFFF : 0xBFFFFFFF);
-			com.mojang.blaze3d.systems.RenderSystem.disableBlend();
 			if (hover) {
 				hovered = b;
 			}
 		}
 
 		if (hovered != null) {
-			g.renderTooltip(font, Lang.tr(hovered.tooltipKey()), mouseX, mouseY);
+			g.setTooltipForNextFrame(font, Lang.tr(hovered.tooltipKey()), mouseX, mouseY);
 		}
 	}
 
-	private static ResourceLocation icon(String name) {
+	private static Identifier icon(String name) {
 		return ChaosChatPlus.id("textures/gui/" + name + ".png");
 	}
 
 	/** Popups encima de todo: aviso de límite, autocompletado y selector. */
-	public void renderOverlays(GuiGraphics g, int mouseX, int mouseY) {
+	public void renderOverlays(GuiGraphicsExtractor g, int mouseX, int mouseY) {
 		Font font = Minecraft.getInstance().font;
-		g.pose().pushPose();
-		g.pose().translate(0, 0, 300);
+		g.pose().pushMatrix();
+		g.nextStratum(); g.pose().translate(0, 0);
 		long since = Util.getMillis() - limitAt;
 		if (since < LIMIT_NOTICE_MS) {
 			float a = since > LIMIT_NOTICE_MS - 400 ? (LIMIT_NOTICE_MS - since) / 400F : 1F;
@@ -225,7 +222,7 @@ public final class ChatBar {
 			int x = 4;
 			int y = barTop - 16;
 			Ui.round(g, x, y, x + w, y + 13, 4, Ui.alpha(0x3A1E22, (int) (230 * a)));
-			g.drawString(font, text, x + 6, y + 3, Ui.alpha(0xFF8A8A, Math.max(4, (int) (255 * a))), false);
+			g.text(font, text, x + 6, y + 3, Ui.alpha(0xFF8A8A, Math.max(4, (int) (255 * a))), false);
 		}
 		if (dmPicker.isOpen()) {
 			dmPicker.render(g, font, mouseX, mouseY, screen.width, barTop);
@@ -235,7 +232,7 @@ public final class ChatBar {
 		} else {
 			suggest.render(g, font, barTop, mouseX, mouseY);
 		}
-		g.pose().popPose();
+		g.pose().popMatrix();
 	}
 
 

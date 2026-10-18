@@ -24,11 +24,11 @@ import com.chaos.chatplus.gif.OnlineGifs;
 import com.chaos.chatplus.net.ChatPayloads;
 
 import com.chaos.chatplus.client.ClientNetwork;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * GIFs animados en el cliente. De dónde salen, en este orden:
@@ -50,7 +50,7 @@ public final class GifCache {
 			.followRedirects(HttpClient.Redirect.NEVER).build();
 
 	public static final class Gif {
-		final List<ResourceLocation> frames = new ArrayList<>();
+		final List<Identifier> frames = new ArrayList<>();
 		int[] delays = new int[0];
 		int total;
 		int width;
@@ -293,8 +293,8 @@ public final class GifCache {
 		int id = counter++;
 		for (int i = 0; i < frames.images().size(); i++) {
 			BufferedImage img = frames.images().get(i);
-			ResourceLocation loc = ChaosChatPlus.id("gif/" + id + "_" + i);
-			Minecraft.getInstance().getTextureManager().register(loc, new DynamicTexture(ShotCache.toNative(img, true)));
+			Identifier loc = ChaosChatPlus.id("gif/" + id + "_" + i);
+			Minecraft.getInstance().getTextureManager().register(loc, new DynamicTexture(() -> "Chaos ChatPlus", ShotCache.toNative(img, true)));
 			gif.frames.add(loc);
 		}
 		gif.delays = frames.delays();
@@ -317,7 +317,7 @@ public final class GifCache {
 
 	/** Frame que toca ahora (animación con los retardos del GIF). */
 	@Nullable
-	public static ResourceLocation frame(Gif gif) {
+	public static Identifier frame(Gif gif) {
 		if (!gif.ready || gif.frames.isEmpty()) {
 			return null;
 		}
@@ -332,10 +332,10 @@ public final class GifCache {
 	}
 
 	/** Dibuja el GIF dentro de la caja (sin deformar, centrado). Devuelve el ancho usado. */
-	public static int draw(GuiGraphics g, GifInfo info, int x, int y, int maxW, int maxH, boolean center) {
+	public static int draw(GuiGraphicsExtractor g, GifInfo info, int x, int y, int maxW, int maxH, boolean center) {
         return draw(g, info, x, y, maxW, maxH, center, 0xFFFFFFFF);
     }
-    public static int draw(GuiGraphics g, GifInfo info, int x, int y, int maxW, int maxH, boolean center, int color) {
+    public static int draw(GuiGraphicsExtractor g, GifInfo info, int x, int y, int maxW, int maxH, boolean center, int color) {
 		Gif gif = get(info);
 		int w = Math.max(1, gif.width);
 		int h = Math.max(1, gif.height);
@@ -344,7 +344,7 @@ public final class GifCache {
 		int dh = Math.max(1, (int) (h * s));
 		int dx = center ? x + (maxW - dw) / 2 : x;
 		int dy = y + (maxH - dh) / 2;
-		ResourceLocation frame = frame(gif);
+		Identifier frame = frame(gif);
 		if (frame != null) {
 			com.chaos.chatplus.client.ui.Ui.blit(g, frame, dx, dy, dw, dh, 0, 0, 1, 1, 1, 1, color);
 		} else {

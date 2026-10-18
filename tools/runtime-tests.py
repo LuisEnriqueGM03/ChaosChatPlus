@@ -78,7 +78,7 @@ def main():
             if server.poll() is not None:raise RuntimeError('Dedicated server exited before readiness')
             if time.monotonic()-start>240:raise RuntimeError('Dedicated server startup timed out')
             time.sleep(1)
-        for command in ['op Luis','gamerule doDaylightCycle false','time set day','gamerule doMobSpawning false']:
+        for command in ['op Luis','gamerule minecraft:advance_time false','time set day','gamerule minecraft:spawn_mobs false']:
             server.stdin.write((command+'\n').encode());server.stdin.flush()
         # Establish each connection before starting the next graphical process.
         # This avoids status/login timeouts while three clients compile shaders concurrently.

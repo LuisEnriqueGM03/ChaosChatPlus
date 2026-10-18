@@ -9,13 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-@EventBusSubscriber(modid = "chaoschatplus", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = "chaoschatplus", value = Dist.CLIENT)
 public final class NeoClient {
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             ClientNetwork.install(new ClientNetwork.Transport() {
-                public void send(CustomPacketPayload payload) { net.neoforged.neoforge.network.PacketDistributor.sendToServer(payload); }
+                public void send(CustomPacketPayload payload) { net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(payload); }
             public boolean canSend(CustomPacketPayload.Type<?> type) {
                 return Minecraft.getInstance().getConnection() != null && Minecraft.getInstance().getConnection().hasChannel(type.id());
             }

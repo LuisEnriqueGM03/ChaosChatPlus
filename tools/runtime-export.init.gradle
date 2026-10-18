@@ -3,13 +3,13 @@ import org.gradle.jvm.toolchain.JavaLauncher
 gradle.projectsEvaluated {
     rootProject.allprojects {
         def runtimeProject = project
-        def fabric = plugins.hasPlugin('net.fabricmc.fabric-loom-remap')
+        def fabric = plugins.hasPlugin('net.fabricmc.fabric-loom')
         def forge = plugins.hasPlugin('net.minecraftforge.gradle')
         def shared = fabric ? projectDir : file('../..')
         def loader = fabric ? 'fabric' : (forge ? 'forge' : 'neoforge')
         tasks.withType(JavaExec).matching { it.name in (forge ? ['runClient', 'runServer'] : ['runRuntimeClient', 'runRuntimeServer']) }.configureEach { task ->
             def server = task.name.toLowerCase().endsWith('server')
-            def launcher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }.get()
+            def launcher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }.get()
             if (!server) {
                 def gui = layout.file(providers.provider { new File(launcher.executablePath.asFile.parentFile, 'javaw.exe') }).get()
                 javaLauncher.set([getMetadata: { launcher.metadata }, getExecutablePath: { gui }] as JavaLauncher)

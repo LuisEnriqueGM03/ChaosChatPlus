@@ -52,14 +52,14 @@ public final class ItemShare {
 	public static MutableComponent viewLink(ItemStack stack) {
 		return Lang.tr("item.view").withStyle(s -> s
 				.withColor(VIEW_COLOR)
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(stack)))
-				.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, VIEW_COMMAND)));
+				.withHoverEvent(new HoverEvent.ShowItem(net.minecraft.world.item.ItemStackTemplate.fromNonEmptyStack(stack)))
+				.withClickEvent(new ClickEvent.RunCommand(VIEW_COMMAND)));
 	}
 
 	public static boolean ready(ServerPlayer player) {
 		long cooldown = ChatConfig.get().items.cooldownSeconds * 1000L;
 		Long last = LAST_USE.get(player.getUUID());
-		return last == null || player.hasPermissions(2) || System.currentTimeMillis() - last >= cooldown;
+		return last == null || player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER) || System.currentTimeMillis() - last >= cooldown;
 	}
 
 	private static long secondsLeft(ServerPlayer player) {
@@ -95,7 +95,7 @@ public final class ItemShare {
 		}
 		ServerPlayer target = null;
 		if (!targetName.isEmpty()) {
-			target = player.server.getPlayerList().getPlayerByName(targetName);
+			target = player.level().getServer().getPlayerList().getPlayerByName(targetName);
 			if (target == null) {
 				player.sendSystemMessage(Lang.tr("dm.offline", targetName).withStyle(ChatFormatting.RED));
 				return;
@@ -110,13 +110,13 @@ public final class ItemShare {
 			if (to != player) {
 				to.sendSystemMessage(Component.literal("✉ ").append(Lang.tr("dm.item_in", player.getDisplayName(), item))
 						.withStyle(st -> st.withColor(GifServer.PRIVATE_COLOR)
-								.withInsertion("/msg " + player.getGameProfile().getName() + " ")));
+								.withInsertion("/msg " + player.getGameProfile().name() + " ")));
 				Mentions.ping(to, player);
 			}
 			return;
 		}
-		player.server.sendSystemMessage(Lang.tr("item.shared", player.getDisplayName(), "", item));
-		for (ServerPlayer viewer : player.server.getPlayerList().getPlayers()) {
+		player.level().getServer().sendSystemMessage(Lang.tr("item.shared", player.getDisplayName(), "", item));
+		for (ServerPlayer viewer : player.level().getServer().getPlayerList().getPlayers()) {
 			viewer.sendSystemMessage(Lang.tr("item.shared", player.getDisplayName(), ChatTransform.icon(viewer, "espada"), item));
 		}
 	}

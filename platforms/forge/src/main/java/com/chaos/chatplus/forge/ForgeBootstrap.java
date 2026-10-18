@@ -15,23 +15,24 @@ import net.minecraftforge.event.TickEvent;
 
 @Mod(ChaosChatPlus.MOD_ID)
 public final class ForgeBootstrap {
-    public ForgeBootstrap() {
+    public ForgeBootstrap(net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext context) {
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) ForgeClient.register(context);
         ForgeNetwork.register();
         Platform.install(new ForgeEnvironment());
         ForgeNetwork.install();
         ChaosChatPlus.initialize();
-        MinecraftForge.EVENT_BUS.addListener(this::commands);
-        MinecraftForge.EVENT_BUS.addListener(this::started);
-        MinecraftForge.EVENT_BUS.addListener(this::stopped);
-        MinecraftForge.EVENT_BUS.addListener(this::tick);
-        MinecraftForge.EVENT_BUS.addListener(this::join);
-        MinecraftForge.EVENT_BUS.addListener(this::leave);
-        MinecraftForge.EVENT_BUS.addListener(this::chat);
+        RegisterCommandsEvent.BUS.addListener(this::commands);
+        ServerStartedEvent.BUS.addListener(this::started);
+        ServerStoppedEvent.BUS.addListener(this::stopped);
+        TickEvent.ServerTickEvent.Post.BUS.addListener(this::tick);
+        PlayerEvent.PlayerLoggedInEvent.BUS.addListener(this::join);
+        PlayerEvent.PlayerLoggedOutEvent.BUS.addListener(this::leave);
+        ServerChatEvent.BUS.addListener(this::chat);
     }
     private void commands(RegisterCommandsEvent event) { ChatPlusCommand.register(event.getDispatcher()); }
     private void started(ServerStartedEvent event) { ChaosChatPlus.serverStarted(event.getServer()); }
     private void stopped(ServerStoppedEvent event) { ChatServer.stop(); }
-    private void tick(TickEvent.ServerTickEvent.Post event) { ChatServer.tick(event.getServer()); }
+    private void tick(TickEvent.ServerTickEvent.Post event) { ChatServer.tick(event.server()); }
     private void join(PlayerEvent.PlayerLoggedInEvent event) { if (event.getEntity() instanceof ServerPlayer player) ChatServer.join(player); }
     private void leave(PlayerEvent.PlayerLoggedOutEvent event) { if (event.getEntity() instanceof ServerPlayer player) ChatServer.leave(player); }
     private void chat(ServerChatEvent event) { event.setMessage(ChatDecorator.decorate(event.getPlayer(), event.getMessage())); }

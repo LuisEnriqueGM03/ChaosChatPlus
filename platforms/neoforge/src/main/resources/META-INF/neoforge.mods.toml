@@ -11,13 +11,13 @@ description="Chat moderno: emojis, GIFs, objetos, menciones y capturas moderadas
 [[dependencies.chaoschatplus]]
 modId="minecraft"
 type="required"
-versionRange="[1.21.4]"
+versionRange="[26.1]"
 ordering="NONE"
 side="BOTH"
 [[dependencies.chaoschatplus]]
 modId="neoforge"
 type="required"
-versionRange="[21.4.158,)"
+versionRange="[26.1.0.19-beta,)"
 ordering="NONE"
 side="BOTH"
 

@@ -137,7 +137,7 @@ public final class ChatServer {
 
 	/** Lo que decide los permisos de un jugador (si cambia, se vuelve a mandar ServerInfo). */
 	private static String permKey(ServerPlayer player) {
-		return player.server.getProfilePermissions(player.getGameProfile()) + "|" + Objects.toString(ChaosRanksCompat.rankId(player));
+		return player.level().getServer().getProfilePermissions(new net.minecraft.server.players.NameAndId(player.getGameProfile())).level().ordinal() + "|" + Objects.toString(ChaosRanksCompat.rankId(player));
 	}
 
 	private static JsonObject info(ServerPlayer player) {
@@ -196,7 +196,7 @@ public final class ChatServer {
 			return null;
 		}
 		MutableComponent out = Component.empty().append(rank.badge()).append(" ")
-				.append(Component.literal(player.getGameProfile().getName()).setStyle(rank.nameStyle()));
+				.append(Component.literal(player.getGameProfile().name()).setStyle(rank.nameStyle()));
 		if (rank.separator() != null && !rank.separator().isEmpty()) {
 			out.append(" ").append(Component.literal(rank.separator()).withColor(rank.separatorColor()));
 		}
@@ -213,7 +213,7 @@ public final class ChatServer {
 		if (rank.label() != null && !rank.label().isEmpty()) {
 			out.append(Component.literal("[" + rank.label() + "] ").withStyle(s -> s.withColor(rank.bgColor()).withBold(true)));
 		}
-		out.append(Component.literal(player.getGameProfile().getName()).setStyle(rank.nameStyle()));
+		out.append(Component.literal(player.getGameProfile().name()).setStyle(rank.nameStyle()));
 		if (rank.separator() != null && !rank.separator().isEmpty()) {
 			out.append(" ").append(Component.literal(rank.separator()).withColor(rank.separatorColor()));
 		}
@@ -237,24 +237,24 @@ public final class ChatServer {
 			player.sendSystemMessage(Lang.tr("emoji.bad_image", EmojiRegistry.MAX_UPLOAD_SIZE).withStyle(ChatFormatting.RED));
 			return;
 		}
-		boolean approved = !ChatConfig.get().emojis.requireApproval || player.hasPermissions(2);
-		EmojiRegistry.Result result = EmojiRegistry.add(payload.name(), payload.png(), player.getGameProfile().getName(), approved);
+		boolean approved = !ChatConfig.get().emojis.requireApproval || player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER);
+		EmojiRegistry.Result result = EmojiRegistry.add(payload.name(), payload.png(), player.getGameProfile().name(), approved);
 		switch (result) {
 			case OK -> {
 				player.sendSystemMessage(Lang.tr("emoji.added", ":" + payload.name().toLowerCase() + ":").withStyle(ChatFormatting.GREEN));
-				resyncAll(player.server);
+				resyncAll(player.level().getServer());
 			}
 			case PENDING -> {
 				player.sendSystemMessage(Lang.tr("emoji.pending").withStyle(ChatFormatting.YELLOW));
-				Component note = Lang.tr("emoji.pending_staff", player.getGameProfile().getName(), payload.name().toLowerCase())
+				Component note = Lang.tr("emoji.pending_staff", player.getGameProfile().name(), payload.name().toLowerCase())
 						.withStyle(ChatFormatting.GOLD);
-				for (ServerPlayer p : player.server.getPlayerList().getPlayers()) {
-					if (p.hasPermissions(2)) {
+				for (ServerPlayer p : player.level().getServer().getPlayerList().getPlayers()) {
+					if (p.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)) {
 						p.sendSystemMessage(note);
 					}
 				}
 				ChaosChatPlus.LOGGER.info("[ChatPlus] {} subió el emoji {} (pendiente de aprobar)",
-						player.getGameProfile().getName(), payload.name());
+						player.getGameProfile().name(), payload.name());
 			}
 			default -> player.sendSystemMessage(Lang.tr("emoji.error." + result.name().toLowerCase(), EmojiRegistry.MAX_UPLOAD_SIZE)
 					.withStyle(ChatFormatting.RED));

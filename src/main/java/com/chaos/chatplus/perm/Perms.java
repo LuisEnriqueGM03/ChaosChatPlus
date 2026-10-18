@@ -19,7 +19,7 @@ public final class Perms {
 			return false;
 		}
 		return AccessRules.allowed(access.enabled,
-				player.server.getProfilePermissions(player.getGameProfile()), access.opLevel,
+				player.level().getServer().getProfilePermissions(new net.minecraft.server.players.NameAndId(player.getGameProfile())).level().ordinal(), access.opLevel,
 				ChaosRanksCompat.present() ? ChaosRanksCompat.rankId(player) : null, access.allowedRanks);
 	}
 
@@ -45,7 +45,7 @@ public final class Perms {
 		if (!can(player, cfg.access)) {
 			return false;
 		}
-		return cfg.minPlayMinutes <= 0 || player.hasPermissions(2) || playMinutes(player) >= cfg.minPlayMinutes;
+		return cfg.minPlayMinutes <= 0 || player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER) || playMinutes(player) >= cfg.minPlayMinutes;
 	}
 
 	public static boolean canUpload(ServerPlayer player) {

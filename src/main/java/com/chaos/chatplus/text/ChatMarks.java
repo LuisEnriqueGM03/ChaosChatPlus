@@ -17,7 +17,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Cómo se marcan los emojis y las menciones dentro de un mensaje (lo usan el servidor y el cliente):
@@ -28,7 +28,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class ChatMarks {
 
-	public static final ResourceLocation EMOJI_FONT = ChaosChatPlus.id("emoji");
+	public static final Identifier EMOJI_FONT = ChaosChatPlus.id("emoji");
 	/** Color de "@TuNombre" cuando la mención es para ti. */
 	public static final int SELF_MENTION_COLOR = 0xFFD54A;
 
@@ -36,26 +36,26 @@ public final class ChatMarks {
 
 	public static MutableComponent emoji(Emoji emoji) {
 		return Component.literal(emoji.glyph()).withStyle(Style.EMPTY
-				.withFont(EMOJI_FONT)
+				.withFont(new net.minecraft.network.chat.FontDescription.Resource(EMOJI_FONT))
 				.withColor(0xFFFFFF)
 				.withInsertion(emoji.code())
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(emoji.code()))));
+				.withHoverEvent(new HoverEvent.ShowText(Component.literal(emoji.code()))));
 	}
 
 	/** Emoji decorativo (en muertes, entradas, capturas...): sin inserción; si quien lo recibe no lo puede ver, se quita. */
 	public static MutableComponent icon(Emoji emoji) {
-		return Component.literal(emoji.glyph()).withStyle(Style.EMPTY.withFont(EMOJI_FONT).withColor(0xFFFFFF));
+		return Component.literal(emoji.glyph()).withStyle(Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(EMOJI_FONT)).withColor(0xFFFFFF));
 	}
 
 	public static boolean isEmoji(Style style) {
-		return EMOJI_FONT.equals(style.getFont());
+		return new net.minecraft.network.chat.FontDescription.Resource(EMOJI_FONT).equals(style.getFont());
 	}
 
 	public static MutableComponent mention(String token, int color) {
 		return Component.literal(token).withStyle(Style.EMPTY
 				.withColor(color)
 				.withInsertion(token)
-				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Lang.tr("mention.hover", token))));
+				.withHoverEvent(new HoverEvent.ShowText(Lang.tr("mention.hover", token))));
 	}
 
 	/** El "@algo" de una mención (en minúsculas), o null si ese trozo no es una mención. */

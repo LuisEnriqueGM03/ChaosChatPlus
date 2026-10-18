@@ -50,7 +50,7 @@ public final class ChatPlusCommand {
 					ctx.getSource().sendSuccess(() -> Lang.tr("item.view_hint").withStyle(ChatFormatting.GRAY), false);
 					return 1;
 				})))
-				.then(Commands.literal("restore").requires(s -> s.hasPermission(2)).executes(ctx -> {
+				.then(Commands.literal("restore").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)).executes(ctx -> {
 					int emojis = EmojiRegistry.export(true);
 					int gifs = GifRegistry.export(true);
 					EmojiRegistry.load();
@@ -59,7 +59,7 @@ public final class ChatPlusCommand {
 					ctx.getSource().sendSuccess(() -> Lang.tr("restored", emojis, gifs).withStyle(ChatFormatting.GREEN), true);
 					return 1;
 				}))
-				.then(Commands.literal("reload").requires(s -> s.hasPermission(2)).executes(ChatPlusCommand::reload))
+				.then(Commands.literal("reload").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)).executes(ChatPlusCommand::reload))
 
 				.then(Commands.literal("shot")
 						.then(Commands.literal("view").then(Commands.argument("id", StringArgumentType.word())
@@ -67,38 +67,38 @@ public final class ChatPlusCommand {
 									Shots.view(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "id"));
 									return 1;
 								})))
-						.then(Commands.literal("review").requires(s -> s.hasPermission(2))
+						.then(Commands.literal("review").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 								.then(Commands.argument("id", StringArgumentType.word()).suggests(SHOTS)
 										.executes(ctx -> {
 											Shots.review(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "id"));
 											return 1;
 										})))
-						.then(Commands.literal("delete").requires(s -> s.hasPermission(2))
+						.then(Commands.literal("delete").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 								.then(Commands.argument("id", StringArgumentType.word()).suggests(SHOTS)
 										.executes(ChatPlusCommand::deleteShot)))
-						.then(Commands.literal("list").requires(s -> s.hasPermission(2)).executes(ChatPlusCommand::listShots))));
+						.then(Commands.literal("list").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)).executes(ChatPlusCommand::listShots))));
 
 		dispatcher.register(Commands.literal("emoji")
 				.executes(ChatPlusCommand::list)
 				.then(Commands.literal("list").executes(ChatPlusCommand::list))
-				.then(Commands.literal("pending").requires(s -> s.hasPermission(2)).executes(ChatPlusCommand::pending))
-				.then(Commands.literal("approve").requires(s -> s.hasPermission(2))
+				.then(Commands.literal("pending").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER)).executes(ChatPlusCommand::pending))
+				.then(Commands.literal("approve").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 						.then(Commands.argument("name", StringArgumentType.word()).suggests(PENDING)
 								.executes(ChatPlusCommand::approve)))
-				.then(Commands.literal("deny").requires(s -> s.hasPermission(2))
+				.then(Commands.literal("deny").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 						.then(Commands.argument("name", StringArgumentType.word()).suggests(PENDING)
 								.executes(ChatPlusCommand::deny)))
-				.then(Commands.literal("remove").requires(s -> s.hasPermission(2))
+				.then(Commands.literal("remove").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 						.then(Commands.argument("name", StringArgumentType.word()).suggests(EMOJIS)
 								.executes(ChatPlusCommand::remove)))
-				.then(Commands.literal("enable").requires(s -> s.hasPermission(2))
+				.then(Commands.literal("enable").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 						.then(Commands.argument("name", StringArgumentType.word()).suggests(DISABLED)
 								.executes(ChatPlusCommand::enable)))
-				.then(Commands.literal("alias").requires(s -> s.hasPermission(2))
+				.then(Commands.literal("alias").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 						.then(Commands.argument("name", StringArgumentType.word()).suggests(EMOJIS)
 								.then(Commands.argument("alias", StringArgumentType.word())
 										.executes(ChatPlusCommand::alias))))
-				.then(Commands.literal("ranks").requires(s -> s.hasPermission(2))
+				.then(Commands.literal("ranks").requires(s -> s.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER))
 						.then(Commands.argument("name", StringArgumentType.word()).suggests(EMOJIS)
 								.executes(ctx -> ranks(ctx, ""))
 								.then(Commands.argument("ranks", StringArgumentType.greedyString())
@@ -133,7 +133,7 @@ public final class ChatPlusCommand {
 		for (Shots.Shot s : shots) {
 			long min = (System.currentTimeMillis() - s.created()) / 60_000;
 			MutableComponent line = Component.literal(" " + s.id()).withStyle(st -> st.withColor(0x7AD7FF)
-					.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, Shots.VIEW_COMMAND + s.id())))
+					.withClickEvent(new ClickEvent.RunCommand(Shots.VIEW_COMMAND + s.id())))
 					.append(Component.literal("  " + s.ownerName() + "  " + min + " min  " + s.reporters().size() + " ⚑")
 							.withStyle(ChatFormatting.GRAY));
 			ctx.getSource().sendSuccess(() -> line, false);
@@ -156,8 +156,8 @@ public final class ChatPlusCommand {
 					? ChatMarks.emoji(e)
 					: Component.literal(e.code()).withStyle(ChatFormatting.GRAY);
 			out.append(Component.empty().append(item).withStyle(s -> s
-					.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hover))
-					.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, e.code()))));
+					.withHoverEvent(new HoverEvent.ShowText(hover))
+					.withClickEvent(new ClickEvent.SuggestCommand(e.code()))));
 		}
 		ctx.getSource().sendSuccess(() -> out, false);
 		return 1;
@@ -170,10 +170,10 @@ public final class ChatPlusCommand {
 			MutableComponent line = Component.literal(" :" + p.name + ": ").withStyle(ChatFormatting.WHITE)
 					.append(Component.literal("(" + p.uploader + ") ").withStyle(ChatFormatting.GRAY))
 					.append(Lang.tr("emoji.approve_button").withStyle(s -> s.withColor(ChatFormatting.GREEN)
-							.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/emoji approve " + p.name))))
+							.withClickEvent(new ClickEvent.RunCommand("/emoji approve " + p.name))))
 					.append(" ")
 					.append(Lang.tr("emoji.deny_button").withStyle(s -> s.withColor(ChatFormatting.RED)
-							.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/emoji deny " + p.name))));
+							.withClickEvent(new ClickEvent.RunCommand("/emoji deny " + p.name))));
 			ctx.getSource().sendSuccess(() -> line, false);
 		}
 		return list.size();

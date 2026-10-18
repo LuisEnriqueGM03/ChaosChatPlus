@@ -16,7 +16,7 @@ import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.gif.GifInfo;
 import com.chaos.chatplus.gif.OnlineGifs;
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 
 /**

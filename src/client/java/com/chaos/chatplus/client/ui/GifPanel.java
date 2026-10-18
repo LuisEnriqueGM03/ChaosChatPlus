@@ -22,9 +22,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import com.chaos.chatplus.client.ClientNetwork;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 
@@ -242,7 +242,7 @@ public final class GifPanel {
 		return query.isEmpty() || customMode() || favoritesMode();
 	}
 
-	public void render(GuiGraphics g, Font font, int x, int y, int w, int h, int mouseX, int mouseY) {
+	public void render(GuiGraphicsExtractor g, Font font, int x, int y, int w, int h, int mouseX, int mouseY) {
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -256,10 +256,10 @@ public final class GifPanel {
 		Ui.roundBordered(g, x, y, x + w, y + 13, 3, 0xFF15171C, customMode() ? 0xFF5A4A8E : 0xFF3A3E48);
 		boolean caret = (Util.getMillis() / 500) % 2 == 0;
 		if (query.isEmpty()) {
-			g.drawString(font, Lang.tr(customMode() ? "gif.search_klipy" : "gif.search"), x + 4, y + 3, 0xFF6C717B, false);
+			g.text(font, Lang.tr(customMode() ? "gif.search_klipy" : "gif.search"), x + 4, y + 3, 0xFF6C717B, false);
 		} else {
 			String shown = font.plainSubstrByWidth(query, w - 10, true);
-			g.drawString(font, shown + (caret ? "_" : ""), x + 4, y + 3, Ui.TEXT, false);
+			g.text(font, shown + (caret ? "_" : ""), x + 4, y + 3, Ui.TEXT, false);
 		}
 
 		// Categorías.
@@ -306,10 +306,10 @@ public final class GifPanel {
 			Ui.round(g, cx, cy, cx + cellW, cy + CELL_H, 3, hover ? 0x33FFFFFF : 0x18FFFFFF);
 			GifCache.draw(g, gif, cx + 2, cy + 2, cellW - 4, CELL_H - 4, true);
 			if (ClientPrefs.isFavoriteGif(gif.id())) {
-				g.pose().pushPose();
-				g.pose().translate(0, 0, 200);
-				g.drawString(font, "★", cx + cellW - 8, cy + 1, FAV_COLOR, true);
-				g.pose().popPose();
+				g.pose().pushMatrix();
+				g.nextStratum(); g.pose().translate(0, 0);
+				g.text(font, "★", cx + cellW - 8, cy + 1, FAV_COLOR, true);
+				g.pose().popMatrix();
 			}
 			if (hover) {
 				hovered = gif;
@@ -320,10 +320,10 @@ public final class GifPanel {
 		if (customMode() && !klipy()) {
 			// Sin clave de Klipy: aviso y cómo activarlo.
 			int cy = gy + gh / 2 - 12;
-			g.drawCenteredString(font, Lang.tr("gif.klipy_off"), x + w / 2, cy, Ui.TEXT);
+			g.centeredText(font, Lang.tr("gif.klipy_off"), x + w / 2, cy, Ui.TEXT);
 			List<FormattedCharSequence> hint = font.split(Lang.tr("gif.klipy_hint"), w - 8);
 			for (int i = 0; i < hint.size() && i < 4; i++) {
-				g.drawCenteredString(font, hint.get(i), x + w / 2, cy + 13 + i * 10, Ui.MUTED);
+				g.centeredText(font, hint.get(i), x + w / 2, cy + 13 + i * 10, Ui.MUTED);
 			}
 		} else {
 			String note = null;
@@ -341,7 +341,7 @@ public final class GifPanel {
 			if (note != null) {
 				List<FormattedCharSequence> lines = font.split(net.minecraft.network.chat.Component.literal(note), w - 8);
 				for (int i = 0; i < lines.size(); i++) {
-					g.drawCenteredString(font, lines.get(i), x + w / 2, gy + gh / 2 - 4 - (lines.size() - 1) * 5 + i * 10, Ui.MUTED);
+					g.centeredText(font, lines.get(i), x + w / 2, gy + gh / 2 - 4 - (lines.size() - 1) * 5 + i * 10, Ui.MUTED);
 				}
 			}
 		}
@@ -350,24 +350,24 @@ public final class GifPanel {
 		if (hovered != null) {
 			String hint = hovered.id().startsWith(OnlineGifs.KLIPY) ? "" : " · " + Lang.tr("gif.fav_hint").getString();
 			String name = font.plainSubstrByWidth(hovered.name(), Math.max(20, w - font.width(hint)), false);
-			g.drawString(font, name, x, fy, Ui.TEXT, false);
+			g.text(font, name, x, fy, Ui.TEXT, false);
 			if (font.width(name + hint) <= w) {
-				g.drawString(font, hint, x + font.width(name), fy, Ui.MUTED, false);
+				g.text(font, hint, x + font.width(name), fy, Ui.MUTED, false);
 			}
 		} else if (hoveredChip != null) {
-			g.drawString(font, hoveredChip.label(), x, fy, Ui.TEXT, false);
+			g.text(font, hoveredChip.label(), x, fy, Ui.TEXT, false);
 		} else if (GifCache.pausedSeconds() > 0) {
 			String wait = Lang.tr("gif.busy", (GifCache.pausedSeconds() + 59) / 60).getString();
-			g.drawString(font, font.plainSubstrByWidth(wait, w, false), x, fy, Ui.WARN, false);
+			g.text(font, font.plainSubstrByWidth(wait, w, false), x, fy, Ui.WARN, false);
 		} else if (customMode() && !limited.isEmpty() && received) {
 			String warn = Lang.tr("gif.limit_" + limited).getString();
-			g.drawString(font, font.plainSubstrByWidth(warn, w, false), x, fy, Ui.WARN, false);
+			g.text(font, font.plainSubstrByWidth(warn, w, false), x, fy, Ui.WARN, false);
 		} else if (customMode()) {
 			if (klipy()) {
-				g.drawString(font, Lang.tr("gif.powered_klipy"), x, fy, 0xFFB9A6FF, false);
+				g.text(font, Lang.tr("gif.powered_klipy"), x, fy, 0xFFB9A6FF, false);
 			}
 		} else {
-			g.drawString(font, font.plainSubstrByWidth(Lang.tr("gif.server_only").getString(), w, false), x, fy, Ui.MUTED, false);
+			g.text(font, font.plainSubstrByWidth(Lang.tr("gif.server_only").getString(), w, false), x, fy, Ui.MUTED, false);
 		}
 	}
 

@@ -6,10 +6,10 @@ import java.nio.file.Path;
 import java.util.Optional;
 public final class ForgeEnvironment implements Platform.Environment {
     public Path configDir() { return FMLPaths.CONFIGDIR.get(); }
-    public boolean loaded(String id) { return ModList.get().isLoaded(id); }
+    public boolean loaded(String id) { return ModList.isLoaded(id); }
     public Optional<Path> resource(String id, String path) {
-        var file = ModList.get().getModFileById(id);
+        var file = ModList.getModFileById(id);
         return file == null ? Optional.empty() : Optional.of(file.getFile().findResource(path));
     }
-    public String version() { return ModList.get().getModContainerById("chaoschatplus").orElseThrow().getModInfo().getVersion().toString(); }
+    public String version() { return ModList.getModContainerById("chaoschatplus").orElseThrow().getModInfo().getVersion().toString(); }
 }

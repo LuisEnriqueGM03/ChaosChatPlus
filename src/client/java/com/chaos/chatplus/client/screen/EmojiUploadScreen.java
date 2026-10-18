@@ -21,17 +21,17 @@ import com.chaos.chatplus.net.ChatPayloads;
 import com.mojang.blaze3d.platform.NativeImage;
 
 import com.chaos.chatplus.client.ClientNetwork;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** Subir un emoji propio (PNG soltado en el chat): vista previa, nombre y [Subir]. Lo aprueba un OP. */
 public class EmojiUploadScreen extends Screen {
 
-	private static final ResourceLocation PREVIEW = ChaosChatPlus.id("emoji_upload_preview");
+	private static final Identifier PREVIEW = ChaosChatPlus.id("emoji_upload_preview");
 	private static final int W = 220;
 	private static final int H = 120;
 
@@ -88,7 +88,7 @@ public class EmojiUploadScreen extends Screen {
 		top = (height - H) / 2;
 		if (png != null && minecraft != null) {
 			try {
-				minecraft.getTextureManager().register(PREVIEW, new DynamicTexture(NativeImage.read(png)));
+				minecraft.getTextureManager().register(PREVIEW, new DynamicTexture(() -> "Chaos ChatPlus", NativeImage.read(png)));
 			} catch (Exception e) {
 				png = null;
 			}
@@ -101,7 +101,7 @@ public class EmojiUploadScreen extends Screen {
 		name = new EditBox(font, left + 64, top + 36, W - 72, 16, Lang.tr("emoji.name"));
 		name.setMaxLength(32);
 		name.setValue(suggested);
-		name.setFilter(s -> s.matches("[a-zA-Z0-9_]*"));
+		name.setResponder(s -> { String valid = s.replaceAll("[^a-zA-Z0-9_]", ""); if (!valid.equals(s)) name.setValue(valid); });
 		addRenderableWidget(name);
 		setInitialFocus(name);
 		upload = addRenderableWidget(new FlatButton(left + W - 8 - 70, top + H - 24, 70, 16, Lang.tr("emoji.upload"), true,
@@ -125,25 +125,25 @@ public class EmojiUploadScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
 		Ui.roundBordered(g, left, top, left + W, top + H, 6, Ui.POPUP, Ui.POPUP_BORDER);
-		g.drawString(font, title, left + 8, top + 8, Ui.TEXT, false);
+		g.text(font, title, left + 8, top + 8, Ui.TEXT, false);
 		Ui.round(g, left + 8, top + 24, left + 56, top + 72, 5, 0x22FFFFFF);
 		if (png != null) {
 			com.chaos.chatplus.client.ui.Ui.blit(g, PREVIEW, left + 16, top + 32, 32, 32, 0, 0, 1, 1, 1, 1);
 		}
-		g.drawString(font, Lang.tr("emoji.name"), left + 64, top + 25, Ui.MUTED, false);
-		g.drawString(font, ":" + name.getValue().toLowerCase(Locale.ROOT) + ":", left + 64, top + 58, Ui.ACCENT, false);
+		g.text(font, Lang.tr("emoji.name"), left + 64, top + 25, Ui.MUTED, false);
+		g.text(font, ":" + name.getValue().toLowerCase(Locale.ROOT) + ":", left + 64, top + 58, Ui.ACCENT, false);
 		if (error != null) {
-			g.drawString(font, error, left + 8, top + 80, Ui.ERROR, false);
+			g.text(font, error, left + 8, top + 80, Ui.ERROR, false);
 		} else {
-			g.drawWordWrap(font, Lang.tr("emoji.upload_note"), left + 8, top + 78, W - 16, 0xFF8A8F98);
+			g.textWithWordWrap(font, Lang.tr("emoji.upload_note"), left + 8, top + 78, W - 16, 0xFF8A8F98);
 		}
-		super.render(g, mouseX, mouseY, partial);
+		super.extractRenderState(g, mouseX, mouseY, partial);
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
 		g.fill(0, 0, width, height, 0x88000000);
 	}
 

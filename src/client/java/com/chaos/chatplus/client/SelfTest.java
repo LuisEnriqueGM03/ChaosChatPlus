@@ -15,7 +15,7 @@ import com.chaos.chatplus.net.ChatPayloads;
 import com.chaos.chatplus.server.Shots;
 
 import com.chaos.chatplus.client.ClientNetwork;
-import net.minecraft.client.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.screens.ChatScreen;
@@ -48,7 +48,7 @@ public final class SelfTest {
 		}
 		mc.options.pauseOnLostFocus = false;
 		ticks++;
-		if (mc.player.getGameProfile().getName().equals("Luis")) {
+		if (mc.player.getGameProfile().name().equals("Luis")) {
 			record(mc);
 			luis(mc);
 		} else {
@@ -63,12 +63,12 @@ public final class SelfTest {
 			case 40 -> mc.player.connection.sendCommand("time set day");
 			case 60 -> mc.player.connection.sendChat("Hola a todos :chaos: :fuego: :risa: 😂 ❤️ mirad [item]");
 			case 100 -> shot("01_chat_cerrado");
-			case 120 -> mc.setScreen(new ChatScreen("Probando :cor"));
+			case 120 -> mc.setScreen(new ChatScreen("Probando :cor", true));
 			case 160 -> shot("02_autocompletado");
-			case 180 -> mc.setScreen(new ChatScreen("@P"));
+			case 180 -> mc.setScreen(new ChatScreen("@P", true));
 			case 200 -> shot("03_mencion_autocompletado");
 			case 220 -> {
-				mc.setScreen(new ChatScreen(""));
+				mc.setScreen(new ChatScreen("", true));
 			}
 			case 225 -> {
 				if (mc.screen instanceof BarAccess b && b.chaoschatplus$bar() != null) {
@@ -76,7 +76,7 @@ public final class SelfTest {
 				}
 			}
 			case 260 -> shot("04_selector_emojis");
-			case 280 -> mc.setScreen(new ItemPickerScreen(new ChatScreen("")));
+			case 280 -> mc.setScreen(new ItemPickerScreen(new ChatScreen("", true)));
 			case 320 -> shot("05_mostrar_item");
 			case 330 -> {
 				ClientNetwork.send(new ChatPayloads.ShareItem(0, ""));
@@ -91,24 +91,24 @@ public final class SelfTest {
 					s.sendForTest();
 				}
 			}
-			case 520 -> mc.setScreen(new ChatScreen(""));
+			case 520 -> mc.setScreen(new ChatScreen("", true));
 			case 560 -> shot("07_chat_abierto");
 			case 580 -> {
 				String id = lastShotId(mc);
 				ChaosChatPlus.LOGGER.info("[SelfTest] última captura: {}", id);
 				if (id != null) {
-					mc.setScreen(new ShotViewerScreen(id, new ChatScreen(""), false));
+					mc.setScreen(new ShotViewerScreen(id, new ChatScreen("", true), false));
 				}
 			}
 			case 640 -> shot("08_visor_captura");
-			case 660 -> mc.setScreen(new ChatScreen("hola :diablo: que tal :fuego: "));
+			case 660 -> mc.setScreen(new ChatScreen("hola :diablo: que tal :fuego: ", true));
 			case 700 -> shot("09_emoji_en_barra");
-			case 720 -> mc.setScreen(new ChatScreen("a".repeat(256)));
+			case 720 -> mc.setScreen(new ChatScreen("a".repeat(256), true));
 			case 740 -> shot("09b_limite");
 			case 760 -> {
 				String id = lastShotId(mc);
 				if (id != null) {
-					mc.setScreen(new ShotViewerScreen(id, new ChatScreen(""), true));
+					mc.setScreen(new ShotViewerScreen(id, new ChatScreen("", true), true));
 				}
 			}
 			case 800 -> shot("09c_revision");
@@ -121,7 +121,7 @@ public final class SelfTest {
 				mc.setScreen(null);
 			}
 			case 870 -> ClientNetwork.send(new ChatPayloads.SendGif("local:default/animados/creeper_baile", "", ""));
-			case 920 -> mc.setScreen(new ChatScreen(""));
+			case 920 -> mc.setScreen(new ChatScreen("", true));
 			case 960 -> shot("11_muerte_y_gif");
 			case 980 -> {
 				if (mc.screen instanceof BarAccess b && b.chaoschatplus$bar() != null) {
@@ -146,7 +146,7 @@ public final class SelfTest {
 			case 1480 -> gifTab("custom:cat");
 			case 1720 -> shot("12g_klipy_busqueda");
 			case 1725 -> gifTab("send");
-			case 1745 -> mc.setScreen(new ChatScreen(""));
+			case 1745 -> mc.setScreen(new ChatScreen("", true));
 			case 1800 -> shot("12h_klipy_en_chat");
 			case 1805 -> {
 				if (mc.screen instanceof BarAccess b && b.chaoschatplus$bar() != null) {
@@ -161,7 +161,7 @@ public final class SelfTest {
 			case 1930 -> ClientNetwork.send(new ChatPayloads.SendGif("local:default/troll/x_rickrolled", "", "Pepe"));
 			case 1960 -> {
 				ClientState.setDmTarget("Pepe");
-				mc.setScreen(new ChatScreen(""));
+				mc.setScreen(new ChatScreen("", true));
 			}
 			case 2000 -> shot("13_modo_privado");
 			case 2005 -> {
@@ -174,7 +174,7 @@ public final class SelfTest {
 				ClientState.setDmTarget(null);
 				mc.setScreen(null);
 			}
-			case 2100 -> mc.setScreen(new ChatScreen(""));
+			case 2100 -> mc.setScreen(new ChatScreen("", true));
 			case 2140 -> shot("10_mencion_recibida");
 			case 2200 -> mc.stop();
 			default -> { }
@@ -185,7 +185,7 @@ public final class SelfTest {
 		switch (ticks) {
 			case 200 -> mc.player.connection.sendChat("@Luis mira esto :corazon: :fuego: (desde vanilla)");
 			case 260 -> mc.player.connection.sendChat("@everyone esto no debería sonar");
-			case 2050 -> mc.setScreen(new ChatScreen(""));
+			case 2050 -> mc.setScreen(new ChatScreen("", true));
 			case 2090 -> shot("pepe_chat");
 			case 2300 -> mc.stop();
 			default -> { }
@@ -199,8 +199,8 @@ public final class SelfTest {
 		for (GuiMessage.Line line : lines) {
 			line.content().accept((index, style, codepoint) -> {
 				ClickEvent click = style.getClickEvent();
-				if (found.get() == null && click != null && click.getValue().startsWith(Shots.VIEW_COMMAND)) {
-					found.set(click.getValue().substring(Shots.VIEW_COMMAND.length()));
+				if (found.get() == null && click instanceof net.minecraft.network.chat.ClickEvent.RunCommand command && command.command().startsWith(Shots.VIEW_COMMAND)) {
+					found.set(command.command().substring(Shots.VIEW_COMMAND.length()));
 				}
 				return true;
 			});
@@ -221,7 +221,7 @@ public final class SelfTest {
 		}
 		for (int[] r : RECORD) {
 			if (ticks >= r[0] && ticks <= r[1] && (ticks - r[0]) % r[2] == 0) {
-				Screenshot.grab(mc.gameDirectory, String.format("frame_%05d.png", ticks), mc.getMainRenderTarget(), msg -> { });
+				Screenshot.grab(mc.gameDirectory, String.format("frame_%05d.png", ticks), mc.getMainRenderTarget(), 1, msg -> { });
 				return;
 			}
 		}
@@ -235,7 +235,7 @@ public final class SelfTest {
 
 	private static void shot(String name) {
 		Minecraft mc = Minecraft.getInstance();
-		Screenshot.grab(mc.gameDirectory, "selftest_" + name + ".png", mc.getMainRenderTarget(), msg -> { });
+		Screenshot.grab(mc.gameDirectory, "selftest_" + name + ".png", mc.getMainRenderTarget(), 1, msg -> { });
 		ChaosChatPlus.LOGGER.info("[SelfTest] captura {}", name);
 	}
 }

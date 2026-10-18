@@ -78,7 +78,7 @@ public final class GifServer {
 		}
 		long cooldown = ChatConfig.get().gifs.cooldownSeconds * 1000L;
 		Long last = LAST.get(player.getUUID());
-		if (last != null && !player.hasPermissions(2) && System.currentTimeMillis() - last < cooldown) {
+		if (last != null && !player.permissions().hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER) && System.currentTimeMillis() - last < cooldown) {
 			long left = (cooldown - (System.currentTimeMillis() - last) + 999) / 1000;
 			player.sendSystemMessage(Lang.tr("cooldown", left).withStyle(ChatFormatting.RED));
 			return;
@@ -90,17 +90,17 @@ public final class GifServer {
 		}
 		ServerPlayer target = null;
 		if (!targetName.isEmpty()) {
-			target = player.server.getPlayerList().getPlayerByName(targetName);
+			target = player.level().getServer().getPlayerList().getPlayerByName(targetName);
 			if (target == null) {
 				player.sendSystemMessage(Lang.tr("dm.offline", targetName).withStyle(ChatFormatting.RED));
 				return;
 			}
 		}
 		LAST.put(player.getUUID(), System.currentTimeMillis());
-		ChaosChatPlus.LOGGER.info("[ChatPlus] {} envió el GIF {} ({}){}", player.getGameProfile().getName(), info.name(), info.id(),
-				target == null ? "" : " en privado a " + target.getGameProfile().getName());
+		ChaosChatPlus.LOGGER.info("[ChatPlus] {} envió el GIF {} ({}){}", player.getGameProfile().name(), info.name(), info.id(),
+				target == null ? "" : " en privado a " + target.getGameProfile().name());
 		if (target == null) {
-			for (ServerPlayer viewer : player.server.getPlayerList().getPlayers()) {
+			for (ServerPlayer viewer : player.level().getServer().getPlayerList().getPlayers()) {
 				viewer.sendSystemMessage(message(viewer, player, null, info));
 			}
 		} else {
@@ -120,7 +120,7 @@ public final class GifServer {
 				? Lang.tr("dm.gif_out", target.getDisplayName())
 				: Lang.tr("dm.gif_in", sender.getDisplayName());
 		return Component.literal("✉ ").append(h).withStyle(s -> s.withColor(PRIVATE_COLOR)
-				.withInsertion("/msg " + (viewer == sender ? target : sender).getGameProfile().getName() + " "));
+				.withInsertion("/msg " + (viewer == sender ? target : sender).getGameProfile().name() + " "));
 	}
 
 	private static Component message(ServerPlayer viewer, ServerPlayer sender, @Nullable ServerPlayer target, GifInfo info) {
@@ -134,7 +134,7 @@ public final class GifServer {
 		}
 		MutableComponent name = Component.literal(info.name()).withStyle(ChatFormatting.AQUA);
 		if (!info.local() && !info.page().isEmpty()) {
-			name = name.withStyle(s -> s.withUnderlined(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, info.page())));
+			name = name.withStyle(s -> s.withUnderlined(true).withClickEvent(new ClickEvent.OpenUrl(java.net.URI.create(info.page()))));
 		}
 		if (target != null) {
 			return Component.literal("✉ ").append(Lang.tr("dm.gif_vanilla", sender.getDisplayName(), name))

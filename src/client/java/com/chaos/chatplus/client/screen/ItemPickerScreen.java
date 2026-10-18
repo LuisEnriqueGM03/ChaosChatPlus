@@ -8,7 +8,7 @@ import com.chaos.chatplus.client.ui.Ui;
 import com.chaos.chatplus.net.ChatPayloads;
 
 import com.chaos.chatplus.client.ClientNetwork;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -61,10 +61,10 @@ public class ItemPickerScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
-		super.render(g, mouseX, mouseY, partial);
+	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(g, mouseX, mouseY, partial);
 		Ui.roundBordered(g, left, top, left + W, top + H, 6, Ui.POPUP, Ui.POPUP_BORDER);
-		g.drawString(font, title, left + PAD, top + 4, Ui.TEXT, false);
+		g.text(font, title, left + PAD, top + 4, Ui.TEXT, false);
 		if (minecraft == null || minecraft.player == null) {
 			return;
 		}
@@ -80,26 +80,27 @@ public class ItemPickerScreen extends Screen {
 			int bg = hover && !stack.isEmpty() ? 0x55FFFFFF : 0x22FFFFFF;
 			Ui.round(g, p[0], p[1], p[0] + SLOT - 1, p[1] + SLOT - 1, 3, bg);
 			if (!stack.isEmpty()) {
-				g.renderItem(stack, p[0] + 1, p[1] + 1);
-				g.renderItemDecorations(font, stack, p[0] + 1, p[1] + 1);
+				g.item(stack, p[0] + 1, p[1] + 1);
+				g.itemDecorations(font, stack, p[0] + 1, p[1] + 1);
 				if (hover) {
 					hovered = stack;
 				}
 			}
 		}
-		g.drawString(font, Lang.tr("item.picker_hint"), left + PAD, top + H - 11, Ui.MUTED, false);
+		g.text(font, Lang.tr("item.picker_hint"), left + PAD, top + H - 11, Ui.MUTED, false);
 		if (!hovered.isEmpty()) {
-			g.renderTooltip(font, hovered, mouseX, mouseY);
+			g.setTooltipForNextFrame(font, hovered, mouseX, mouseY);
 		}
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
 		g.fill(0, 0, width, height, 0x88000000);
 	}
 
 	@Override
-	public boolean mouseClicked(double mx, double my, int button) {
+	public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
+        double mx = event.x(), my = event.y(); int button = event.button();
 		if (minecraft != null && minecraft.player != null && button == 0) {
 			Inventory inv = minecraft.player.getInventory();
 			for (int slot = 0; slot <= Inventory.SLOT_OFFHAND; slot++) {
@@ -115,7 +116,7 @@ public class ItemPickerScreen extends Screen {
 				return true;
 			}
 		}
-		return super.mouseClicked(mx, my, button);
+		return super.mouseClicked(event, doubleClick);
 	}
 
 	@Override

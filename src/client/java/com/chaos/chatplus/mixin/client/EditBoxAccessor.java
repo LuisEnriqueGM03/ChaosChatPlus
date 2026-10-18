@@ -11,9 +11,6 @@ import net.minecraft.util.FormattedCharSequence;
 @Mixin(EditBox.class)
 public interface EditBoxAccessor {
 
-	@Accessor("formatter")
-	BiFunction<String, Integer, FormattedCharSequence> chaoschatplus$formatter();
-
 	@Accessor("maxLength")
 	int chaoschatplus$maxLength();
 }

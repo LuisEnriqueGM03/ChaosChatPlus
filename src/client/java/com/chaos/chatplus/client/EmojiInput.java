@@ -20,9 +20,14 @@ import net.minecraft.util.FormattedCharSequence;
 public final class EmojiInput {
 
 	private static final Pattern CODE = Pattern.compile(":([a-z0-9_+\\-]{1,32}):");
-	private static final Style EMOJI_STYLE = Style.EMPTY.withFont(ChatMarks.EMOJI_FONT);
+	private static final Style EMOJI_STYLE = Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(ChatMarks.EMOJI_FONT));
 
 	private EmojiInput() {}
+
+    public static FormattedCharSequence format(String text, int offset) {
+        if (!hasGlyph(text) || text.startsWith("/")) return null;
+        return wrap((part, start) -> FormattedCharSequence.forward(part, Style.EMPTY)).apply(text, offset);
+    }
 
 	/** Resultado de convertir: texto nuevo y dónde queda el cursor. */
 	public record Converted(String text, int cursor) {}

@@ -29,7 +29,7 @@ public final class FabricBootstrap implements ModInitializer {
             public boolean canSend(ServerPlayer player, CustomPacketPayload.Type<?> type) { return ServerPlayNetworking.canSend(player, type); }
         });
         PayloadCatalog.ALL.forEach(FabricBootstrap::register);
-        PayloadTypeRegistry.configurationS2C().register(ChatPayloads.Hello.TYPE, ChatPayloads.Hello.CODEC);
+        PayloadTypeRegistry.clientboundConfiguration().register(ChatPayloads.Hello.TYPE, ChatPayloads.Hello.CODEC);
         ChaosChatPlus.initialize();
         ServerMessageDecoratorEvent.EVENT.register(ServerMessageDecoratorEvent.CONTENT_PHASE, (sender, message) -> sender == null ? message : ChatDecorator.decorate(sender, message));
         CommandRegistrationCallback.EVENT.register((dispatcher, access, env) -> ChatPlusCommand.register(dispatcher));
@@ -44,8 +44,8 @@ public final class FabricBootstrap implements ModInitializer {
     }
     private static <T extends CustomPacketPayload> void register(PayloadCatalog.Entry<T> entry) {
         if (entry.toServer()) {
-            PayloadTypeRegistry.playC2S().register(entry.type(), entry.codec());
+            PayloadTypeRegistry.serverboundPlay().register(entry.type(), entry.codec());
             ServerPlayNetworking.registerGlobalReceiver(entry.type(), (payload, context) -> ServerNetwork.receive(payload, context.player()));
-        } else PayloadTypeRegistry.playS2C().register(entry.type(), entry.codec());
+        } else PayloadTypeRegistry.clientboundPlay().register(entry.type(), entry.codec());
     }
 }

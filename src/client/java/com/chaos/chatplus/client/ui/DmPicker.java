@@ -3,10 +3,10 @@ package com.chaos.chatplus.client.ui;
 import java.util.*;
 import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.client.ClientState;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /** Recipient selection owns its search, geometry and keyboard state. */
 public final class DmPicker {
@@ -17,8 +17,8 @@ public final class DmPicker {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.getConnection() != null && mc.player != null) {
 			for (var info : mc.getConnection().getOnlinePlayers()) {
-				String name = info.getProfile().getName();
-				if (!name.equals(mc.player.getGameProfile().getName())) {
+				String name = info.getProfile().name();
+				if (!name.equals(mc.player.getGameProfile().name())) {
 					out.add(name);
 				}
 			}
@@ -79,29 +79,29 @@ public final class DmPicker {
 		return DM_HEAD + Math.max(1, players.size()) * DM_ROW + extra + 4;
 	}
 
-	public void render(GuiGraphics g, Font font, int mouseX, int mouseY, int screenWidth, int bottom) {
+	public void render(GuiGraphicsExtractor g, Font font, int mouseX, int mouseY, int screenWidth, int bottom) {
 		List<String> players = visiblePlayers();
 		int h = dmHeight(players);
 		dmX = screenWidth - 4 - DM_W;
 		dmY = bottom - 3 - h;
 		Ui.roundBordered(g, dmX, dmY, dmX + DM_W, dmY + h, 5, Ui.POPUP, Ui.POPUP_BORDER);
-		g.drawString(font, Lang.tr("dm.pick"), dmX + 6, dmY + 5, Ui.MUTED, false);
+		g.text(font, Lang.tr("dm.pick"), dmX + 6, dmY + 5, Ui.MUTED, false);
 		// Buscador.
 		Ui.roundBordered(g, dmX + 4, dmY + 15, dmX + DM_W - 4, dmY + 27, 3, 0xFF15171C, 0xFF3A3E48);
 		if (dmSearch.isEmpty()) {
-			g.drawString(font, Lang.tr("dm.search"), dmX + 7, dmY + 17, 0xFF6C717B, false);
+			g.text(font, Lang.tr("dm.search"), dmX + 7, dmY + 17, 0xFF6C717B, false);
 		} else {
 			boolean caret = (Util.getMillis() / 500) % 2 == 0;
-			g.drawString(font, font.plainSubstrByWidth(dmSearch, DM_W - 16, true) + (caret ? "_" : ""), dmX + 7, dmY + 17,
+			g.text(font, font.plainSubstrByWidth(dmSearch, DM_W - 16, true) + (caret ? "_" : ""), dmX + 7, dmY + 17,
 					Ui.TEXT, false);
 		}
 		if (players.isEmpty()) {
-			g.drawString(font, Lang.tr("dm.none"), dmX + 6, dmY + DM_HEAD + 2, Ui.MUTED, false);
+			g.text(font, Lang.tr("dm.none"), dmX + 6, dmY + DM_HEAD + 2, Ui.MUTED, false);
 			return;
 		}
 		int more = otherPlayers().size() - players.size();
 		if (dmSearch.isEmpty() && more > 0) {
-			g.drawString(font, Lang.tr("dm.more", more), dmX + 6, dmY + DM_HEAD + players.size() * DM_ROW + 2, Ui.MUTED, false);
+			g.text(font, Lang.tr("dm.more", more), dmX + 6, dmY + DM_HEAD + players.size() * DM_ROW + 2, Ui.MUTED, false);
 		}
 		for (int i = 0; i < players.size(); i++) {
 			int y = dmY + DM_HEAD + i * DM_ROW;
@@ -112,7 +112,7 @@ public final class DmPicker {
 			} else if (Ui.inside(mouseX, mouseY, dmX + 2, y, dmX + DM_W - 2, y + DM_ROW)) {
 				Ui.round(g, dmX + 2, y, dmX + DM_W - 2, y + DM_ROW, 3, Ui.HOVER);
 			}
-			g.drawString(font, "✉ " + name, dmX + 6, y + 2, sel ? 0xFFFFFFFF : 0xFFD6B4FF, false);
+			g.text(font, "✉ " + name, dmX + 6, y + 2, sel ? 0xFFFFFFFF : 0xFFD6B4FF, false);
 		}
 	}
 

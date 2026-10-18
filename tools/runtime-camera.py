@@ -61,7 +61,7 @@ def main():
         if 'All dimensions are saved' not in log.read_text(errors='replace'):
             raise RuntimeError('Camera server did not save cleanly')
         result = {'loader': args.loader, 'result': 'PASS', 'checks': 3,
-            'coverage': ['camera and zoom', 'HUD suppression render hook', 'preview and restoration'],
+            'coverage': ['actual projection field of view and camera zoom', 'HUD suppression render hook', 'preview and restoration'],
             'screenshots': ['runtime_camera.png', 'runtime_preview.png']}
         (home / 'CAMERA_RESULT.json').write_text(json.dumps(result, indent=2) + '\n')
         print('PASS', args.loader, 'three camera regressions; inspect camera and preview screenshots.')

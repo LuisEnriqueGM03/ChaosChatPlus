@@ -63,9 +63,8 @@ public final class ServerMessages {
 	@Nullable
 	private static ItemStack itemOf(Component c) {
 		HoverEvent hover = c.getStyle().getHoverEvent();
-		if (hover != null && hover.getAction() == HoverEvent.Action.SHOW_ITEM) {
-			HoverEvent.ItemStackInfo info = hover.getValue(HoverEvent.Action.SHOW_ITEM);
-			return info == null ? null : info.getItemStack();
+		if (hover instanceof HoverEvent.ShowItem item) {
+			return item.item().create();
 		}
 		for (Component s : c.getSiblings()) {
 			ItemStack found = itemOf(s);

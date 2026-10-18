@@ -37,7 +37,7 @@ public final class ChatTransform {
 			return message;
 		}
 		boolean modded = ChatServer.isModded(viewer);
-		String me = "@" + viewer.getGameProfile().getName().toLowerCase(Locale.ROOT);
+		String me = "@" + viewer.getGameProfile().name().toLowerCase(Locale.ROOT);
 		String rank = ChaosRanksCompat.present() ? ChaosRanksCompat.rankId(viewer) : null;
 		String myRank = rank == null ? null : "@" + rank.toLowerCase(Locale.ROOT);
 		return ChatMarks.rebuild(message, node -> {

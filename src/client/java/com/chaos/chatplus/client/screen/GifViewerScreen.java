@@ -6,7 +6,7 @@ import com.chaos.chatplus.client.ui.FlatButton;
 import com.chaos.chatplus.client.ui.Ui;
 import com.chaos.chatplus.gif.GifInfo;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -28,19 +28,19 @@ public class GifViewerScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
-		super.render(g, mouseX, mouseY, partial);
+	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(g, mouseX, mouseY, partial);
 		int maxW = Math.min(width - 40, 320);
 		int maxH = height - 70;
 		int x = (width - maxW) / 2;
 		int y = 24;
 		Ui.round(g, x - 4, y - 4, x + maxW + 4, y + maxH + 4, 6, Ui.POPUP);
 		GifCache.draw(g, gif, x, y, maxW, maxH, true);
-		g.drawCenteredString(font, font.plainSubstrByWidth(gif.name(), width - 20), width / 2, 8, Ui.TEXT);
+		g.centeredText(font, font.plainSubstrByWidth(gif.name(), width - 20), width / 2, 8, Ui.TEXT);
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
 		g.fill(0, 0, width, height, 0xCC0B0C10);
 	}
 

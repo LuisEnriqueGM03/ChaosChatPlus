@@ -24,7 +24,7 @@ import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.gui.font.FontOption;
 import net.minecraft.client.gui.font.FontSet;
 import net.minecraft.client.gui.font.providers.GlyphProviderDefinition;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -35,9 +35,18 @@ import net.minecraft.server.packs.resources.ResourceManager;
 public final class FontInjector {
 
 	private static com.chaos.chatplus.net.PartAssembly parts;
-	private static final Map<ResourceLocation, FontSet> ORIGINALS = new HashMap<>();
+	private static final Map<Identifier, FontSet> ORIGINALS = new HashMap<>();
 	private static int fontGeneration;
-	private static final Set<ResourceLocation> INJECTED = new java.util.HashSet<>();
+	private static final Set<Identifier> INJECTED = new java.util.HashSet<>();
+    private static final List<GlyphProvider> OWNED_PROVIDERS = new ArrayList<>();
+
+    private static void invalidateCaches() {
+        Minecraft mc = Minecraft.getInstance();
+        for (var font : List.of(mc.font, mc.fontFilterFishy)) {
+            var provider = ((com.chaos.chatplus.mixin.client.FontAccessor) font).chaoschatplus$provider();
+            if (provider instanceof com.chaos.chatplus.mixin.client.FontCacheAccessor cached) cached.chaoschatplus$invalidate();
+        }
+    }
 
 	private FontInjector() {}
 
@@ -58,14 +67,17 @@ public final class FontInjector {
 	public static void clear() {
 		parts = null;
 		FontManager fonts = ((MinecraftAccessor) Minecraft.getInstance()).chaoschatplus$fontManager();
-		Map<ResourceLocation, FontSet> sets = ((FontManagerAccessor) fonts).chaoschatplus$fontSets();
-		for (ResourceLocation id : INJECTED) {
+		Map<Identifier, FontSet> sets = ((FontManagerAccessor) fonts).chaoschatplus$fontSets();
+		for (Identifier id : INJECTED) {
 			FontSet injected = sets.remove(id);
 			if (injected != null) injected.close();
 			FontSet original = ORIGINALS.get(id);
 			if (original != null) sets.put(id, original);
 		}
 		INJECTED.clear(); ORIGINALS.clear();
+        OWNED_PROVIDERS.forEach(GlyphProvider::close);
+        OWNED_PROVIDERS.clear();
+        invalidateCaches();
 	}
 
 	private static void inject(Map<String, byte[]> files) throws Exception {
@@ -82,7 +94,7 @@ public final class FontInjector {
 			if (p.length != 4 || !p[0].equals("assets") || !p[2].equals("font") || !p[3].endsWith(".json")) {
 				continue;
 			}
-			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(p[1], p[3].substring(0, p[3].length() - 5));
+			Identifier id = Identifier.fromNamespaceAndPath(p[1], p[3].substring(0, p[3].length() - 5));
 			JsonObject json = JsonParser.parseString(new String(f.getValue(), StandardCharsets.UTF_8)).getAsJsonObject();
 			List<GlyphProvider.Conditional> providers = new ArrayList<>();
 			for (JsonElement el : json.getAsJsonArray("providers")) {
@@ -90,10 +102,11 @@ public final class FontInjector {
 				Optional<GlyphProviderDefinition.Loader> loader = def.unpack().left();
 				if (loader.isPresent()) {
 					GlyphProvider provider = loader.get().load(resources);
+                    OWNED_PROVIDERS.add(provider);
 					providers.add(new GlyphProvider.Conditional(provider, FontOption.Filter.ALWAYS_PASS));
 				}
 			}
-			FontSet set = new FontSet(access.chaoschatplus$textureManager(), ChaosChatPlus.id("server_font/" + (++fontGeneration)));
+			FontSet set = new FontSet(new net.minecraft.client.gui.font.GlyphStitcher(access.chaoschatplus$textureManager(), ChaosChatPlus.id("server_font/" + (++fontGeneration))));
 			try {
 				set.reload(providers, Set.of());
 				FontSet previous = access.chaoschatplus$fontSets().put(id, set);
@@ -104,6 +117,7 @@ public final class FontInjector {
 			}
 			count++;
 		}
+        invalidateCaches();
 		ChaosChatPlus.LOGGER.info("Fuentes del servidor cargadas: {}", count);
 	}
 
@@ -111,7 +125,7 @@ public final class FontInjector {
 	private record Files(Map<String, byte[]> files, ResourceManager fallback) implements ResourceManager {
 
 		@Override
-		public Optional<Resource> getResource(ResourceLocation id) {
+		public Optional<Resource> getResource(Identifier id) {
 			byte[] data = files.get("assets/" + id.getNamespace() + "/" + id.getPath());
 			if (data == null) {
 				return fallback.getResource(id);
@@ -126,18 +140,18 @@ public final class FontInjector {
 		}
 
 		@Override
-		public List<Resource> getResourceStack(ResourceLocation id) {
+		public List<Resource> getResourceStack(Identifier id) {
 			return getResource(id).map(List::of).orElse(List.of());
 		}
 
 		@Override
-		public Map<ResourceLocation, Resource> listResources(String path, java.util.function.Predicate<ResourceLocation> filter) {
+		public Map<Identifier, Resource> listResources(String path, java.util.function.Predicate<Identifier> filter) {
 			return Map.of();
 		}
 
 		@Override
-		public Map<ResourceLocation, List<Resource>> listResourceStacks(String path,
-				java.util.function.Predicate<ResourceLocation> filter) {
+		public Map<Identifier, List<Resource>> listResourceStacks(String path,
+				java.util.function.Predicate<Identifier> filter) {
 			return Map.of();
 		}
 

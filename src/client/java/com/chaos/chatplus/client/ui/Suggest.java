@@ -12,7 +12,7 @@ import com.chaos.chatplus.client.EmojiTextures;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.PlayerInfo;
@@ -117,7 +117,7 @@ public final class Suggest {
 		List<String> names = new ArrayList<>();
 		if (connection != null) {
 			for (PlayerInfo info : connection.getOnlinePlayers()) {
-				names.add(info.getProfile().getName());
+				names.add(info.getProfile().name());
 			}
 		}
 		names.sort(String.CASE_INSENSITIVE_ORDER);
@@ -206,7 +206,7 @@ public final class Suggest {
 		return boxY + (entries.size() - 1 - i) * ROW;
 	}
 
-	public void render(GuiGraphics g, Font font, int barTop, int mouseX, int mouseY) {
+	public void render(GuiGraphicsExtractor g, Font font, int barTop, int mouseX, int mouseY) {
 		if (!visible()) {
 			return;
 		}
@@ -234,7 +234,7 @@ public final class Suggest {
 				x += 12;
 			}
 			int color = e.emoji() == null ? (0xFF000000 | ClientState.mentionColor()) : Ui.TEXT;
-			g.drawString(font, e.label(), x, y + 2, i == selected ? 0xFFFFFFFF : color, false);
+			g.text(font, e.label(), x, y + 2, i == selected ? 0xFFFFFFFF : color, false);
 		}
 	}
 }

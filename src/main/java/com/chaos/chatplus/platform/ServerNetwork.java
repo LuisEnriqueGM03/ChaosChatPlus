@@ -11,7 +11,7 @@ public final class ServerNetwork {
         void send(ServerPlayer player, CustomPacketPayload payload);
         boolean canSend(ServerPlayer player, CustomPacketPayload.Type<?> type);
     }
-    public record Context(ServerPlayer player) { public MinecraftServer server() { return player.server; } }
+    public record Context(ServerPlayer player) { public MinecraftServer server() { return player.level().getServer(); } }
     private static Transport transport;
     private static final Map<CustomPacketPayload.Type<?>, BiConsumer<CustomPacketPayload, Context>> HANDLERS = new HashMap<>();
     private ServerNetwork() {}

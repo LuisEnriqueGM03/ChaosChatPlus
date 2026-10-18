@@ -9,9 +9,9 @@ import com.chaos.chatplus.ChaosChatPlus;
 import com.mojang.blaze3d.platform.NativeImage;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Imágenes de los emojis para el selector y el autocompletado: los de serie salen del jar del mod y los propios del
@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public final class EmojiTextures {
 
-	private record Texture(ResourceLocation id, int width, int height) {}
+	private record Texture(Identifier id, int width, int height) {}
 
 	private static final Map<String, Texture> CUSTOM = new HashMap<>();
 
@@ -32,8 +32,8 @@ public final class EmojiTextures {
 		}
 		try {
 			NativeImage image = NativeImage.read(png);
-			ResourceLocation id = ChaosChatPlus.id("custom_emoji/" + name);
-			Minecraft.getInstance().getTextureManager().register(id, new DynamicTexture(image));
+			Identifier id = ChaosChatPlus.id("custom_emoji/" + name);
+			Minecraft.getInstance().getTextureManager().register(id, new DynamicTexture(() -> "Chaos ChatPlus", image));
 			CUSTOM.put(name, new Texture(id, image.getWidth(), image.getHeight()));
 		} catch (Exception e) {
 			ChaosChatPlus.LOGGER.warn("Emoji propio no válido: {}", name, e);
@@ -48,11 +48,11 @@ public final class EmojiTextures {
 	}
 
 	/** Dibuja el emoji en un cuadrado de {@code size} px (centrado y sin deformar). */
-	public static void draw(GuiGraphics g, ClientState.ClientEmoji emoji, int x, int y, int size) {
+	public static void draw(GuiGraphicsExtractor g, ClientState.ClientEmoji emoji, int x, int y, int size) {
 		draw(g, emoji.name(), emoji.builtin(), x, y, size);
 	}
 
-	public static void draw(GuiGraphics g, String name, boolean builtin, int x, int y, int size) {
+	public static void draw(GuiGraphicsExtractor g, String name, boolean builtin, int x, int y, int size) {
 		Texture t = builtin ? new Texture(builtin(name), 32, 32) : CUSTOM.get(name);
 		if (t == null) {
 			return;
@@ -65,18 +65,15 @@ public final class EmojiTextures {
 			h = Math.max(1, (int) Math.round(t.height() * s));
 		}
 		com.chaos.chatplus.client.ui.Ui.smooth(t.id());
-		com.mojang.blaze3d.systems.RenderSystem.enableBlend();
-		com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
 		com.chaos.chatplus.client.ui.Ui.blit(g, t.id(), x + (size - w) / 2, y + (size - h) / 2, w, h, 0, 0, t.width(), t.height(), t.width(), t.height());
-		com.mojang.blaze3d.systems.RenderSystem.disableBlend();
 	}
 
-	public static ResourceLocation builtin(String name) {
+	public static Identifier builtin(String name) {
 		return ChaosChatPlus.id("textures/emoji/" + name + ".png");
 	}
 
 	@Nullable
-	public static ResourceLocation custom(String name) {
+	public static Identifier custom(String name) {
 		Texture t = CUSTOM.get(name);
 		return t == null ? null : t.id();
 	}

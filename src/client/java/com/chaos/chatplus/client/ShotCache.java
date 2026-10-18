@@ -14,12 +14,12 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.chaos.chatplus.client.ClientNetwork;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** Capturas recibidas del servidor (se piden al pasar el ratón o al abrirlas, no antes). */
 public final class ShotCache {
 
-	public record Shot(String id, String owner, byte[] jpeg, ResourceLocation texture, ResourceLocation blurred,
+	public record Shot(String id, String owner, byte[] jpeg, Identifier texture, Identifier blurred,
 			int width, int height) {}
 
 	private static final com.chaos.chatplus.util.BudgetCache<String, Shot> SHOTS =
@@ -59,10 +59,10 @@ public final class ShotCache {
 			}
 			SHOTS.remove(id);
 			GONE.remove(id);
-			ResourceLocation tex = ChaosChatPlus.id("shot/" + id);
-			ResourceLocation blur = ChaosChatPlus.id("shot/" + id + "_blur");
-			Minecraft.getInstance().getTextureManager().register(tex, new DynamicTexture(toNative(img)));
-			Minecraft.getInstance().getTextureManager().register(blur, new DynamicTexture(toNative(blur(img))));
+			Identifier tex = ChaosChatPlus.id("shot/" + id);
+			Identifier blur = ChaosChatPlus.id("shot/" + id + "_blur");
+			Minecraft.getInstance().getTextureManager().register(tex, new DynamicTexture(() -> "Chaos ChatPlus", toNative(img)));
+			Minecraft.getInstance().getTextureManager().register(blur, new DynamicTexture(() -> "Chaos ChatPlus", toNative(blur(img))));
 			SHOTS.put(id, new Shot(id, data.owner(), data.jpeg(), tex, blur, img.getWidth(), img.getHeight()));
 
 		} catch (Exception e) {

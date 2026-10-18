@@ -11,12 +11,12 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 
 /** Zoom del modo cámara: reduce el campo de visión del mundo (la mano no cambia). */
-@Mixin(GameRenderer.class)
+@Mixin(Camera.class)
 abstract class CameraZoomMixin {
 
-	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
-	private void chaoschatplus$zoom(Camera camera, float partial, boolean useFovSetting, CallbackInfoReturnable<Float> cir) {
-		if (useFovSetting && ShotCapture.cameraMode() && ShotCapture.zoom() > 1.0) {
+	@Inject(method = "calculateFov", at = @At("RETURN"), cancellable = true)
+	private void chaoschatplus$zoom(float partial, CallbackInfoReturnable<Float> cir) {
+		if (ShotCapture.cameraMode() && ShotCapture.zoom() > 1.0) {
 			cir.setReturnValue((float) (cir.getReturnValue() / ShotCapture.zoom()));
 		}
 	}

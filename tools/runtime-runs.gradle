@@ -1,10 +1,10 @@
 // Opt-in development runs against isolated local worlds; normal run configurations are unchanged.
-def fabric = plugins.hasPlugin('net.fabricmc.fabric-loom-remap')
+def fabric = plugins.hasPlugin('net.fabricmc.fabric-loom')
 def loader = fabric ? 'fabric' : (plugins.hasPlugin('net.minecraftforge.gradle') ? 'forge' : 'neoforge')
 def sharedRoot = fabric ? projectDir : file('../..')
 def runtimeHome = new File(sharedRoot, ".verification/runtime/${loader}")
 def role = providers.gradleProperty('runtimeRole').getOrElse('Luis')
-def port = providers.gradleProperty('runtimePort').getOrElse('25831')
+def port = providers.gradleProperty('runtimePort').getOrElse('25931')
 def props = ['chaoschatplus.runtimeTest': 'true', 'chaoschatplus.runtimeDir': new File(runtimeHome, 'signals').absolutePath]
 def clientArgs = ['--username', role, '--width', '1280', '--height', '720']
 if (fabric) {

@@ -4,7 +4,6 @@ plugins {
     id 'net.minecraftforge.jarjar' version '0.2.3'
 }
 minecraft {
-    mappings channel: 'official', version: '1.21.4'
     runs {
         configureEach { workingDir = layout.projectDirectory.dir('run'); args '--mixin.config=chaoschatplus.mixins.json' }
         register('client')
@@ -17,12 +16,12 @@ repositories {
     maven fg.minecraftLibsMaven
     mavenCentral()
 }
-dependencies { implementation minecraft.dependency('net.minecraftforge:forge:1.21.4-54.1.14') }
+dependencies { implementation minecraft.dependency('net.minecraftforge:forge:26.1-62.0.9') }
 
 version = '1.1.1'
 group = 'com.chaos'
-base { archivesName = 'chaoschatplus-forge-1.21.4' }
-java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+base { archivesName = 'chaoschatplus-forge-26.1' }
+java { toolchain.languageVersion = JavaLanguageVersion.of(25); withSourcesJar() }
 sourceSets {
     main {
         java.setSrcDirs(['../../src/main/java', '../../src/client/java', 'src/main/java'])
@@ -31,7 +30,7 @@ sourceSets {
     }
     test { java.srcDir '../../src/test/java' }
 }
-tasks.withType(JavaCompile).configureEach { options.release = 21; options.encoding = 'UTF-8' }
+tasks.withType(JavaCompile).configureEach { options.release = 25; options.encoding = 'UTF-8' }
 processResources {
     inputs.property 'version', project.version
     filesMatching('META-INF/*.toml') { expand version: project.version }
@@ -54,3 +53,6 @@ dependencies {
 }
 
 apply from: '../../tools/runtime-runs.gradle'
+
+// Forge bundles Mixin 0.8.7; bytecode and runtime still require Java 25.
+processResources { filesMatching('chaoschatplus.mixins.json') { filter { it.replace('JAVA_25', 'JAVA_21') } } }

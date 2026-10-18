@@ -7,15 +7,15 @@ import com.chaos.chatplus.client.ui.FlatButton;
 import com.chaos.chatplus.client.ui.Ui;
 import com.mojang.blaze3d.platform.NativeImage;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /** Vista previa de la captura antes de mandarla al chat: [Enviar] o [Cancelar]. */
 public class ShotSendScreen extends Screen {
 
-	private static final ResourceLocation PREVIEW = ChaosChatPlus.id("shot_preview");
+	private static final Identifier PREVIEW = ChaosChatPlus.id("shot_preview");
 
 	private NativeImage image;
 	private final int imageW;
@@ -36,7 +36,7 @@ public class ShotSendScreen extends Screen {
 			// La textura se queda con una copia; la original se usa para codificar.
 			NativeImage copy = new NativeImage(imageW, imageH, false);
 			copy.copyFrom(image);
-			minecraft.getTextureManager().register(PREVIEW, new DynamicTexture(copy));
+			minecraft.getTextureManager().register(PREVIEW, new DynamicTexture(() -> "Chaos ChatPlus", copy));
             previewRegistered = true;
 		}
 		int bw = 80;
@@ -62,8 +62,8 @@ public class ShotSendScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
-		super.render(g, mouseX, mouseY, partial);
+	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(g, mouseX, mouseY, partial);
 		int maxW = width - 40;
 		int maxH = height - 70;
 		double s = Math.min((double) maxW / imageW, (double) maxH / imageH);
@@ -73,12 +73,12 @@ public class ShotSendScreen extends Screen {
 		int y = 24;
 		Ui.round(g, x - 3, y - 3, x + w + 3, y + h + 3, 4, Ui.POPUP);
 		com.chaos.chatplus.client.ui.Ui.blit(g, PREVIEW, x, y, w, h, 0, 0, 1, 1, 1, 1);
-		g.drawCenteredString(font, title, width / 2, 8, Ui.TEXT);
-		g.drawCenteredString(font, Lang.tr("shot.send_note"), width / 2, height - 42, Ui.MUTED);
+		g.centeredText(font, title, width / 2, 8, Ui.TEXT);
+		g.centeredText(font, Lang.tr("shot.send_note"), width / 2, height - 42, Ui.MUTED);
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
 		g.fill(0, 0, width, height, 0xCC0B0C10);
 	}
 

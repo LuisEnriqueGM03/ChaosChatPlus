@@ -11,7 +11,7 @@ import com.chaos.chatplus.client.ClientPrefs;
 import com.chaos.chatplus.client.ClientState;
 import com.chaos.chatplus.text.ChatMarks;
 
-import net.minecraft.client.GuiMessageTag;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -55,7 +55,7 @@ public final class ChatTags {
 			return ChatMarks.any(message, c -> ChatMarks.mentionToken(c) != null
 					&& c.getStyle().isBold() && self.equals(c.getStyle().getColor()));
 		}
-		String name = mc.player.getGameProfile().getName();
+		String name = mc.player.getGameProfile().name();
 		Pattern p = Pattern.compile("(^|[^A-Za-z0-9_])@" + Pattern.quote(name.toLowerCase(Locale.ROOT)) + "($|[^A-Za-z0-9_])");
 		return p.matcher(message.getString().toLowerCase(Locale.ROOT)).find();
 	}

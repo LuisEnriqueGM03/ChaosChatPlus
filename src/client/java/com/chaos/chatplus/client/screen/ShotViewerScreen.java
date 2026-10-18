@@ -1,5 +1,7 @@
 package com.chaos.chatplus.client.screen;
 
+import net.minecraft.client.Minecraft;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -14,7 +16,7 @@ import com.chaos.chatplus.net.ChatPayloads;
 
 import com.chaos.chatplus.client.ClientNetwork;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -72,17 +74,17 @@ public class ShotViewerScreen extends Screen {
 		ShotCache.Shot shot = ShotCache.get(id);
 		save.active = shot != null;
 		boolean mine = shot != null && minecraft != null && minecraft.player != null
-				&& shot.owner().equals(minecraft.player.getGameProfile().getName());
+				&& shot.owner().equals(minecraft.player.getGameProfile().name());
 		report.active = shot != null && !reported && !mine;
 	}
 
 	@Override
-	public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
-		super.render(g, mouseX, mouseY, partial);
+	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(g, mouseX, mouseY, partial);
 		ShotCache.Shot shot = ShotCache.get(id);
 		if (shot == null) {
 			String key = ShotCache.gone(id) ? "shot.gone" : "shot.loading";
-			g.drawCenteredString(font, Lang.tr(key), width / 2, height / 2 - 4, Ui.MUTED);
+			g.centeredText(font, Lang.tr(key), width / 2, height / 2 - 4, Ui.MUTED);
 			return;
 		}
 		int maxW = width - 40;
@@ -99,19 +101,20 @@ public class ShotViewerScreen extends Screen {
 			Component show = Lang.tr("shot.reveal");
 			int tw = font.width(show) + 16;
 			Ui.round(g, width / 2 - tw / 2, y + h / 2 - 9, width / 2 + tw / 2, y + h / 2 + 9, 5, 0xCC111318);
-			g.drawCenteredString(font, show, width / 2, y + h / 2 - 4, Ui.TEXT);
+			g.centeredText(font, show, width / 2, y + h / 2 - 4, Ui.TEXT);
 		}
 		Component top = moderation ? title.copy().append(" · ").append(Lang.tr("shot.by", shot.owner())) : Lang.tr("shot.by", shot.owner());
-		g.drawCenteredString(font, top, width / 2, 6, moderation ? Ui.WARN : Ui.TEXT);
+		g.centeredText(font, top, width / 2, 6, moderation ? Ui.WARN : Ui.TEXT);
 	}
 
 	@Override
-	public boolean mouseClicked(double mx, double my, int button) {
+	public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
+        double mx = event.x(), my = event.y(); int button = event.button();
 		if (!revealed && my < height - 30) {
 			revealed = true;
 			return true;
 		}
-		return super.mouseClicked(mx, my, button);
+		return super.mouseClicked(event, doubleClick);
 	}
 
 	private void save() {
@@ -127,8 +130,8 @@ public class ShotViewerScreen extends Screen {
 			Files.write(file, shot.jpeg());
 			Component name = Component.literal(file.getFileName().toString()).withStyle(s -> s
 					.withUnderlined(true)
-					.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.toAbsolutePath().toString())));
-			minecraft.player.displayClientMessage(Lang.tr("shot.saved", name).withStyle(ChatFormatting.GREEN), false);
+					.withClickEvent(new ClickEvent.OpenFile(file.toAbsolutePath())));
+			Minecraft.getInstance().gui.getChat().addClientSystemMessage(Lang.tr("shot.saved", name).withStyle(ChatFormatting.GREEN));
 			save.active = false;
 		} catch (Exception e) {
 			ChaosChatPlus.LOGGER.warn("No se pudo guardar la captura {}", id, e);
@@ -145,7 +148,7 @@ public class ShotViewerScreen extends Screen {
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
 		g.fill(0, 0, width, height, 0xE00B0C10);
 	}
 

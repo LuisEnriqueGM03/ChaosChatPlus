@@ -69,7 +69,7 @@ public final class ChatDecorator {
 			return message;
 		}
 		if (ctx.everyone) {
-			for (ServerPlayer p : sender.server.getPlayerList().getPlayers()) {
+			for (ServerPlayer p : sender.level().getServer().getPlayerList().getPlayers()) {
 				ctx.pinged.add(p);
 			}
 		}
@@ -161,15 +161,15 @@ public final class ChatDecorator {
 			ctx.everyone = true;
 			return ChatMarks.mention("@" + lower, color);
 		}
-		ServerPlayer target = ctx.sender.server.getPlayerList().getPlayerByName(name);
+		ServerPlayer target = ctx.sender.level().getServer().getPlayerList().getPlayerByName(name);
 		if (target != null) {
 			ctx.pinged.add(target);
-			return ChatMarks.mention("@" + target.getGameProfile().getName(), color);
+			return ChatMarks.mention("@" + target.getGameProfile().name(), color);
 		}
 		if (Perms.canMentionRanks(ctx.sender)) {
 			for (ChaosRanksCompat.Rank rank : ChaosRanksCompat.ranks()) {
 				if (rank.id().equalsIgnoreCase(name)) {
-					for (ServerPlayer p : ctx.sender.server.getPlayerList().getPlayers()) {
+					for (ServerPlayer p : ctx.sender.level().getServer().getPlayerList().getPlayers()) {
 						ChaosRanksCompat.Rank r = ChaosRanksCompat.rankOf(p);
 						if (r != null && r.id().equals(rank.id())) {
 							ctx.pinged.add(p);

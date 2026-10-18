@@ -6,7 +6,7 @@ import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.client.ui.FlatButton;
 import com.chaos.chatplus.client.ui.Ui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -47,35 +47,35 @@ public class ItemPreviewScreen extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics g, int mouseX, int mouseY, float partial) {
-		super.render(g, mouseX, mouseY, partial);
+	public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
+		super.extractRenderState(g, mouseX, mouseY, partial);
 		Ui.roundBordered(g, left, top, left + W, top + H, 6, Ui.POPUP, Ui.POPUP_BORDER);
 		Ui.round(g, left + 8, top + 8, left + 80, top + 80, 6, 0x22FFFFFF);
 
 		// Ítem grande con un leve vaivén.
 		float bob = Mth.sin((System.currentTimeMillis() % 3000L) / 3000.0F * Mth.TWO_PI) * 2.0F;
-		g.pose().pushPose();
-		g.pose().translate(left + 44, top + 44 + bob, 100);
-		g.pose().scale(4.0F, 4.0F, 4.0F);
-		g.renderItem(stack, -8, -8);
-		g.pose().popPose();
+		g.pose().pushMatrix();
+		g.nextStratum(); g.pose().translate(left + 44, top + 44 + bob);
+		g.pose().scale(4.0F, 4.0F);
+		g.item(stack, -8, -8);
+		g.pose().popMatrix();
 		if (stack.getCount() > 1) {
-			g.drawString(font, "×" + stack.getCount(), left + 10, top + 84, Ui.TEXT, false);
+			g.text(font, "×" + stack.getCount(), left + 10, top + 84, Ui.TEXT, false);
 		}
 
 		int y = top + 10;
 		for (FormattedCharSequence line : lines) {
 			if (y > top + H - 30) {
-				g.drawString(font, "…", left + 88, y, Ui.MUTED, false);
+				g.text(font, "…", left + 88, y, Ui.MUTED, false);
 				break;
 			}
-			g.drawString(font, line, left + 88, y, 0xFFFFFFFF, true);
+			g.text(font, line, left + 88, y, 0xFFFFFFFF, true);
 			y += 10;
 		}
 	}
 
 	@Override
-	public void renderBackground(GuiGraphics g, int mouseX, int mouseY, float partial) {
+	public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partial) {
 		g.fill(0, 0, width, height, 0x88000000);
 	}
 

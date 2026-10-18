@@ -1,6 +1,6 @@
 package com.chaos.chatplus.client.ui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /** Piezas de dibujo del estilo moderno: rectángulos redondeados y la paleta. */
 public final class Ui {
@@ -22,7 +22,7 @@ public final class Ui {
 	private Ui() {}
 
 	/** Rectángulo con las esquinas redondeadas (radio en px), hecho con filas de fill. */
-	public static void round(GuiGraphics g, int x0, int y0, int x1, int y1, int radius, int argb) {
+	public static void round(GuiGraphicsExtractor g, int x0, int y0, int x1, int y1, int radius, int argb) {
 		int h = y1 - y0;
 		int w = x1 - x0;
 		int r = Math.max(0, Math.min(radius, Math.min(w, h) / 2));
@@ -38,7 +38,7 @@ public final class Ui {
 	}
 
 	/** Lo mismo con un borde de 1 px de otro color. */
-	public static void roundBordered(GuiGraphics g, int x0, int y0, int x1, int y1, int radius, int fill, int border) {
+	public static void roundBordered(GuiGraphicsExtractor g, int x0, int y0, int x1, int y1, int radius, int fill, int border) {
 		round(g, x0, y0, x1, y1, radius, border);
 		round(g, x0 + 1, y0 + 1, x1 - 1, y1 - 1, Math.max(0, radius - 1), fill);
 	}
@@ -61,18 +61,18 @@ public final class Ui {
 		return mx >= x0 && mx < x1 && my >= y0 && my < y1;
 	}
 
-    public static void blit(GuiGraphics g, net.minecraft.resources.ResourceLocation texture,
+    public static void blit(GuiGraphicsExtractor g, net.minecraft.resources.Identifier texture,
             int x, int y, int w, int h, float u, float v, int regionW, int regionH, int textureW, int textureH) {
         blit(g, texture, x, y, w, h, u, v, regionW, regionH, textureW, textureH, 0xFFFFFFFF);
     }
-    public static void blit(GuiGraphics g, net.minecraft.resources.ResourceLocation texture,
+    public static void blit(GuiGraphicsExtractor g, net.minecraft.resources.Identifier texture,
             int x, int y, int w, int h, float u, float v, int regionW, int regionH, int textureW, int textureH, int color) {
-        g.blit(net.minecraft.client.renderer.RenderType::guiTextured, texture, x, y, u, v,
+        g.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, x, y, u, v,
                 w, h, regionW, regionH, textureW, textureH, color);
     }
 
 	/** Píxeles nítidos (sin suavizar) para los emojis e iconos en pixel art. */
-	public static void smooth(net.minecraft.resources.ResourceLocation id) {
-		net.minecraft.client.Minecraft.getInstance().getTextureManager().getTexture(id).setFilter(false, false);
+	public static void smooth(net.minecraft.resources.Identifier id) {
+		// Dynamic textures use the nearest-neighbor sampler by default in 26.1.
 	}
 }

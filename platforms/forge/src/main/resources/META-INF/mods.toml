@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[54,)"
+loaderVersion="[62,)"
 license="MIT"
 [[mods]]
 modId="chaoschatplus"
@@ -11,12 +11,12 @@ description="Chat moderno: emojis, GIFs, objetos, menciones y capturas moderadas
 [[dependencies.chaoschatplus]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.21.4]"
+versionRange="[26.1]"
 ordering="NONE"
 side="BOTH"
 [[dependencies.chaoschatplus]]
 modId="forge"
 mandatory=true
-versionRange="[54.1.14,)"
+versionRange="[62.0.9,)"
 ordering="NONE"
 side="BOTH"

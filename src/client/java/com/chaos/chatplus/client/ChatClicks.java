@@ -16,7 +16,7 @@ import com.chaos.chatplus.server.Shots;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.HoverEvent;
@@ -36,8 +36,8 @@ public final class ChatClicks {
 			return null;
 		}
 		ClickEvent click = style.getClickEvent();
-		if (click.getAction() == ClickEvent.Action.RUN_COMMAND && click.getValue().startsWith(Shots.VIEW_COMMAND)) {
-			return click.getValue().substring(Shots.VIEW_COMMAND.length()).strip();
+		if (click instanceof ClickEvent.RunCommand command && command.command().startsWith(Shots.VIEW_COMMAND)) {
+			return command.command().substring(Shots.VIEW_COMMAND.length()).strip();
 		}
 		return null;
 	}
@@ -54,24 +54,24 @@ public final class ChatClicks {
 			return true;
 		}
 		ClickEvent click = style.getClickEvent();
-		if (click != null && click.getAction() == ClickEvent.Action.RUN_COMMAND && ClientState.serverMod()
-				&& click.getValue().startsWith(Shots.REVIEW_COMMAND)) {
-			String reviewId = click.getValue().substring(Shots.REVIEW_COMMAND.length()).strip();
+		if (click instanceof ClickEvent.RunCommand command && ClientState.serverMod()
+				&& command.command().startsWith(Shots.REVIEW_COMMAND)) {
+			String reviewId = command.command().substring(Shots.REVIEW_COMMAND.length()).strip();
 			mc.setScreen(new ShotViewerScreen(reviewId, screen, true));
 			return true;
 		}
-		if (click != null && click.getAction() == ClickEvent.Action.RUN_COMMAND
-				&& click.getValue().startsWith(ShotCapture.SEND_FILE_COMMAND)) {
-			ShotCapture.openFile(click.getValue().substring(ShotCapture.SEND_FILE_COMMAND.length()));
+		if (click instanceof ClickEvent.RunCommand command
+				&& command.command().startsWith(ShotCapture.SEND_FILE_COMMAND)) {
+			ShotCapture.openFile(command.command().substring(ShotCapture.SEND_FILE_COMMAND.length()));
 			return true;
 		}
 		HoverEvent hover = style.getHoverEvent();
-		boolean viewLink = click != null && click.getAction() == ClickEvent.Action.RUN_COMMAND
-				&& click.getValue().equals(ItemShare.VIEW_COMMAND);
-		if ((click == null || viewLink) && hover != null && hover.getAction() == HoverEvent.Action.SHOW_ITEM) {
-			HoverEvent.ItemStackInfo info = hover.getValue(HoverEvent.Action.SHOW_ITEM);
+		boolean viewLink = click instanceof ClickEvent.RunCommand command
+				&& command.command().equals(ItemShare.VIEW_COMMAND);
+		if ((click == null || viewLink) && hover instanceof HoverEvent.ShowItem item) {
+			var info = item.item();
 			if (info != null) {
-				ItemStack stack = info.getItemStack();
+				ItemStack stack = info.create();
 				if (!stack.isEmpty()) {
 					mc.setScreen(new ItemPreviewScreen(stack, screen));
 					return true;
@@ -82,7 +82,7 @@ public final class ChatClicks {
 	}
 
 	/** Miniatura de la captura al pasar el ratón por "[Ver]". */
-	public static boolean renderHover(GuiGraphics g, @Nullable Style style, int mouseX, int mouseY) {
+	public static boolean renderHover(GuiGraphicsExtractor g, @Nullable Style style, int mouseX, int mouseY) {
 		String id = shotId(style);
 		if (id == null || !ChaosChatPlusClient.ACTIVE || !ClientState.serverMod()) {
 			return false;
@@ -93,17 +93,17 @@ public final class ChatClicks {
 		int h = shot == null ? 24 : Math.max(8, shot.height() * w / Math.max(1, shot.width()));
 		int x = Math.min(mouseX + 10, g.guiWidth() - w - 6);
 		int y = Math.max(4, mouseY - h - 14);
-		g.pose().pushPose();
-		g.pose().translate(0, 0, 400);
+		g.pose().pushMatrix();
+		g.nextStratum(); g.pose().translate(0, 0);
 		Ui.roundBordered(g, x - 3, y - 3, x + w + 3, y + h + 14, 4, Ui.POPUP, Ui.POPUP_BORDER);
 		if (shot != null) {
 			com.chaos.chatplus.client.ui.Ui.blit(g, ClientState.blurShots() ? shot.blurred() : shot.texture(), x, y, w, h, 0, 0, 1, 1, 1, 1);
-			g.drawString(mc.font, Lang.tr("shot.by", shot.owner()), x, y + h + 3, Ui.MUTED, false);
+			g.text(mc.font, Lang.tr("shot.by", shot.owner()), x, y + h + 3, Ui.MUTED, false);
 		} else {
 			String key = ShotCache.gone(id) ? "shot.gone" : "shot.loading";
-			g.drawString(mc.font, Lang.tr(key), x + 4, y + 8, Ui.MUTED, false);
+			g.text(mc.font, Lang.tr(key), x + 4, y + 8, Ui.MUTED, false);
 		}
-		g.pose().popPose();
+		g.pose().popMatrix();
 		return true;
 	}
 
@@ -119,7 +119,7 @@ public final class ChatClicks {
 		}
 		if (!ClientState.upload()) {
 			if (mc.player != null) {
-				mc.player.displayClientMessage(Lang.tr("emoji.no_permission").withStyle(ChatFormatting.RED), false);
+				Minecraft.getInstance().gui.getChat().addClientSystemMessage(Lang.tr("emoji.no_permission").withStyle(ChatFormatting.RED));
 			}
 			return;
 		}

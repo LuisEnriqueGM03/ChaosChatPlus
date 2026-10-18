@@ -8,13 +8,13 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.client.gui.font.FontManager;
 import net.minecraft.client.gui.font.FontSet;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @Mixin(FontManager.class)
 public interface FontManagerAccessor {
 
 	@Accessor("fontSets")
-	Map<ResourceLocation, FontSet> chaoschatplus$fontSets();
+	Map<Identifier, FontSet> chaoschatplus$fontSets();
 
 	@Accessor("textureManager")
 	TextureManager chaoschatplus$textureManager();
