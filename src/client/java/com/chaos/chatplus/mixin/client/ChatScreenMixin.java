@@ -64,7 +64,7 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
         if(chaoschatplus$bar!=null && chaoschatplus$bar.mouseClicked(mx,my,event.button())) { cir.setReturnValue(true); return; }
         if(!ModernChat.enabled() || event.button()!=0) return;
         GifInfo gif=ModernChat.gifAt(mx,my);
-        if(gif!=null) { Minecraft.getInstance().setScreen(new GifViewerScreen(gif,(ChatScreen)(Object)this)); cir.setReturnValue(true); return; }
+        if(gif!=null) { Minecraft.getInstance().gui.setScreen(new GifViewerScreen(gif,(ChatScreen)(Object)this)); cir.setReturnValue(true); return; }
         Style style=ModernChat.styleAt(mx,my);
         if(style!=null && !event.hasShiftDown() && ChatClicks.handle(style,(ChatScreen)(Object)this)) cir.setReturnValue(true);
         else if(style!=null && handleComponentClicked(style,event.hasShiftDown())) cir.setReturnValue(true);

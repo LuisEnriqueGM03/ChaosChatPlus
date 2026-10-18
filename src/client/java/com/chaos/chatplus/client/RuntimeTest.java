@@ -45,17 +45,17 @@ public final class RuntimeTest {
         lastTick = System.currentTimeMillis();
         try {
             if (lastTick - START > 900_000 || lastTick - entered > (phase == 0 ? 600_000 : 180_000))
-                throw new IllegalStateException("Runtime test timed out at phase " + phase + ", screen=" + mc.screen);
+                throw new IllegalStateException("Runtime test timed out at phase " + phase + ", screen=" + mc.gui.screen());
             if (mc.player == null || mc.level == null || mc.getConnection() == null) {
-                if (joined) throw new IllegalStateException("Disconnected before runtime test completed: " + mc.screen);
-                if (mc.screen != null && lastTick - lastWaitingLog > 15_000) {
+                if (joined) throw new IllegalStateException("Disconnected before runtime test completed: " + mc.gui.screen());
+                if (mc.gui.screen() != null && lastTick - lastWaitingLog > 15_000) {
                     lastWaitingLog = lastTick;
-                    ChaosChatPlus.LOGGER.info("[RuntimeTest] waiting on {}", mc.screen.getClass().getName());
+                    ChaosChatPlus.LOGGER.info("[RuntimeTest] waiting on {}", mc.gui.screen().getClass().getName());
                     shot(mc, "startup");
                 }
-                if (!attemptedConnection && mc.getOverlay() == null && mc.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
+                if (!attemptedConnection && mc.gui.overlay() == null && mc.gui.screen() instanceof net.minecraft.client.gui.screens.TitleScreen) {
                     attemptedConnection = true;
-                    int port = DIR.toString().contains("neoforge") ? 25933 : DIR.toString().contains("forge") ? 25932 : 25931;
+                    int port = DIR.toString().contains("neoforge") ? 26033 : DIR.toString().contains("forge") ? 26032 : 26031;
                     pendingServer = new net.minecraft.client.multiplayer.ServerData("Runtime", "127.0.0.1:" + port, net.minecraft.client.multiplayer.ServerData.Type.OTHER);
                     pendingServer.ping = -1;
                     statusPinger = new net.minecraft.client.multiplayer.ServerStatusPinger();
@@ -73,13 +73,13 @@ public final class RuntimeTest {
                     }
                     if (pendingServer.ping >= 0) {
                         statusPinger.removeAll(); statusPinger = null;
-                        net.minecraft.client.gui.screens.ConnectScreen.startConnecting(mc.screen, mc,
+                        net.minecraft.client.gui.screens.ConnectScreen.startConnecting(mc.gui.screen(), mc,
                                 net.minecraft.client.multiplayer.resolver.ServerAddress.parseString(pendingServer.ip),
                                 pendingServer, false, null);
                     }
                 }
-                if (mc.screen != null && mc.screen.getClass().getSimpleName().equals("AccessibilityOnboardingScreen"))
-                    mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
+                if (mc.gui.screen() != null && mc.gui.screen().getClass().getSimpleName().equals("AccessibilityOnboardingScreen"))
+                    mc.gui.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
                 return;
             }
             joined = true;
@@ -116,13 +116,13 @@ public final class RuntimeTest {
             if (!ClientState.serverMod() || ClientState.emojis().size() < 197) return;
             ShotCapture.start(); ShotCapture.scrollZoom(1); next();
         } else if (phase == 1 && elapsed() > 1500) {
-            float fov = mc.gameRenderer.getMainCamera().getFov();
+            float fov = mc.gameRenderer.mainCamera().getFov();
             check(ShotCapture.cameraMode() && ShotCapture.zoom() > 1
                     && Math.abs(fov * ShotCapture.zoom() - mc.options.fov().get()) < 0.5,
                     "camera zoom changes the field of view used by the projection");
             check((int) field(ShotCapture.class, null, "hudFrames") > 0, "native HUD suppression hook rendered");
             shot(mc, "camera"); ShotCapture.shoot(); next();
-        } else if (phase == 2 && mc.screen instanceof ShotSendScreen && elapsed() > 1500) {
+        } else if (phase == 2 && mc.gui.screen() instanceof ShotSendScreen && elapsed() > 1500) {
             check(!ShotCapture.cameraMode(), "camera restores into screenshot preview");
             shot(mc, "preview"); next();
         } else if (phase == 3 && elapsed() > 1000) {
@@ -142,19 +142,19 @@ public final class RuntimeTest {
                 if (!exists("Pepe.public") || !exists("Audit.public") || mc.player.getInventory().getItem(0).isEmpty()) return;
                 check(emoji, "public emoji rendered with server codepoint");
                 ClientNetwork.send(new ChatPayloads.ShareItem(0, ""));
-                mc.setScreen(new ChatScreen(":fue", true)); next();
+                mc.gui.setScreen(new ChatScreen(":fue", true)); next();
             }
             case 3 -> {
                 if (elapsed() < 1500 || !exists("Pepe.item")) return;
                 ChatBar bar = bar(mc);
                 clickLink(mc, ItemShare.VIEW_COMMAND);
-                check(mc.screen instanceof ItemPreviewScreen, "item link opens preview through mouse input");
-                mc.setScreen(new ChatScreen(":fue", true));
+                check(mc.gui.screen() instanceof ItemPreviewScreen, "item link opens preview through mouse input");
+                mc.gui.setScreen(new ChatScreen(":fue", true));
                 bar = bar(mc);
                 EditBox input = (EditBox) field(ChatBar.class, bar, "input");
-                check(mc.screen.keyPressed(new net.minecraft.client.input.KeyEvent(258, 0, 0)), "Tab handles emoji autocomplete");
+                check(mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(258, 0, 0)), "Tab handles emoji autocomplete");
                 check(!input.getValue().equals(":fue"), "autocomplete inserts emoji");
-                mc.screen.charTyped(new net.minecraft.client.input.CharacterEvent('ñ'));
+                mc.gui.screen().charTyped(new net.minecraft.client.input.CharacterEvent('ñ'));
                 check(input.getValue().contains("ñ"), "Unicode typing works");
                 bar.togglePicker(); next();
             }
@@ -174,7 +174,7 @@ public final class RuntimeTest {
                 shot(mc, "gifs");
                 mark("publicGif", chosen.id()); mark("privateGif", privateGif.id());
                 ClientNetwork.send(new ChatPayloads.SendGif(chosen.id(), "", ""));
-                mc.setScreen(null); next();
+                mc.gui.setScreen(null); next();
             }
             case 6 -> {
                 if (!exists("Pepe.gif") || !exists("Audit.gif")) return;
@@ -187,7 +187,7 @@ public final class RuntimeTest {
                 shot(mc, "camera"); ShotCapture.shoot(); next();
             }
             case 8 -> {
-                if (!(mc.screen instanceof ShotSendScreen screen) || elapsed() < 1500) return;
+                if (!(mc.gui.screen() instanceof ShotSendScreen screen) || elapsed() < 1500) return;
                 check(!ShotCapture.cameraMode(), "camera restores after capture");
                 shot(mc, "preview"); screen.sendForTest(); next();
             }
@@ -196,25 +196,25 @@ public final class RuntimeTest {
                 publicShot = read("Pepe.shot");
                 if (ShotCache.get(publicShot) == null) return;
                 check(ShotCache.get(publicShot).jpeg().length > 0, "own screenshot roundtrip");
-                mc.setScreen(new ChatScreen("", true));
+                mc.gui.setScreen(new ChatScreen("", true));
                 clickLink(mc, Shots.VIEW_COMMAND + publicShot);
-                check(mc.screen instanceof ShotViewerScreen, "screenshot link opens viewer through mouse input");
+                check(mc.gui.screen() instanceof ShotViewerScreen, "screenshot link opens viewer through mouse input");
                 next();
             }
             case 10 -> {
                 if (elapsed() < 1500) return;
-                shot(mc, "viewer"); mc.setScreen(null);
+                shot(mc, "viewer"); mc.gui.setScreen(null);
                 // Exercise the actual private-mode ChatScreen input conversion and Enter handling.
                 ClientState.setDmTarget("Pepe");
-                mc.setScreen(new ChatScreen("RUNTIME_PRIVATE :corazon:", true));
-                check(mc.screen.keyPressed(new net.minecraft.client.input.KeyEvent(257, 0, 0)), "Enter submits private-mode chat");
+                mc.gui.setScreen(new ChatScreen("RUNTIME_PRIVATE :corazon:", true));
+                check(mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(257, 0, 0)), "Enter submits private-mode chat");
                 ClientNetwork.send(new ChatPayloads.ShareItem(0, "Pepe"));
                 ClientNetwork.send(new ChatPayloads.SendGif(privateGif.id(), "", "Pepe"));
                 next();
             }
             case 11 -> {
                 if (!exists("Pepe.private")) return;
-                mc.setScreen(new ChatScreen("", true)); bar(mc).dmPickerForTest(); next();
+                mc.gui.setScreen(new ChatScreen("", true)); bar(mc).dmPickerForTest(); next();
             }
             case 12 -> {
                 if (elapsed() < 1500) return;
@@ -222,7 +222,7 @@ public final class RuntimeTest {
                 ShotCapture.start(); ShotCapture.shoot(); next();
             }
             case 13 -> {
-                if (!(mc.screen instanceof ShotSendScreen screen) || elapsed() < 1000) return;
+                if (!(mc.gui.screen() instanceof ShotSendScreen screen) || elapsed() < 1000) return;
                 screen.sendForTest(); next();
             }
             case 14 -> {
@@ -246,7 +246,7 @@ public final class RuntimeTest {
             case 16 -> {
                 if (ClientState.emoji("runtime_added") == null || !exists("Pepe.reload") || !exists("Audit.reload")) return;
                 check(EmojiTextures.custom("runtime_added") != null, "directory reload distributes custom texture");
-                mc.setScreen(new ChatScreen("Prueba :runtime_probe: :runtime_added:", true)); next();
+                mc.gui.setScreen(new ChatScreen("Prueba :runtime_probe: :runtime_added:", true)); next();
             }
             case 17 -> {
                 if (elapsed() < 1500 || !exists("Pepe.report")) return;
@@ -332,7 +332,7 @@ public final class RuntimeTest {
     }
 
     private static void observe(Minecraft mc) {
-        for (var line : ((ChatComponentAccessor) mc.gui.getChat()).chaoschatplus$lines()) {
+        for (var line : ((ChatComponentAccessor) mc.gui.hud.getChat()).chaoschatplus$lines()) {
             StringBuilder text = new StringBuilder();
             final boolean[] lineItem = {false};
             final boolean[] lineEmoji = {false};
@@ -361,8 +361,8 @@ public final class RuntimeTest {
         return info != null && GifCache.get(info).ready && GifCache.get(info).frames.size() > 1;
     }
     private static ChatBar bar(Minecraft mc) {
-        if (!(mc.screen instanceof SelfTest.BarAccess access) || access.chaoschatplus$bar() == null)
-            throw new IllegalStateException("Chat bar missing on " + mc.screen);
+        if (!(mc.gui.screen() instanceof SelfTest.BarAccess access) || access.chaoschatplus$bar() == null)
+            throw new IllegalStateException("Chat bar missing on " + mc.gui.screen());
         return access.chaoschatplus$bar();
     }
     private static Object field(Class<?> type, Object owner, String name) throws Exception {
@@ -379,10 +379,10 @@ public final class RuntimeTest {
         checks++; ChaosChatPlus.LOGGER.info("[RuntimeTest] PASS {}: {}", role, label);
     }
     private static void clickLink(Minecraft mc, String command) {
-        ChatComponentAccessor chat = (ChatComponentAccessor)mc.gui.getChat();
+        ChatComponentAccessor chat = (ChatComponentAccessor)mc.gui.hud.getChat();
         var lines = chat.chaoschatplus$lines();
         double scale = chat.chaoschatplus$scale();
-        for (int row = 0; row < Math.min(lines.size(),mc.gui.getChat().getLinesPerPage()); row++) {
+        for (int row = 0; row < Math.min(lines.size(),mc.gui.hud.getChat().getLinesPerPage()); row++) {
             double[] x = {0}, found = {-1};
             lines.get(row).content().accept((i, style, cp) -> {
                 int width = mc.font.width(net.minecraft.util.FormattedCharSequence.codepoint(cp,style));
@@ -393,13 +393,13 @@ public final class RuntimeTest {
             });
             if (found[0] >= 0) {
                 double mx=(4+found[0])*scale, my=mc.getWindow().getGuiScaledHeight()-40-(row+0.5)*chat.chaoschatplus$lineHeight()*scale;
-                mc.screen.mouseClicked(new net.minecraft.client.input.MouseButtonEvent(mx,my,new net.minecraft.client.input.MouseButtonInfo(0,0)),false);
+                mc.gui.screen().mouseClicked(new net.minecraft.client.input.MouseButtonEvent(mx,my,new net.minecraft.client.input.MouseButtonInfo(0,0)),false);
                 return;
             }
         }
         throw new IllegalStateException("Chat link not found: " + command);
     }
-    private static void shot(Minecraft mc, String name) { Screenshot.grab(mc.gameDirectory, "runtime_" + name + ".png", mc.getMainRenderTarget(), 1, msg -> {}); }
+    private static void shot(Minecraft mc, String name) { Screenshot.grab(mc.gameDirectory, "runtime_" + name + ".png", mc.gameRenderer.mainRenderTarget(), 1, msg -> {}); }
     private static void finish(Minecraft mc) throws Exception {
         if (exists("Luis.done") && exists("Pepe.done") && exists("Audit.done")) {
             finished = true; ChaosChatPlus.LOGGER.info("[RuntimeTest] COMPLETE {}: {} checks", role, checks); mc.stop();

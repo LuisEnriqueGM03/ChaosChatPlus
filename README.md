@@ -1,8 +1,4 @@
-> Rama fabric · Minecraft 26.1 · Chaos ChatPlus 1.1.1. Compilación: `./gradlew build`.
-
----
-
-# Chaos ChatPlus (Minecraft 26.1)
+# Chaos ChatPlus (Minecraft 26.2)
 
 Chat moderno para servidores: emojis, emojis propios, mostrar ítems,
 menciones `@nombre` y capturas del juego moderadas. Se instala en el servidor y en cada cliente; incluye el diseño nuevo, el selector de emojis, los botones y el visor de capturas.
@@ -84,10 +80,10 @@ misma instalación. Chaos Ranks continúa siendo opcional y necesita una edició
 | Edición | Compilación desde la raíz | Archivo instalable |
 | --- | --- | --- |
 | Fabric | `./gradlew build` | `build/libs/chaoschatplus-1.1.1.jar` |
-| Forge 62.0.9+ | `./gradlew -p platforms/forge build` | `platforms/forge/build/libs/chaoschatplus-forge-26.1-1.1.1.jar` |
-| NeoForge 26.1.0.19-beta+ | `./gradlew -p platforms/neoforge build` | `platforms/neoforge/build/libs/chaoschatplus-neoforge-26.1-1.1.1.jar` |
+| Forge 65.1.5+ | `./gradlew -p platforms/forge build` | `platforms/forge/build/libs/chaoschatplus-forge-26.2-1.1.1.jar` |
+| NeoForge 26.2.0.93+ | `./gradlew -p platforms/neoforge build` | `platforms/neoforge/build/libs/chaoschatplus-neoforge-26.2-1.1.1.jar` |
 
-Minecraft 26.1, los tres mods y la compilación requieren **Java 25**. Fabric necesita Fabric Loader 0.19.5+ y Fabric API 0.145.1+26.1. La edición Forge incluye MixinExtras dentro del archivo instalable; el archivo con sufijo `slim` es intermedio. NeoForge 26.1.0.19-beta es la dependencia de cargador probada para esta versión exacta de Minecraft.
+Minecraft 26.2, los tres mods y la compilación requieren **Java 25**. Fabric necesita Fabric Loader 0.19.5+ y Fabric API 0.161.0+26.2. La edición Forge incluye MixinExtras dentro del archivo instalable; el archivo con sufijo `slim` es intermedio. NeoForge 26.2.0.93 es la dependencia de cargador probada para esta versión exacta de Minecraft.
 
 - `src/fabric/java` y `src/fabricClient/java`: conexiones y eventos exclusivos de Fabric.
 - `platforms/forge`: compilación y adaptadores nativos Forge.
@@ -97,4 +93,4 @@ Minecraft 26.1, los tres mods y la compilación requieren **Java 25**. Fabric ne
 
 ## Validación multijugador
 
-La 1.1.1 para 26.1 pasa 31 pruebas automáticas y 50 comprobaciones dentro del juego por cargador, con tres clientes gráficos y un servidor dedicado. Además, tres comprobaciones específicas verifican el campo de visión real de la cámara, el HUD y la vista previa en cada cargador. Consulta [VALIDATION.md](VALIDATION.md) para cobertura, resultados y reproducción con `tools/runtime-prepare.py` y `tools/runtime-tests.py`.
+La 1.1.1 para 26.2 pasa 31 pruebas automáticas y 50 comprobaciones dentro del juego por cargador, con tres clientes gráficos y un servidor dedicado. Además, tres comprobaciones específicas verifican el campo de visión real de la cámara, el HUD y la vista previa en cada cargador. Consulta [VALIDATION.md](VALIDATION.md) para cobertura, resultados y reproducción con `tools/runtime-prepare.py` y `tools/runtime-tests.py`.

@@ -107,7 +107,7 @@ public class ItemPickerScreen extends Screen {
 				int[] p = slotPos(slot);
 				if (p != null && Ui.inside(mx, my, p[0], p[1], p[0] + SLOT - 1, p[1] + SLOT - 1) && !inv.getItem(slot).isEmpty()) {
 					ClientNetwork.send(new ChatPayloads.ShareItem(slot, ClientState.dmTargetOrEmpty()));
-					minecraft.setScreen(null);
+					minecraft.gui.setScreen(null);
 					return true;
 				}
 			}
@@ -122,7 +122,7 @@ public class ItemPickerScreen extends Screen {
 	@Override
 	public void onClose() {
 		if (minecraft != null) {
-			minecraft.setScreen(parent);
+			minecraft.gui.setScreen(parent);
 		}
 	}
 

@@ -51,7 +51,7 @@ public final class ShotCapture {
 	 */
 	public static void start() {
 		Minecraft mc = Minecraft.getInstance();
-		mc.setScreen(null);
+		mc.gui.setScreen(null);
 		cameraMode = true;
 		hudFrames = 0;
 		countdown = -1;
@@ -94,7 +94,7 @@ public final class ShotCapture {
 		if (!cameraMode) {
 			return;
 		}
-		if (mc.screen != null || mc.player == null) {
+		if (mc.gui.screen() != null || mc.player == null) {
 			cancel();
 			return;
 		}
@@ -118,10 +118,10 @@ public final class ShotCapture {
 			return;
 		}
         countdown = -2;
-        Screenshot.takeScreenshot(mc.getMainRenderTarget(), image -> mc.execute(() -> {
+        Screenshot.takeScreenshot(mc.gameRenderer.mainRenderTarget(), image -> mc.execute(() -> {
             boolean active = cameraMode;
             cancel();
-            if (active && mc.player != null) mc.setScreen(new ShotSendScreen(image));
+            if (active && mc.player != null) mc.gui.setScreen(new ShotSendScreen(image));
             else image.close();
         }));
 	}
@@ -179,7 +179,7 @@ public final class ShotCapture {
 				return;
 			}
 			try (var in = java.nio.file.Files.newInputStream(file.toPath())) {
-				mc.setScreen(new ShotSendScreen(NativeImage.read(in)));
+				mc.gui.setScreen(new ShotSendScreen(NativeImage.read(in)));
 			}
 		} catch (Exception e) {
 			ChaosChatPlus.LOGGER.warn("No se pudo abrir la captura {}", path, e);
@@ -248,7 +248,7 @@ public final class ShotCapture {
 		Minecraft mc = Minecraft.getInstance();
 		if (jpeg == null) {
 			if (mc.player != null) {
-				Minecraft.getInstance().gui.getChat().addClientSystemMessage(Lang.tr("shot.too_big", ClientState.maxShotKb()).withStyle(ChatFormatting.RED));
+				Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Lang.tr("shot.too_big", ClientState.maxShotKb()).withStyle(ChatFormatting.RED));
 			}
 			return;
 		}
@@ -263,7 +263,7 @@ public final class ShotCapture {
 			ClientNetwork.send(new ChatPayloads.ShotPart(i, parts, chunk, target));
 		}
 		if (mc.player != null) {
-			Minecraft.getInstance().gui.setOverlayMessage(Lang.tr("shot.sending").withStyle(ChatFormatting.GRAY), false);
+			Minecraft.getInstance().gui.hud.setOverlayMessage(Lang.tr("shot.sending").withStyle(ChatFormatting.GRAY), false);
 		}
 	}
 

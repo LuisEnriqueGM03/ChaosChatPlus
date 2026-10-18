@@ -8,11 +8,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.chaos.chatplus.client.ShotCapture;
 
 import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /** En modo cámara no se pinta el HUD: solo el visor de la captura. */
-@Mixin(Gui.class)
+@Mixin(Hud.class)
 abstract class GuiMixin {
 
 	@Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)

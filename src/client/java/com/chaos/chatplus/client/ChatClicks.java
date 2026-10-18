@@ -50,14 +50,14 @@ public final class ChatClicks {
 		Minecraft mc = Minecraft.getInstance();
 		String id = shotId(style);
 		if (id != null && ClientState.serverMod()) {
-			mc.setScreen(new ShotViewerScreen(id, screen, false));
+			mc.gui.setScreen(new ShotViewerScreen(id, screen, false));
 			return true;
 		}
 		ClickEvent click = style.getClickEvent();
 		if (click instanceof ClickEvent.RunCommand command && ClientState.serverMod()
 				&& command.command().startsWith(Shots.REVIEW_COMMAND)) {
 			String reviewId = command.command().substring(Shots.REVIEW_COMMAND.length()).strip();
-			mc.setScreen(new ShotViewerScreen(reviewId, screen, true));
+			mc.gui.setScreen(new ShotViewerScreen(reviewId, screen, true));
 			return true;
 		}
 		if (click instanceof ClickEvent.RunCommand command
@@ -73,7 +73,7 @@ public final class ChatClicks {
 			if (info != null) {
 				ItemStack stack = info.create();
 				if (!stack.isEmpty()) {
-					mc.setScreen(new ItemPreviewScreen(stack, screen));
+					mc.gui.setScreen(new ItemPreviewScreen(stack, screen));
 					return true;
 				}
 			}
@@ -119,10 +119,10 @@ public final class ChatClicks {
 		}
 		if (!ClientState.upload()) {
 			if (mc.player != null) {
-				Minecraft.getInstance().gui.getChat().addClientSystemMessage(Lang.tr("emoji.no_permission").withStyle(ChatFormatting.RED));
+				Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Lang.tr("emoji.no_permission").withStyle(ChatFormatting.RED));
 			}
 			return;
 		}
-		mc.setScreen(new EmojiUploadScreen(p, screen));
+		mc.gui.setScreen(new EmojiUploadScreen(p, screen));
 	}
 }

@@ -16,7 +16,7 @@ abstract class MouseHandlerMixin {
 
 	@Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
 	private void chaoschatplus$zoom(long window, double horizontal, double vertical, CallbackInfo ci) {
-		if (ShotCapture.cameraMode() && Minecraft.getInstance().screen == null && vertical != 0) {
+		if (ShotCapture.cameraMode() && Minecraft.getInstance().gui.screen() == null && vertical != 0) {
 			ShotCapture.scrollZoom(vertical);
 			ci.cancel();
 		}

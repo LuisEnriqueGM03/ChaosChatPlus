@@ -16,11 +16,11 @@ repositories {
     maven fg.minecraftLibsMaven
     mavenCentral()
 }
-dependencies { implementation minecraft.dependency('net.minecraftforge:forge:26.1-62.0.9') }
+dependencies { implementation minecraft.dependency('net.minecraftforge:forge:26.2-65.1.5') }
 
 version = '1.1.1'
 group = 'com.chaos'
-base { archivesName = 'chaoschatplus-forge-26.1' }
+base { archivesName = 'chaoschatplus-forge-26.2' }
 java { toolchain.languageVersion = JavaLanguageVersion.of(25); withSourcesJar() }
 sourceSets {
     main {

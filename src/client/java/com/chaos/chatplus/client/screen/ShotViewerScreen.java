@@ -62,7 +62,7 @@ public class ShotViewerScreen extends Screen {
 			minecraft.player.connection.sendCommand("chatplus shot delete " + id);
 		}
 		if (minecraft != null) {
-			minecraft.setScreen(null);
+			minecraft.gui.setScreen(null);
 		}
 	}
 
@@ -131,7 +131,7 @@ public class ShotViewerScreen extends Screen {
 			Component name = Component.literal(file.getFileName().toString()).withStyle(s -> s
 					.withUnderlined(true)
 					.withClickEvent(new ClickEvent.OpenFile(file.toAbsolutePath())));
-			Minecraft.getInstance().gui.getChat().addClientSystemMessage(Lang.tr("shot.saved", name).withStyle(ChatFormatting.GREEN));
+			Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Lang.tr("shot.saved", name).withStyle(ChatFormatting.GREEN));
 			save.active = false;
 		} catch (Exception e) {
 			ChaosChatPlus.LOGGER.warn("No se pudo guardar la captura {}", id, e);
@@ -155,7 +155,7 @@ public class ShotViewerScreen extends Screen {
 	@Override
 	public void onClose() {
 		if (minecraft != null) {
-			minecraft.setScreen(parent);
+			minecraft.gui.setScreen(parent);
 		}
 	}
 

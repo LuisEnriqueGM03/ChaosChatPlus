@@ -60,7 +60,7 @@ public final class ModernChat {
     @Nullable
     public static net.minecraft.network.chat.Style styleAt(double mx, double my) {
         Minecraft mc = Minecraft.getInstance();
-        ChatComponent chat = mc.gui.getChat();
+        ChatComponent chat = mc.gui.hud.getChat();
         ChatComponentAccessor acc = (ChatComponentAccessor) chat;
         double x = chatX(acc, mx), y = chatY(acc, my);
         if (x < 0 || x > acc.chaoschatplus$width() / acc.chaoschatplus$scale() || y < 0) return null;
@@ -236,7 +236,7 @@ public final class ModernChat {
 		}
 
 		// Mensajes en espera (chat con retraso).
-		long queued = mc.getChatListener().queueSize();
+		long queued = mc.gui.chatListener().queueSize();
 		if (queued > 0) {
 			int a = (int) (128.0 * textOpacity);
 			g.pose().pushMatrix();

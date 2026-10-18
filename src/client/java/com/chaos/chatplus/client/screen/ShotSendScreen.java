@@ -96,7 +96,7 @@ public class ShotSendScreen extends Screen {
 	@Override
 	public void onClose() {
 		if (minecraft != null) {
-			minecraft.setScreen(null);
+			minecraft.gui.setScreen(null);
 		}
 	}
 

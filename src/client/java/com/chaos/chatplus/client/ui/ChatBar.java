@@ -68,7 +68,7 @@ public final class ChatBar {
 		}
 		if (ClientState.items()) {
 			buttons.add(new Button("btn_item", "bar.item", () ->
-					Minecraft.getInstance().setScreen(new ItemPickerScreen(screen))));
+					Minecraft.getInstance().gui.setScreen(new ItemPickerScreen(screen))));
 		}
 		if (ClientState.shots()) {
 			buttons.add(new Button("btn_shot", "bar.shot", ShotCapture::start));
@@ -277,7 +277,7 @@ public final class ChatBar {
 	}
 
 	public void togglePicker() {
-		picker = picker == null ? new EmojiPicker(this::insertEmoji, () -> Minecraft.getInstance().setScreen(null)) : null;
+		picker = picker == null ? new EmojiPicker(this::insertEmoji, () -> Minecraft.getInstance().gui.setScreen(null)) : null;
 	}
 
 	private void insertEmoji(ClientState.ClientEmoji e) {
@@ -289,7 +289,7 @@ public final class ChatBar {
 
 	private void send() {
 		screen.handleChatInput(input.getValue(), true);
-		Minecraft.getInstance().setScreen(null);
+		Minecraft.getInstance().gui.setScreen(null);
 	}
 
 	public boolean keyPressed(int key) {

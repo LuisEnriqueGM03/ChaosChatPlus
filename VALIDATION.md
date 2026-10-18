@@ -1,4 +1,4 @@
-# Validación de Chaos ChatPlus 1.1.1 — Minecraft 26.1
+# Validación de Chaos ChatPlus 1.1.1 — Minecraft 26.2
 
 Fecha: 18 de octubre de 2026. Publicación estable para Java 25.
 
@@ -30,13 +30,13 @@ Las 50 comprobaciones por cargador suman 150 verificaciones de ejecución. Las p
 
 Además se ejecutan tres comprobaciones específicas de cámara por cargador: campo de visión realmente usado en la proyección, ocultación de HUD y restauración de la vista previa. Son 9 verificaciones adicionales; se conservan los registros de la prueba multijugador antes de estas sesiones.
 
-## Adaptación a Minecraft 26.1
+## Adaptación a Minecraft 26.2
 
-Las pantallas usan GuiGraphicsExtractor y las texturas RenderPipelines.GUI_TEXTURED. Se adaptaron los eventos de teclado y ratón, perfiles, permisos y enlaces de objetos y capturas. La captura del renderizador se recibe mediante callback y abre su vista previa en el hilo del cliente. El zoom actúa sobre Camera.calculateFov() sin alterar la mano. La cámara oculta también los avisos emergentes.
+La gestión de pantallas usa Gui.screen()/setScreen(), el chat y la interfaz visible usan Gui.hud y la captura toma el renderizador desde GameRenderer.mainRenderTarget(). El modo cámara oculta Hud.extractRenderState() sin cancelar el gestor de pantallas. Las pantallas usan GuiGraphicsExtractor y las texturas RenderPipelines.GUI_TEXTURED. Se adaptaron los eventos de teclado y ratón, perfiles, permisos y enlaces de objetos y capturas. La captura del renderizador se recibe mediante callback y abre su vista previa en el hilo del cliente. El zoom actúa sobre Camera.calculateFov() sin alterar la mano. La cámara oculta también los avisos emergentes.
 
 Las fuentes dinámicas usan GlyphStitcher; se invalidan las cachés al sustituirlas y se liberan sus proveedores al recargar o desconectar. NativeImage conserva ARGB: cada cliente comprueba rojo, un color mixto y alfa parcial. Dos comprobaciones adicionales hacen clic en los enlaces reales del chat y verifican que se abran los visores de ítem y captura.
 
-Se probaron Fabric Loader 0.19.5 / Fabric API 0.145.1+26.1, Forge 62.0.9 y NeoForge 26.1.0.19-beta. Forge usa JAVA_21 en la declaración de compatibilidad de Mixin porque su enum no admite JAVA_25; las clases y el juego requieren Java 25 en los tres cargadores.
+Se probaron Fabric Loader 0.19.5 / Fabric API 0.161.0+26.2, Forge 65.1.5 y NeoForge 26.2.0.93. Forge usa JAVA_21 en la declaración de compatibilidad de Mixin porque su enum no admite JAVA_25; las clases y el juego requieren Java 25 en los tres cargadores.
 
 ## Reproducción en Windows
 
@@ -47,7 +47,7 @@ python tools/runtime-prepare.py fabric --jdk25 "C:/Program Files/Eclipse Adoptiu
 python tools/runtime-tests.py fabric
 ```
 
-Repite ambos comandos con forge y neoforge. El preparador exporta los lanzamientos y usa javaw.exe, que en este equipo tiene la preferencia de gráfica de alto rendimiento ya configurada. Las pruebas se guardan en .verification/runtime/<cargador>; los servidores escuchan únicamente en 127.0.0.1, puertos 25931–25933, sin autenticación para estos perfiles locales. Cierra una sesión de prueba antes de iniciar la siguiente. Al repetirla, se conserva la configuración de la ejecución anterior en un directorio de respaldo dentro de la carpeta de pruebas.
+Repite ambos comandos con forge y neoforge. El preparador exporta los lanzamientos y usa javaw.exe, que en este equipo tiene la preferencia de gráfica de alto rendimiento ya configurada. Las pruebas se guardan en .verification/runtime/<cargador>; los servidores escuchan únicamente en 127.0.0.1, puertos 26031–26033, sin autenticación para estos perfiles locales. Cierra una sesión de prueba antes de iniciar la siguiente. Al repetirla, se conserva la configuración de la ejecución anterior en un directorio de respaldo dentro de la carpeta de pruebas.
 
 Los clientes se inician y conectan uno por uno, después de completar la carga gráfica y consultar el estado del servidor. Los JAR se compilan con ./gradlew build, ./gradlew -p platforms/forge build y ./gradlew -p platforms/neoforge build. El archivo -slim.jar de Forge no es el instalable; distribuye el JAR sin clasificador.
 
