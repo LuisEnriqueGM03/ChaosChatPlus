@@ -1,10 +1,10 @@
 # Edición Fabric — Minecraft 1.21.1
 
-Rama `fabric-1.21.1`, Chaos ChatPlus 1.1.0 beta. El repositorio mantiene el código común y los adaptadores de los tres cargadores.
+Rama `fabric-1.21.1`, Chaos ChatPlus 1.1.1 estable. El repositorio mantiene el código común y los adaptadores de los tres cargadores.
 
-Compila esta edición desde la raíz con `./gradlew build`. JAR instalable: `build/libs/chaoschatplus-1.1.0.jar`. Para ejecutar el mod necesitas Java 21; para compilar consulta las versiones de JDK en VALIDATION.md.
+Compila esta edición desde la raíz con `./gradlew build`. JAR instalable: `build/libs/chaoschatplus-1.1.1.jar`. Para ejecutar el mod necesitas Java 21; para compilar consulta las versiones de JDK en VALIDATION.md.
 
-[Descargar esta versión y sus fuentes](https://github.com/LuisEnriqueGM03/ChaosChatPlus/releases/tag/v1.1.0-1.21.1) · [Resultados y límites de pruebas](VALIDATION.md).
+[Descargar esta versión y sus fuentes](https://github.com/LuisEnriqueGM03/ChaosChatPlus/releases/tag/v1.1.1-1.21.1) · [Resultados y límites de pruebas](VALIDATION.md).
 
 ---
 
