@@ -67,7 +67,7 @@ public final class EmojiTextures {
 		com.chaos.chatplus.client.ui.Ui.smooth(t.id());
 		com.mojang.blaze3d.systems.RenderSystem.enableBlend();
 		com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
-		g.blit(t.id(), x + (size - w) / 2, y + (size - h) / 2, w, h, 0, 0, t.width(), t.height(), t.width(), t.height());
+		com.chaos.chatplus.client.ui.Ui.blit(g, t.id(), x + (size - w) / 2, y + (size - h) / 2, w, h, 0, 0, t.width(), t.height(), t.width(), t.height());
 		com.mojang.blaze3d.systems.RenderSystem.disableBlend();
 	}
 

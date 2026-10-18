@@ -61,6 +61,16 @@ public final class Ui {
 		return mx >= x0 && mx < x1 && my >= y0 && my < y1;
 	}
 
+    public static void blit(GuiGraphics g, net.minecraft.resources.ResourceLocation texture,
+            int x, int y, int w, int h, float u, float v, int regionW, int regionH, int textureW, int textureH) {
+        blit(g, texture, x, y, w, h, u, v, regionW, regionH, textureW, textureH, 0xFFFFFFFF);
+    }
+    public static void blit(GuiGraphics g, net.minecraft.resources.ResourceLocation texture,
+            int x, int y, int w, int h, float u, float v, int regionW, int regionH, int textureW, int textureH, int color) {
+        g.blit(net.minecraft.client.renderer.RenderType::guiTextured, texture, x, y, u, v,
+                w, h, regionW, regionH, textureW, textureH, color);
+    }
+
 	/** Píxeles nítidos (sin suavizar) para los emojis e iconos en pixel art. */
 	public static void smooth(net.minecraft.resources.ResourceLocation id) {
 		net.minecraft.client.Minecraft.getInstance().getTextureManager().getTexture(id).setFilter(false, false);

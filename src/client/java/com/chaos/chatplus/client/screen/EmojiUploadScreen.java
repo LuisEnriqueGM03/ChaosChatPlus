@@ -130,7 +130,7 @@ public class EmojiUploadScreen extends Screen {
 		g.drawString(font, title, left + 8, top + 8, Ui.TEXT, false);
 		Ui.round(g, left + 8, top + 24, left + 56, top + 72, 5, 0x22FFFFFF);
 		if (png != null) {
-			g.blit(PREVIEW, left + 16, top + 32, 32, 32, 0, 0, 1, 1, 1, 1);
+			com.chaos.chatplus.client.ui.Ui.blit(g, PREVIEW, left + 16, top + 32, 32, 32, 0, 0, 1, 1, 1, 1);
 		}
 		g.drawString(font, Lang.tr("emoji.name"), left + 64, top + 25, Ui.MUTED, false);
 		g.drawString(font, ":" + name.getValue().toLowerCase(Locale.ROOT) + ":", left + 64, top + 58, Ui.ACCENT, false);

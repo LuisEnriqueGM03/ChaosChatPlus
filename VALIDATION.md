@@ -1,4 +1,4 @@
-# Validación de Chaos ChatPlus 1.1.1 — Minecraft 1.21.1
+# Validación de Chaos ChatPlus 1.1.1 — Minecraft 1.21.4
 
 Fecha: 18 de octubre de 2026. Publicación estable para Java 21.
 
@@ -6,7 +6,7 @@ Fecha: 18 de octubre de 2026. Publicación estable para Java 21.
 | --- | --- | --- | --- |
 | Compilación final | Correcta | Correcta | Correcta |
 | Pruebas automáticas | 31 sin fallos | 31 sin fallos | 31 sin fallos |
-| Comprobaciones dentro del juego | 45 correctas | 45 correctas | 45 correctas |
+| Comprobaciones dentro del juego | 48 correctas | 48 correctas | 48 correctas |
 | Jugadores conectados a servidor dedicado | 3 | 3 | 3 |
 | Arranque y cierre guardando el mundo | Correcto | Correcto | Correcto |
 | Revisión visual de capturas | Correcta | Correcta | Correcta |
@@ -26,13 +26,13 @@ Las pruebas usan tres procesos gráficos reales (Luis, Pepe y Audit) y un servid
 - Reporte legítimo registrado, borrado por moderador e invalidación de las cachés de los tres jugadores.
 - Rechazo de imagen inválida e ID inexistente, sin desconectar al remitente; conservación de acceso del propietario a su captura privada.
 
-Las 45 comprobaciones por cargador suman 135 verificaciones de ejecución. Las pruebas JUnit suman otras 93 ejecuciones sin fallos. RUNTIME_RESULTS.json contiene los resultados y los mensajes de comprobación. runtime-screenshots.zip contiene las capturas de cada cargador.
+Las 48 comprobaciones por cargador suman 144 verificaciones de ejecución. Las pruebas JUnit suman otras 93 ejecuciones sin fallos. RUNTIME_RESULTS.json contiene los resultados y los mensajes de comprobación. runtime-screenshots.zip contiene las capturas de cada cargador.
 
-## Correcciones encontradas durante la validación
+## Adaptación a Minecraft 1.21.4
 
-Forge y NeoForge decoraban el chat público mediante sus eventos, pero estos no cubrían /msg, /tell y /w. Se añadió la decoración del contenido privado, preservando el mensaje firmado y limitando los avisos de menciones al destinatario. La prueba exige ahora recibir un glifo de emoji dentro del mensaje privado; antes de la corrección Forge mostraba :corazon: literalmente.
+Las texturas usan RenderType::guiTextured mediante un adaptador que conserva el orden y las medidas del área dibujada. La opacidad de iconos y GIF se aplica por dibujo. NativeImage usa ARGB: la prueba verifica rojo, un color mixto y un alfa parcial, además de la conversión de la captura a BufferedImage.
 
-La compilación nativa registra también la versión como entrada de processResources, evitando conservar una versión antigua dentro del JAR cuando cambia gradle.properties/build.gradle. Se verificaron los metadatos finales 1.1.1, Java 21, ausencia de entradas ZIP duplicadas y dependencia MixinExtras incluida en Forge.
+Se adaptaron el campo de visión float, Minecraft.getDeltaTracker(), Profiler.get(), ToastManager y la vista previa sin la antigua sobrecarga de TextureManager. La cámara oculta también los avisos emergentes.
 
 ## Reproducción en Windows
 
@@ -43,9 +43,9 @@ python tools/runtime-prepare.py fabric --jdk21 "C:/Program Files/Eclipse Adoptiu
 python tools/runtime-tests.py fabric
 ```
 
-Repite ambos comandos con forge y neoforge. El preparador exporta los lanzamientos y usa javaw.exe, que en este equipo tiene la preferencia de gráfica de alto rendimiento ya configurada. Las pruebas se guardan en .verification/runtime/<cargador>; los servidores escuchan únicamente en 127.0.0.1, puertos 25631–25633, sin autenticación para estos perfiles locales. Cierra una sesión de prueba antes de iniciar la siguiente. Al repetirla, se conserva la configuración de la ejecución anterior en un directorio de respaldo dentro de la carpeta de pruebas.
+Repite ambos comandos con forge y neoforge. El preparador exporta los lanzamientos y usa javaw.exe, que en este equipo tiene la preferencia de gráfica de alto rendimiento ya configurada. Las pruebas se guardan en .verification/runtime/<cargador>; los servidores escuchan únicamente en 127.0.0.1, puertos 25831–25833, sin autenticación para estos perfiles locales. Cierra una sesión de prueba antes de iniciar la siguiente. Al repetirla, se conserva la configuración de la ejecución anterior en un directorio de respaldo dentro de la carpeta de pruebas.
 
-Los JAR se compilan con ./gradlew build, ./gradlew -p platforms/forge build y ./gradlew -p platforms/neoforge build. El archivo -slim.jar de Forge no es el instalable; distribuye el JAR sin clasificador.
+Los clientes se inician y conectan uno por uno, después de completar la carga gráfica y consultar el estado del servidor. Los JAR se compilan con ./gradlew build, ./gradlew -p platforms/forge build y ./gradlew -p platforms/neoforge build. El archivo -slim.jar de Forge no es el instalable; distribuye el JAR sin clasificador.
 
 ## Alcance
 

@@ -193,13 +193,11 @@ public final class ChatBar {
 			int border = hover || active ? 0xFFA8ADB8 : 0xFF4A4F5A;
 			int fill = active ? 0x447AA2FF : hover ? 0x33FFFFFF : 0x22000000;
 			Ui.roundBordered(g, x, by, x + BOX, by + BOX, 3, fill, border);
-			g.setColor(1, 1, 1, hover || active ? 1.0F : 0.75F);
 			Ui.smooth(icon(b.icon()));
 			com.mojang.blaze3d.systems.RenderSystem.enableBlend();
 			com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
-			g.blit(icon(b.icon()), x + (BOX - ICON) / 2, by + (BOX - ICON) / 2, ICON, ICON, 0, 0, 32, 32, 32, 32);
+			com.chaos.chatplus.client.ui.Ui.blit(g, icon(b.icon()), x + (BOX - ICON) / 2, by + (BOX - ICON) / 2, ICON, ICON, 0, 0, 32, 32, 32, 32, hover || active ? 0xFFFFFFFF : 0xBFFFFFFF);
 			com.mojang.blaze3d.systems.RenderSystem.disableBlend();
-			g.setColor(1, 1, 1, 1);
 			if (hover) {
 				hovered = b;
 			}

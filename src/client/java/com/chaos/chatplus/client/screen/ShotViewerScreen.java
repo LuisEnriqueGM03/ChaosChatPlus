@@ -94,7 +94,7 @@ public class ShotViewerScreen extends Screen {
 		int x = (width - w) / 2;
 		int y = 20 + (maxH - h) / 2;
 		Ui.round(g, x - 3, y - 3, x + w + 3, y + h + 3, 4, Ui.POPUP);
-		g.blit(revealed ? shot.texture() : shot.blurred(), x, y, w, h, 0, 0, 1, 1, 1, 1);
+		com.chaos.chatplus.client.ui.Ui.blit(g, revealed ? shot.texture() : shot.blurred(), x, y, w, h, 0, 0, 1, 1, 1, 1);
 		if (!revealed) {
 			Component show = Lang.tr("shot.reveal");
 			int tw = font.width(show) + 16;

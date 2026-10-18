@@ -20,7 +20,7 @@ gradle.projectsEvaluated {
             def role = server ? 'server' : runtimeProject.providers.gradleProperty('runtimeRole').getOrElse('Luis')
             def capture = new File(shared, '.verification/runtime-capture.jar')
             def output = new File(shared, ".verification/runtime/${loader}/commands/${role}.json")
-            jvmArgs "-javaagent:${capture.absolutePath}", "-Dchaoschatplus.exportPath=${output.absolutePath}"
+            jvmArgs '-XX:ActiveProcessorCount=2', "-javaagent:${capture.absolutePath}", "-Dchaoschatplus.exportPath=${output.absolutePath}"
         }
     }
 }

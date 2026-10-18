@@ -21,6 +21,7 @@ public class ShotSendScreen extends Screen {
 	private final int imageW;
 	private final int imageH;
 	private boolean sent;
+    private boolean previewRegistered;
 
 	public ShotSendScreen(NativeImage image) {
 		super(Lang.tr("shot.send_title"));
@@ -31,11 +32,12 @@ public class ShotSendScreen extends Screen {
 
 	@Override
 	protected void init() {
-		if (minecraft != null && minecraft.getTextureManager().getTexture(PREVIEW, null) == null && image != null) {
+		if (minecraft != null && !previewRegistered && image != null) {
 			// La textura se queda con una copia; la original se usa para codificar.
 			NativeImage copy = new NativeImage(imageW, imageH, false);
 			copy.copyFrom(image);
 			minecraft.getTextureManager().register(PREVIEW, new DynamicTexture(copy));
+            previewRegistered = true;
 		}
 		int bw = 80;
 		int y = height - 30;
@@ -70,7 +72,7 @@ public class ShotSendScreen extends Screen {
 		int x = (width - w) / 2;
 		int y = 24;
 		Ui.round(g, x - 3, y - 3, x + w + 3, y + h + 3, 4, Ui.POPUP);
-		g.blit(PREVIEW, x, y, w, h, 0, 0, 1, 1, 1, 1);
+		com.chaos.chatplus.client.ui.Ui.blit(g, PREVIEW, x, y, w, h, 0, 0, 1, 1, 1, 1);
 		g.drawCenteredString(font, title, width / 2, 8, Ui.TEXT);
 		g.drawCenteredString(font, Lang.tr("shot.send_note"), width / 2, height - 42, Ui.MUTED);
 	}

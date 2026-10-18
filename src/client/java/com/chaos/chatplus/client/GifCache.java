@@ -333,6 +333,9 @@ public final class GifCache {
 
 	/** Dibuja el GIF dentro de la caja (sin deformar, centrado). Devuelve el ancho usado. */
 	public static int draw(GuiGraphics g, GifInfo info, int x, int y, int maxW, int maxH, boolean center) {
+        return draw(g, info, x, y, maxW, maxH, center, 0xFFFFFFFF);
+    }
+    public static int draw(GuiGraphics g, GifInfo info, int x, int y, int maxW, int maxH, boolean center, int color) {
 		Gif gif = get(info);
 		int w = Math.max(1, gif.width);
 		int h = Math.max(1, gif.height);
@@ -343,7 +346,7 @@ public final class GifCache {
 		int dy = y + (maxH - dh) / 2;
 		ResourceLocation frame = frame(gif);
 		if (frame != null) {
-			g.blit(frame, dx, dy, dw, dh, 0, 0, 1, 1, 1, 1);
+			com.chaos.chatplus.client.ui.Ui.blit(g, frame, dx, dy, dw, dh, 0, 0, 1, 1, 1, 1, color);
 		} else {
 			g.fill(dx, dy, dx + dw, dy + dh, gif.failed ? 0x44FF5555 : 0x22FFFFFF);
 		}

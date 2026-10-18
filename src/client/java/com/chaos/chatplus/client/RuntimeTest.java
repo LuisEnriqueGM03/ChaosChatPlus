@@ -34,13 +34,17 @@ public final class RuntimeTest {
     private static final Map<String, GifInfo> gifs = new LinkedHashMap<>();
     private static boolean item, publicText, privateText, emoji, privateItem, privateEmoji;
 
+    private static long pingStarted;
+    private static int pingAttempts;
+    private static net.minecraft.client.multiplayer.ServerStatusPinger statusPinger;
+    private static net.minecraft.client.multiplayer.ServerData pendingServer;
     private RuntimeTest() {}
 
     public static void tick(Minecraft mc) {
         if (!ENABLED || finished || System.currentTimeMillis() - lastTick < 100) return;
         lastTick = System.currentTimeMillis();
         try {
-            if (lastTick - START > 600_000 || lastTick - entered > 180_000)
+            if (lastTick - START > 900_000 || lastTick - entered > (phase == 0 ? 600_000 : 180_000))
                 throw new IllegalStateException("Runtime test timed out at phase " + phase + ", screen=" + mc.screen);
             if (mc.player == null || mc.level == null || mc.getConnection() == null) {
                 if (joined) throw new IllegalStateException("Disconnected before runtime test completed: " + mc.screen);
@@ -49,13 +53,30 @@ public final class RuntimeTest {
                     ChaosChatPlus.LOGGER.info("[RuntimeTest] waiting on {}", mc.screen.getClass().getName());
                     shot(mc, "startup");
                 }
-                if (!attemptedConnection && mc.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
+                if (!attemptedConnection && mc.getOverlay() == null && mc.screen instanceof net.minecraft.client.gui.screens.TitleScreen) {
                     attemptedConnection = true;
-                    int port = DIR.toString().contains("neoforge") ? 25633 : DIR.toString().contains("forge") ? 25632 : 25631;
-                    String address = "127.0.0.1:" + port;
-                    net.minecraft.client.gui.screens.ConnectScreen.startConnecting(mc.screen, mc,
-                            net.minecraft.client.multiplayer.resolver.ServerAddress.parseString(address),
-                            new net.minecraft.client.multiplayer.ServerData("Runtime", address, net.minecraft.client.multiplayer.ServerData.Type.OTHER), false, null);
+                    int port = DIR.toString().contains("neoforge") ? 25833 : DIR.toString().contains("forge") ? 25832 : 25831;
+                    pendingServer = new net.minecraft.client.multiplayer.ServerData("Runtime", "127.0.0.1:" + port, net.minecraft.client.multiplayer.ServerData.Type.OTHER);
+                    pendingServer.ping = -1;
+                    statusPinger = new net.minecraft.client.multiplayer.ServerStatusPinger();
+                    pingStarted = lastTick; pingAttempts++;
+                    statusPinger.pingServer(pendingServer, () -> {}, () -> {});
+                }
+                if (statusPinger != null) {
+                    statusPinger.tick();
+                    if (pendingServer.ping < 0 && lastTick - pingStarted > 35_000) {
+                        statusPinger.removeAll(); statusPinger = null;
+                        if (pingAttempts >= 3) throw new IllegalStateException("Server status ping failed after three attempts");
+                        attemptedConnection = false;
+                        ChaosChatPlus.LOGGER.warn("[RuntimeTest] retrying server status query after timeout, attempt {}", pingAttempts);
+                        return;
+                    }
+                    if (pendingServer.ping >= 0) {
+                        statusPinger.removeAll(); statusPinger = null;
+                        net.minecraft.client.gui.screens.ConnectScreen.startConnecting(mc.screen, mc,
+                                net.minecraft.client.multiplayer.resolver.ServerAddress.parseString(pendingServer.ip),
+                                pendingServer, false, null);
+                    }
                 }
                 if (mc.screen != null && mc.screen.getClass().getSimpleName().equals("AccessibilityOnboardingScreen"))
                     mc.setScreen(new net.minecraft.client.gui.screens.TitleScreen());
@@ -64,9 +85,17 @@ public final class RuntimeTest {
             joined = true;
             role = mc.player.getGameProfile().getName();
             mc.options.pauseOnLostFocus = false;
+            if (Boolean.getBoolean("chaoschatplus.cameraTest")) { camera(mc); return; }
             observe(mc);
             if (phase == 0) {
                 if (!ClientState.serverMod() || ClientState.emojis().size() < 197 || mc.getConnection().getOnlinePlayers().size() < 3) return;
+                java.awt.image.BufferedImage colors = new java.awt.image.BufferedImage(2, 1, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+                colors.setRGB(0, 0, 0x7F1234AB); colors.setRGB(1, 0, 0xFFFF0000);
+                try (var pixels = ShotCache.toNative(colors, true)) {
+                    check(pixels.getPixel(0, 0) == 0x7F1234AB && pixels.getPixel(1, 0) == 0xFFFF0000
+                            && (ShotCapture.toBuffered(pixels).getRGB(0, 0) & 0xFFFFFF) == 0x1234AB,
+                            "ARGB screenshot colors and emoji transparency preserved");
+                }
                 check(ClientState.items() && ClientState.shots() && ClientState.gifs(), "feature permissions synchronized");
                 check(!ChaosChatPlusClient.CHAOS_RANKS || ClientState.prefix() != null, "optional ranks integration state valid");
                 check(!((Set<?>) field(FontInjector.class, null, "INJECTED")).isEmpty(), "server font injected");
@@ -79,6 +108,22 @@ public final class RuntimeTest {
             ChaosChatPlus.LOGGER.error("[RuntimeTest] FAIL {} phase {}", role, phase, error);
             try { mark("FAIL", error.toString()); } catch (Exception ignored) {}
             mc.stop();
+        }
+    }
+
+    private static void camera(Minecraft mc) throws Exception {
+        if (phase == 0) {
+            if (!ClientState.serverMod() || ClientState.emojis().size() < 197) return;
+            ShotCapture.start(); ShotCapture.scrollZoom(1); next();
+        } else if (phase == 1 && elapsed() > 1500) {
+            check(ShotCapture.cameraMode() && ShotCapture.zoom() > 1, "camera and zoom active");
+            check((int) field(ShotCapture.class, null, "hudFrames") > 0, "native HUD suppression hook rendered");
+            shot(mc, "camera"); ShotCapture.shoot(); next();
+        } else if (phase == 2 && mc.screen instanceof ShotSendScreen && elapsed() > 1500) {
+            check(!ShotCapture.cameraMode(), "camera restores into screenshot preview");
+            shot(mc, "preview"); next();
+        } else if (phase == 3 && elapsed() > 1000) {
+            mark("camera", "PASS " + checks); finished = true; mc.stop();
         }
     }
 

@@ -60,3 +60,6 @@ dist/
 # Python tooling caches
 __pycache__/
 *.pyc
+
+logs/
+*.log.gz

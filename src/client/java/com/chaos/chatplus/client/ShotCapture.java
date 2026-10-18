@@ -41,6 +41,7 @@ public final class ShotCapture {
 	private static boolean cameraMode;
 	private static double zoom = 1.0;
 	private static int countdown = -1;
+	private static int hudFrames;
 
 	private ShotCapture() {}
 
@@ -52,6 +53,7 @@ public final class ShotCapture {
 		Minecraft mc = Minecraft.getInstance();
 		mc.setScreen(null);
 		cameraMode = true;
+		hudFrames = 0;
 		countdown = -1;
 		zoom = 1.0;
 	}
@@ -122,6 +124,7 @@ public final class ShotCapture {
 
 	/** Visor del modo cámara (esquinas, título y ayuda). No se pinta en el frame que se captura. */
 	public static void renderViewfinder(GuiGraphics g) {
+		if (cameraMode) hudFrames++;
 		if (!cameraMode || countdown >= 0) {
 			return;
 		}
@@ -150,7 +153,7 @@ public final class ShotCapture {
 		int tw = mc.font.width(title) + 22;
 		Ui.round(g, w / 2 - tw / 2, m + 2, w / 2 + tw / 2, m + 16, 5, 0xAA111318);
 		com.chaos.chatplus.client.ui.Ui.smooth(ChaosChatPlus.id("textures/gui/btn_shot.png"));
-		g.blit(ChaosChatPlus.id("textures/gui/btn_shot.png"), w / 2 - tw / 2 + 5, m + 5, 8, 8, 0, 0, 32, 32, 32, 32);
+		com.chaos.chatplus.client.ui.Ui.blit(g, ChaosChatPlus.id("textures/gui/btn_shot.png"), w / 2 - tw / 2 + 5, m + 5, 8, 8, 0, 0, 32, 32, 32, 32);
 		g.drawString(mc.font, title, w / 2 - tw / 2 + 16, m + 5, 0xFFFFFFFF, false);
 		Component hint = Lang.tr("camera.hint");
 		int hw = mc.font.width(hint) + 16;
@@ -266,8 +269,7 @@ public final class ShotCapture {
 		BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
-				int abgr = image.getPixelRGBA(x, y);
-				int rgb = ((abgr & 0xFF) << 16) | (abgr & 0xFF00) | ((abgr >> 16) & 0xFF);
+				int rgb = image.getPixel(x, y) & 0xFFFFFF;
 				out.setRGB(x, y, rgb);
 			}
 		}

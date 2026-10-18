@@ -97,7 +97,7 @@ public final class ChatClicks {
 		g.pose().translate(0, 0, 400);
 		Ui.roundBordered(g, x - 3, y - 3, x + w + 3, y + h + 14, 4, Ui.POPUP, Ui.POPUP_BORDER);
 		if (shot != null) {
-			g.blit(ClientState.blurShots() ? shot.blurred() : shot.texture(), x, y, w, h, 0, 0, 1, 1, 1, 1);
+			com.chaos.chatplus.client.ui.Ui.blit(g, ClientState.blurShots() ? shot.blurred() : shot.texture(), x, y, w, h, 0, 0, 1, 1, 1, 1);
 			g.drawString(mc.font, Lang.tr("shot.by", shot.owner()), x, y + h + 3, Ui.MUTED, false);
 		} else {
 			String key = ShotCache.gone(id) ? "shot.gone" : "shot.loading";

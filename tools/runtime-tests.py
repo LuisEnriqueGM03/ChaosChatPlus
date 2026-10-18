@@ -46,13 +46,22 @@ def main():
         archive=home/f'signals-{int(time.time())}'
         signals.rename(archive)
         signals.mkdir()
+    if args.loader != 'fabric':
+        # Avoid concurrent Forge splash windows competing for the test GPU.
+        for role in ['Luis','Pepe','Audit']:
+            config_file=home/role/'config/fml.toml'
+            config_file.parent.mkdir(parents=True,exist_ok=True)
+            text=config_file.read_text() if config_file.exists() else ''
+            if 'earlyWindowControl = true' in text:text=text.replace('earlyWindowControl = true','earlyWindowControl = false')
+            elif 'earlyWindowControl' not in text:text+='\nearlyWindowControl = false\n'
+            config_file.write_text(text)
     processes=[];streams=[];launch_times={}
     def launch(role):
         config=json.loads((home/'commands'/f'{role}.json').read_text())
         env=os.environ.copy();env.update(config['environment'])
         stream=(home/f'{role}-console.log').open('wb');streams.append(stream)
         launch_times[role]=time.time_ns()
-        process=subprocess.Popen(config['command'],cwd=config['cwd'],env=env,
+        process=subprocess.Popen([config['command'][0],'-XX:ActiveProcessorCount=2',*config['command'][1:]],cwd=config['cwd'],env=env,
             stdin=subprocess.PIPE,stdout=stream,stderr=subprocess.STDOUT,
             creationflags=subprocess.CREATE_NO_WINDOW)
         processes.append((role,process))
@@ -71,7 +80,16 @@ def main():
             time.sleep(1)
         for command in ['op Luis','gamerule doDaylightCycle false','time set day','gamerule doMobSpawning false']:
             server.stdin.write((command+'\n').encode());server.stdin.flush()
-        for role in ['Luis','Pepe','Audit']:launch(role)
+        # Establish each connection before starting the next graphical process.
+        # This avoids status/login timeouts while three clients compile shaders concurrently.
+        for role in ['Luis','Pepe','Audit']:
+            client=launch(role)
+            connect_start=time.monotonic()
+            while f'{role}[' not in game_log('server'):
+                if client.poll() is not None:raise RuntimeError(role+' exited before joining')
+                if list(signals.glob('*.FAIL')):raise RuntimeError('Client failed during startup')
+                if time.monotonic()-connect_start>210:raise RuntimeError(role+' initial connection timed out')
+                time.sleep(1)
         start=time.monotonic();last_status=0;hot_added=False;online_op=False
         while True:
             failures=list(signals.glob('*.FAIL'))

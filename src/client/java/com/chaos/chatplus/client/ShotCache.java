@@ -86,14 +86,13 @@ public final class ShotCache {
 		return toNative(img, false);
 	}
 
-	/** BufferedImage (ARGB) → NativeImage (ABGR). Con {@code alpha} se respeta la transparencia. */
+	/** BufferedImage (ARGB) → NativeImage (ARGB). Con {@code alpha} se respeta la transparencia. */
 	static NativeImage toNative(BufferedImage img, boolean alpha) {
 		NativeImage out = new NativeImage(img.getWidth(), img.getHeight(), false);
 		for (int y = 0; y < img.getHeight(); y++) {
 			for (int x = 0; x < img.getWidth(); x++) {
 				int argb = img.getRGB(x, y);
-				int abgr = (argb & 0xFF00FF00) | ((argb >> 16) & 0xFF) | ((argb & 0xFF) << 16);
-				out.setPixelRGBA(x, y, alpha ? abgr : abgr | 0xFF000000);
+				out.setPixel(x, y, alpha ? argb : argb | 0xFF000000);
 			}
 		}
 		return out;

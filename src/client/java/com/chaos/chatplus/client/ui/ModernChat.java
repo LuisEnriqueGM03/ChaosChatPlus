@@ -82,7 +82,7 @@ public final class ModernChat {
 			return;
 		}
 		Minecraft mc = Minecraft.getInstance();
-		mc.getProfiler().push("chat");
+		net.minecraft.util.profiling.Profiler.get().push("chat");
 		int perPage = chat.getLinesPerPage();
 		int scroll = acc.chaoschatplus$scroll();
 		float scale = (float) chat.getScale();
@@ -94,7 +94,7 @@ public final class ModernChat {
 		double spacing = mc.options.chatLineSpacing().get();
 		int lineHeight = acc.chaoschatplus$lineHeight();
 		int textOffset = (int) Math.round(-8.0 * (spacing + 1.0) + 4.0 * spacing);
-		float partial = mc.getTimer().getGameTimeDeltaPartialTick(false);
+		float partial = mc.getDeltaTracker().getGameTimeDeltaPartialTick(false);
 		boolean animate = ClientPrefs.get().animations;
 
 		GIF_RECTS.clear();
@@ -189,9 +189,7 @@ public final class ModernChat {
 				int boxW = Math.min(Math.min(width - 4, boxH * 2), fitW);
 				int top = lineBottom - lineHeight + 1;
 				Ui.round(g, 0, top, boxW, top + boxH, 4, Ui.alpha(0x000000, (int) (alpha * 0.35)));
-				g.setColor(1, 1, 1, alpha / 255F);
-				int used = GifCache.draw(g, gif, 2, top + 2, boxW - 4, boxH - 4, false);
-				g.setColor(1, 1, 1, 1);
+				int used = GifCache.draw(g, gif, 2, top + 2, boxW - 4, boxH - 4, false, 0xFFFFFF | (alpha << 24));
 				GIF_RECTS.add(new GifRect(gif, (int) ((4 + slide) * scale), (int) (top * scale),
 						(int) ((4 + slide + used + 2) * scale), (int) ((top + boxH) * scale)));
 			}
@@ -226,6 +224,6 @@ public final class ModernChat {
 		}
 
 		g.pose().popPose();
-		mc.getProfiler().pop();
+		net.minecraft.util.profiling.Profiler.get().pop();
 	}
 }

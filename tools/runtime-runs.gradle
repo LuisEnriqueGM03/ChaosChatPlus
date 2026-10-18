@@ -4,9 +4,9 @@ def loader = fabric ? 'fabric' : (plugins.hasPlugin('net.minecraftforge.gradle')
 def sharedRoot = fabric ? projectDir : file('../..')
 def runtimeHome = new File(sharedRoot, ".verification/runtime/${loader}")
 def role = providers.gradleProperty('runtimeRole').getOrElse('Luis')
-def port = providers.gradleProperty('runtimePort').getOrElse('25631')
+def port = providers.gradleProperty('runtimePort').getOrElse('25831')
 def props = ['chaoschatplus.runtimeTest': 'true', 'chaoschatplus.runtimeDir': new File(runtimeHome, 'signals').absolutePath]
-def clientArgs = ['--username', role, '--quickPlayMultiplayer', "127.0.0.1:${port}", '--width', '1280', '--height', '720']
+def clientArgs = ['--username', role, '--width', '1280', '--height', '720']
 if (fabric) {
     loom.runs {
         runtimeClient {

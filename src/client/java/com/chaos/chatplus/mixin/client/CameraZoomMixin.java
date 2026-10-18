@@ -15,9 +15,9 @@ import net.minecraft.client.renderer.GameRenderer;
 abstract class CameraZoomMixin {
 
 	@Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
-	private void chaoschatplus$zoom(Camera camera, float partial, boolean useFovSetting, CallbackInfoReturnable<Double> cir) {
+	private void chaoschatplus$zoom(Camera camera, float partial, boolean useFovSetting, CallbackInfoReturnable<Float> cir) {
 		if (useFovSetting && ShotCapture.cameraMode() && ShotCapture.zoom() > 1.0) {
-			cir.setReturnValue(cir.getReturnValue() / ShotCapture.zoom());
+			cir.setReturnValue((float) (cir.getReturnValue() / ShotCapture.zoom()));
 		}
 	}
 }

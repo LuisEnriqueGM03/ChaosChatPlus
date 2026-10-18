@@ -1,14 +1,15 @@
-# Chaos ChatPlus 1.1.1 — Minecraft 1.21.1
+# Chaos ChatPlus 1.1.1 — Minecraft 1.21.4
 
-Versión estable para Fabric, Forge y NeoForge. Requiere Java 21 y el mismo cargador en servidor y clientes; Fabric requiere además Fabric API.
+Fabric, Forge y NeoForge para Minecraft 1.21.4. Requiere Java 21 y el mismo cargador en servidor y clientes. Fabric también necesita Fabric API.
 
-- Corregidos los emojis y tokens de ítems en mensajes privados de Forge y NeoForge (/msg, /tell y /w).
-- Las menciones decoradas en privados de los cargadores nativos avisan solo a sus destinatarios.
-- Corregida la actualización de la versión interna en los JAR de Forge y NeoForge.
-- Añadidas pruebas reproducibles con tres clientes gráficos y un servidor dedicado por cargador.
+- Adaptadas las texturas a RenderType y conservadas sus medidas, coordenadas y transparencias.
+- Adaptadas las imágenes a ARGB, preservando colores y transparencia de capturas, GIF y emojis.
+- Adaptados el zoom de cámara, las fuentes, la vista previa y los eventos del juego a 1.21.4.
+- La cámara oculta interfaz y avisos emergentes al tomar la imagen.
+- Conservados chat público y privado, ítems, capturas privadas, permisos, recargas y moderación.
 
-**Validación:** 31 pruebas automáticas y 45 comprobaciones dentro del juego por cargador, sin fallos. Se probaron chat público y privado, emojis, ítems, GIFs, cámara y capturas, permisos, aislamiento de terceros, recargas y moderación. Los tres servidores cerraron guardando sus mundos; las capturas de interfaz se revisaron visualmente.
+Validación: 31 pruebas automáticas y 48 comprobaciones multijugador por cargador, con tres clientes gráficos y servidor dedicado. Incluye una regresión explícita de colores y transparencia. Consulta VALIDATION.md para cobertura y alcance.
 
-Fabric Loader 0.16.0 o posterior con Fabric API; Forge 52.1.20 o posterior; NeoForge 21.1.259 o posterior. Instala solo el JAR de tu cargador; -sources.jar contiene código para desarrollo. Consulta VALIDATION.md para cobertura y alcance, RUNTIME_RESULTS.json para resultados y SHA256SUMS.txt para verificar los archivos.
+Fabric Loader 0.16.0 o posterior y Fabric API; Forge 54.1.14 o posterior; NeoForge 21.4.158 o posterior.
 
-Ramas: fabric-1.21.1, forge-1.21.1 y neoforge-1.21.1. Esta publicación sustituye a la beta 1.1.0.
+Ramas: fabric-1.21.4, forge-1.21.4 y neoforge-1.21.4. Instala solo el JAR de tu cargador; -sources.jar contiene las fuentes.

@@ -4,7 +4,7 @@ plugins {
     id 'net.minecraftforge.jarjar' version '0.2.3'
 }
 minecraft {
-    mappings channel: 'official', version: '1.21.1'
+    mappings channel: 'official', version: '1.21.4'
     runs {
         configureEach { workingDir = layout.projectDirectory.dir('run'); args '--mixin.config=chaoschatplus.mixins.json' }
         register('client')
@@ -17,11 +17,11 @@ repositories {
     maven fg.minecraftLibsMaven
     mavenCentral()
 }
-dependencies { implementation minecraft.dependency('net.minecraftforge:forge:1.21.1-52.1.20') }
+dependencies { implementation minecraft.dependency('net.minecraftforge:forge:1.21.4-54.1.14') }
 
 version = '1.1.1'
 group = 'com.chaos'
-base { archivesName = 'chaoschatplus-forge-1.21.1' }
+base { archivesName = 'chaoschatplus-forge-1.21.4' }
 java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
 sourceSets {
     main {
