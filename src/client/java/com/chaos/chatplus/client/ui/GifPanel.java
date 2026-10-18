@@ -1,5 +1,7 @@
 package com.chaos.chatplus.client.ui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -195,16 +197,16 @@ public final class GifPanel {
 	}
 
 	public boolean keyPressed(int key) {
-		if (key == 259 && !query.isEmpty()) { // borrar
+		if (key == InputConstants.KEY_BACKSPACE && !query.isEmpty()) { // borrar
 			query = query.substring(0, query.length() - 1);
 			edited();
 			return true;
 		}
-		if (key == 257 || key == 335) { // Enter: buscar ya
+		if (key == InputConstants.KEY_RETURN || key == InputConstants.KEY_NUMPADENTER) { // Enter: buscar ya
 			requestNow();
 			return true;
 		}
-		return key != 256; // Esc lo cierra el selector
+		return key != InputConstants.KEY_ESCAPE; // Esc lo cierra el selector
 	}
 
 	private void edited() {
@@ -406,13 +408,13 @@ public final class GifPanel {
 			}
 		}
 		GifInfo gif = at(mx, my);
-		if (gif != null && button == 1) {
+		if (gif != null && button == InputConstants.MOUSE_BUTTON_RIGHT) {
 			if (!gif.id().startsWith(OnlineGifs.KLIPY)) {
 				ClientPrefs.toggleFavoriteGif(gif);
 			}
 			return true;
 		}
-		if (gif != null && button == 0 && ClientNetwork.canSend(ChatPayloads.SendGif.TYPE)) {
+		if (gif != null && button == InputConstants.MOUSE_BUTTON_LEFT && ClientNetwork.canSend(ChatPayloads.SendGif.TYPE)) {
 			String info = gif.id().startsWith(OnlineGifs.KLIPY) ? gif.encode() : "";
 			ClientNetwork.send(new ChatPayloads.SendGif(gif.id(), info, target.get()));
 			onSent.run();

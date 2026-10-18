@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import time
+from runtime_evidence import clean_save
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -13,7 +14,7 @@ def verify(home, loader):
     signals=home/'signals'
     if list(signals.glob('*.FAIL')):raise RuntimeError('Runtime failure signal present')
     server_log=(home/'server/logs/latest.log').read_text(encoding='utf-8',errors='replace')
-    if 'All dimensions are saved' not in server_log:raise RuntimeError('No clean server save confirmation')
+    if not clean_save(home):raise RuntimeError('No complete server world save')
     reports=(home/'server/config/chaoschatplus/reports.log').read_text(encoding='utf-8')
     if 'REPORTE de Pepe' not in reports or 'REPORTE de Audit' in reports:raise RuntimeError('Report access check failed')
     checks=[]
@@ -116,7 +117,7 @@ def main():
             if role!='server':process.wait(timeout=45)
         server.stdin.write(b'stop\n');server.stdin.flush();server.wait(timeout=60)
         log=game_log('server')
-        if 'All dimensions are saved' not in log and 'All chunks are saved' not in log:
+        if server.returncode != 0 or not clean_save(home):
             raise RuntimeError('No clean server world-save confirmation')
         reports=home/'server/config/chaoschatplus/reports.log'
         if not reports.exists() or 'REPORTE de Pepe' not in reports.read_text(encoding='utf-8'):

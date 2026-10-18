@@ -4,7 +4,7 @@ plugins {
 }
 repositories { mavenCentral() }
 neoForge {
-    version = '26.2.0.93'
+    version = '26.3.0.92'
     runs {
         client { client() }
         server { server(); programArgument '--nogui' }
@@ -14,7 +14,7 @@ neoForge {
 
 version = '1.1.1'
 group = 'com.chaos'
-base { archivesName = 'chaoschatplus-neoforge-26.2' }
+base { archivesName = 'chaoschatplus-neoforge-26.3' }
 java { toolchain.languageVersion = JavaLanguageVersion.of(25); withSourcesJar() }
 sourceSets {
     main {

@@ -1,5 +1,7 @@
 package com.chaos.chatplus.client.screen;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.chaos.chatplus.Lang;
@@ -101,7 +103,7 @@ public class ItemPickerScreen extends Screen {
 	@Override
 	public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         double mx = event.x(), my = event.y(); int button = event.button();
-		if (minecraft != null && minecraft.player != null && button == 0) {
+		if (minecraft != null && minecraft.player != null && button == InputConstants.MOUSE_BUTTON_LEFT) {
 			Inventory inv = minecraft.player.getInventory();
 			for (int slot = 0; slot <= Inventory.SLOT_OFFHAND; slot++) {
 				int[] p = slotPos(slot);

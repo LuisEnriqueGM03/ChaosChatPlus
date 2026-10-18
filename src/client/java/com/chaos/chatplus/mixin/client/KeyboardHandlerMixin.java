@@ -1,5 +1,7 @@
 package com.chaos.chatplus.mixin.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,10 +22,10 @@ abstract class KeyboardHandlerMixin {
 		if (!ShotCapture.cameraMode() || Minecraft.getInstance().gui.screen() != null || action != 1) {
 			return;
 		}
-		if (key == 256) { // Esc
+		if (key == InputConstants.KEY_ESCAPE) { // Esc
 			ShotCapture.cancel();
 			ci.cancel();
-		} else if (key == 257 || key == 335) { // Enter
+		} else if (key == InputConstants.KEY_RETURN || key == InputConstants.KEY_NUMPADENTER) { // Enter
 			ShotCapture.shoot();
 			ci.cancel();
 		}

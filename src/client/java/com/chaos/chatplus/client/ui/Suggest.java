@@ -1,5 +1,7 @@
 package com.chaos.chatplus.client.ui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -141,19 +143,19 @@ public final class Suggest {
 			return false;
 		}
 		switch (key) {
-			case 258, 257, 335 -> { // Tab, Enter
+			case InputConstants.KEY_TAB, InputConstants.KEY_RETURN, InputConstants.KEY_NUMPADENTER -> { // Tab, Enter
 				accept(selected);
 				return true;
 			}
-			case 265 -> { // arriba
+			case InputConstants.KEY_UP -> { // arriba
 				selected = (selected + 1) % entries.size();
 				return true;
 			}
-			case 264 -> { // abajo
+			case InputConstants.KEY_DOWN -> { // abajo
 				selected = (selected - 1 + entries.size()) % entries.size();
 				return true;
 			}
-			case 256 -> { // Esc
+			case InputConstants.KEY_ESCAPE -> { // Esc
 				dismissedFor = input.getValue() + "|" + input.getCursorPosition();
 				entries.clear();
 				return true;

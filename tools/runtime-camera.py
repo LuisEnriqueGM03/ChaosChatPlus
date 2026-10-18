@@ -6,6 +6,7 @@ import os
 import shutil
 import subprocess
 import time
+from runtime_evidence import clean_save
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -58,7 +59,7 @@ def main():
         server.stdin.write(b'stop\n')
         server.stdin.flush()
         server.wait(timeout=60)
-        if 'All dimensions are saved' not in log.read_text(errors='replace'):
+        if server.returncode != 0 or not clean_save(home):
             raise RuntimeError('Camera server did not save cleanly')
         result = {'loader': args.loader, 'result': 'PASS', 'checks': 3,
             'coverage': ['actual projection field of view and camera zoom', 'HUD suppression render hook', 'preview and restoration'],

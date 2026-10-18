@@ -1,5 +1,7 @@
 package com.chaos.chatplus.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import com.chaos.chatplus.ChaosChatPlus;
 import com.chaos.chatplus.client.screen.*;
 import com.chaos.chatplus.client.ui.ChatBar;
@@ -55,7 +57,7 @@ public final class RuntimeTest {
                 }
                 if (!attemptedConnection && mc.gui.overlay() == null && mc.gui.screen() instanceof net.minecraft.client.gui.screens.TitleScreen) {
                     attemptedConnection = true;
-                    int port = DIR.toString().contains("neoforge") ? 26033 : DIR.toString().contains("forge") ? 26032 : 26031;
+                    int port = DIR.toString().contains("neoforge") ? 26133 : DIR.toString().contains("forge") ? 26132 : 26131;
                     pendingServer = new net.minecraft.client.multiplayer.ServerData("Runtime", "127.0.0.1:" + port, net.minecraft.client.multiplayer.ServerData.Type.OTHER);
                     pendingServer.ping = -1;
                     statusPinger = new net.minecraft.client.multiplayer.ServerStatusPinger();
@@ -152,7 +154,7 @@ public final class RuntimeTest {
                 mc.gui.setScreen(new ChatScreen(":fue", true));
                 bar = bar(mc);
                 EditBox input = (EditBox) field(ChatBar.class, bar, "input");
-                check(mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(258, 0, 0)), "Tab handles emoji autocomplete");
+                check(mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_TAB, 0, 0)), "Tab handles emoji autocomplete");
                 check(!input.getValue().equals(":fue"), "autocomplete inserts emoji");
                 mc.gui.screen().charTyped(new net.minecraft.client.input.CharacterEvent('ñ'));
                 check(input.getValue().contains("ñ"), "Unicode typing works");
@@ -172,6 +174,7 @@ public final class RuntimeTest {
                 if (!loaded.ready) return;
                 check(loaded.frames.size() > 1, "GIF animation decoded to multiple textures");
                 shot(mc, "gifs");
+                verifyPickerInput(mc, chosen);
                 mark("publicGif", chosen.id()); mark("privateGif", privateGif.id());
                 ClientNetwork.send(new ChatPayloads.SendGif(chosen.id(), "", ""));
                 mc.gui.setScreen(null); next();
@@ -207,7 +210,7 @@ public final class RuntimeTest {
                 // Exercise the actual private-mode ChatScreen input conversion and Enter handling.
                 ClientState.setDmTarget("Pepe");
                 mc.gui.setScreen(new ChatScreen("RUNTIME_PRIVATE :corazon:", true));
-                check(mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(257, 0, 0)), "Enter submits private-mode chat");
+                check(mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_RETURN, 0, 0)), "Enter submits private-mode chat");
                 ClientNetwork.send(new ChatPayloads.ShareItem(0, "Pepe"));
                 ClientNetwork.send(new ChatPayloads.SendGif(privateGif.id(), "", "Pepe"));
                 next();
@@ -378,6 +381,25 @@ public final class RuntimeTest {
         if (!condition) throw new IllegalStateException(label);
         checks++; ChaosChatPlus.LOGGER.info("[RuntimeTest] PASS {}: {}", role, label);
     }
+    private static void verifyPickerInput(Minecraft mc, GifInfo gif) throws Exception {
+        Object picker = field(ChatBar.class, bar(mc), "picker");
+        GifPanel panel = (GifPanel)field(com.chaos.chatplus.client.ui.EmojiPicker.class, picker, "gifs");
+        double x = (int)field(GifPanel.class,panel,"x") + 2;
+        double y = (int)field(GifPanel.class,panel,"y") + (int)field(GifPanel.class,null,"HEADER") + 2;
+        boolean original = ClientPrefs.isFavoriteGif(gif.id());
+        var rightClick = new net.minecraft.client.input.MouseButtonEvent(x,y,
+                new net.minecraft.client.input.MouseButtonInfo(InputConstants.MOUSE_BUTTON_RIGHT,0));
+        mc.gui.screen().mouseClicked(rightClick,false);
+        boolean changed = ClientPrefs.isFavoriteGif(gif.id()) != original;
+        mc.gui.screen().mouseClicked(rightClick,false);
+        check(changed && ClientPrefs.isFavoriteGif(gif.id()) == original, "SDL right-click toggles GIF favorites and restores them");
+        mc.gui.screen().charTyped(new net.minecraft.client.input.CharacterEvent('x'));
+        mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_BACKSPACE,0,0));
+        check(field(GifPanel.class,panel,"query").equals(""), "SDL Backspace edits GIF search");
+        check(mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_RETURN,0,0)), "SDL Enter submits GIF search");
+        mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(InputConstants.KEY_ESCAPE,0,0));
+        check(field(ChatBar.class,bar(mc),"picker") == null, "SDL Escape closes the GIF picker");
+    }
     private static void clickLink(Minecraft mc, String command) {
         ChatComponentAccessor chat = (ChatComponentAccessor)mc.gui.hud.getChat();
         var lines = chat.chaoschatplus$lines();
@@ -393,7 +415,7 @@ public final class RuntimeTest {
             });
             if (found[0] >= 0) {
                 double mx=(4+found[0])*scale, my=mc.getWindow().getGuiScaledHeight()-40-(row+0.5)*chat.chaoschatplus$lineHeight()*scale;
-                mc.gui.screen().mouseClicked(new net.minecraft.client.input.MouseButtonEvent(mx,my,new net.minecraft.client.input.MouseButtonInfo(0,0)),false);
+                mc.gui.screen().mouseClicked(new net.minecraft.client.input.MouseButtonEvent(mx,my,new net.minecraft.client.input.MouseButtonInfo(InputConstants.MOUSE_BUTTON_LEFT,0)),false);
                 return;
             }
         }

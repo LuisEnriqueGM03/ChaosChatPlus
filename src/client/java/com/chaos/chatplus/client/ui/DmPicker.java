@@ -1,5 +1,7 @@
 package com.chaos.chatplus.client.ui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import java.util.*;
 import com.chaos.chatplus.Lang;
 import com.chaos.chatplus.client.ClientState;
@@ -140,9 +142,9 @@ public final class DmPicker {
 	}
 	public boolean keyPressed(int key) {
 		if (!dmPicker) return false;
-		if (key == 256) close();
-		else if (key == 259 && !dmSearch.isEmpty()) dmSearch = dmSearch.substring(0, dmSearch.length() - 1);
-		else if (key == 257 || key == 335) {
+		if (key == InputConstants.KEY_ESCAPE) close();
+		else if (key == InputConstants.KEY_BACKSPACE && !dmSearch.isEmpty()) dmSearch = dmSearch.substring(0, dmSearch.length() - 1);
+		else if (key == InputConstants.KEY_RETURN || key == InputConstants.KEY_NUMPADENTER) {
 			List<String> players = visiblePlayers();
 			if (!players.isEmpty()) { ClientState.setDmTarget(players.get(0)); close(); }
 		}

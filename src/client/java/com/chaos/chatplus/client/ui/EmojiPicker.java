@@ -1,5 +1,7 @@
 package com.chaos.chatplus.client.ui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -262,7 +264,7 @@ public final class EmojiPicker {
 		}
 		ClientState.ClientEmoji e = at(mx, my);
 		if (e != null) {
-			if (button == 1) {
+			if (button == InputConstants.MOUSE_BUTTON_RIGHT) {
 				ClientPrefs.toggleFavorite(e.name());
 			} else {
 				ClientPrefs.useEmoji(e.name());

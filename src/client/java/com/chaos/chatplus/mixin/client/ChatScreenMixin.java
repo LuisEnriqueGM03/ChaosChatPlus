@@ -1,4 +1,6 @@
 package com.chaos.chatplus.mixin.client;
+import com.mojang.blaze3d.platform.InputConstants;
+
 import java.nio.file.Path;
 import java.util.List;
 import com.chaos.chatplus.client.*;
@@ -62,7 +64,7 @@ abstract class ChatScreenMixin extends Screen implements SelfTest.BarAccess {
     private void chaoschatplus$click(MouseButtonEvent event,boolean doubleClick,CallbackInfoReturnable<Boolean> cir) {
         double mx=event.x(),my=event.y();
         if(chaoschatplus$bar!=null && chaoschatplus$bar.mouseClicked(mx,my,event.button())) { cir.setReturnValue(true); return; }
-        if(!ModernChat.enabled() || event.button()!=0) return;
+        if(!ModernChat.enabled() || event.button()!=InputConstants.MOUSE_BUTTON_LEFT) return;
         GifInfo gif=ModernChat.gifAt(mx,my);
         if(gif!=null) { Minecraft.getInstance().gui.setScreen(new GifViewerScreen(gif,(ChatScreen)(Object)this)); cir.setReturnValue(true); return; }
         Style style=ModernChat.styleAt(mx,my);

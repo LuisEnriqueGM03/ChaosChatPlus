@@ -1,5 +1,7 @@
 package com.chaos.chatplus.client.ui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -294,7 +296,7 @@ public final class ChatBar {
 
 	public boolean keyPressed(int key) {
 		if (dmPicker.keyPressed(key)) return true;
-		if (picker != null && key == 256) {
+		if (picker != null && key == InputConstants.KEY_ESCAPE) {
 			picker = null;
 			return true;
 		}

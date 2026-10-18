@@ -130,7 +130,7 @@ public final class FontInjector {
 			if (data == null) {
 				return fallback.getResource(id);
 			}
-			return Optional.of(new Resource(Minecraft.getInstance().getVanillaPackResources(),
+			return Optional.of(new Resource(Minecraft.getInstance().getVanillaPackResources().fullResources(),
 					() -> (InputStream) new ByteArrayInputStream(data)));
 		}
 
@@ -145,13 +145,13 @@ public final class FontInjector {
 		}
 
 		@Override
-		public Map<Identifier, Resource> listResources(String path, java.util.function.Predicate<Identifier> filter) {
+		public Map<Identifier, Resource> listResources(String path, ResourceManager.Selector filter) {
 			return Map.of();
 		}
 
 		@Override
 		public Map<Identifier, List<Resource>> listResourceStacks(String path,
-				java.util.function.Predicate<Identifier> filter) {
+				ResourceManager.Selector filter) {
 			return Map.of();
 		}
 
