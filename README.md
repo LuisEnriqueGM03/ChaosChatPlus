@@ -1,3 +1,7 @@
+> Rama fabric · Minecraft 26.1 · Chaos ChatPlus 1.1.1. Compilación: `./gradlew build`.
+
+---
+
 # Chaos ChatPlus (Minecraft 26.1)
 
 Chat moderno para servidores: emojis, emojis propios, mostrar ítems,
