@@ -89,9 +89,9 @@ misma instalación. Chaos Ranks continúa siendo opcional y necesita una edició
 
 | Edición | Compilación desde la raíz | Archivo instalable |
 | --- | --- | --- |
-| Fabric | `./gradlew build` | `build/libs/chaoschatplus-1.1.0.jar` |
-| Forge 52.1.20+ | `./gradlew -p platforms/forge build` | `platforms/forge/build/libs/chaoschatplus-forge-1.21.1-1.1.0.jar` |
-| NeoForge 21.1.259+ | `./gradlew -p platforms/neoforge build` | `platforms/neoforge/build/libs/chaoschatplus-neoforge-1.21.1-1.1.0.jar` |
+| Fabric | `./gradlew build` | `build/libs/chaoschatplus-1.1.1.jar` |
+| Forge 52.1.20+ | `./gradlew -p platforms/forge build` | `platforms/forge/build/libs/chaoschatplus-forge-1.21.1-1.1.1.jar` |
+| NeoForge 21.1.259+ | `./gradlew -p platforms/neoforge build` | `platforms/neoforge/build/libs/chaoschatplus-neoforge-1.21.1-1.1.1.jar` |
 
 Para compilar, usa JDK 25 para ejecutar Gradle: la versión actual de Loom lo requiere. Forge y NeoForge compilan
 con una toolchain JDK 21; instala ambos JDK o configura su detección mediante Gradle. Los tres mods generan
@@ -103,3 +103,7 @@ el archivo con sufijo `slim` es intermedio y no es el que debes distribuir.
 - `platforms/neoforge`: compilación y adaptadores nativos NeoForge.
 - `platform/ServerNetwork` y `client/ClientNetwork`: frontera entre las funciones del chat y el transporte del cargador.
 - `net/PayloadCatalog`: catálogo único de mensajes, codecs y direcciones utilizado por los tres transportes.
+
+## Validación multijugador
+
+La 1.1.1 estable pasa 31 pruebas automáticas y 45 comprobaciones dentro del juego por cargador, con tres clientes gráficos y un servidor dedicado. Consulta [VALIDATION.md](VALIDATION.md) para cobertura, resultados y reproducción con `tools/runtime-prepare.py` y `tools/runtime-tests.py`.

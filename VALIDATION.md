@@ -1,31 +1,52 @@
-# Validación de Chaos ChatPlus 1.1.0 — Minecraft 1.21.1
+# Validación de Chaos ChatPlus 1.1.1 — Minecraft 1.21.1
 
-Fecha: 17 de octubre de 2026.
+Fecha: 18 de octubre de 2026. Publicación estable para Java 21.
 
 | Comprobación | Fabric | Forge | NeoForge |
 | --- | --- | --- | --- |
-| Compilación y empaquetado | Correcto | Correcto | Correcto |
-| Pruebas automáticas | 31, sin fallos | 31, sin fallos | 31, sin fallos |
-| Inspección de JAR y metadatos | Correcto | Correcto | Correcto |
-| Arranque y cierre dedicado con esta adaptación | No ejecutado | Correcto | Correcto |
-| Cliente gráfico y multijugador real con estos cambios | Pendiente | Pendiente | Pendiente |
+| Compilación final | Correcta | Correcta | Correcta |
+| Pruebas automáticas | 31 sin fallos | 31 sin fallos | 31 sin fallos |
+| Comprobaciones dentro del juego | 45 correctas | 45 correctas | 45 correctas |
+| Jugadores conectados a servidor dedicado | 3 | 3 | 3 |
+| Arranque y cierre guardando el mundo | Correcto | Correcto | Correcto |
+| Revisión visual de capturas | Correcta | Correcta | Correcta |
 
-Los servidores nativos cargaron los 197 emojis y 360 GIFs integrados y cerraron guardando sus mundos de prueba. Los JAR nativos contienen sus adaptadores y metadatos de cargador y no incluyen fabric.mod.json. Forge incluye la dependencia MixinExtras. Los seis JAR de distribución no contienen entradas ZIP duplicadas; el código compilado requiere Java 21.
+Las pruebas usan tres procesos gráficos reales (Luis, Pepe y Audit) y un servidor dedicado independiente por cargador, con Java 21 y NVIDIA RTX 3060. Todos se ejecutan en el mismo equipo, conectados por TCP local. No se usaron mundos ni configuraciones del usuario. No se declara compatibilidad de red entre cargadores.
 
-## Reproducción
+## Cobertura dentro del juego
 
-Usa JDK 25 para ejecutar Gradle/Loom y ten instalado JDK 21 para las herramientas de Forge y NeoForge; el mod compilado funciona sobre Java 21.
+- Conexión, permisos y sincronización de los 197 emojis y fuentes del servidor.
+- Chat público, menciones, glifos de emoji, autocompletado con Tab y escritura Unicode.
+- Compartir un ítem real y recibir el enlace y su contenido de tooltip.
+- Búsqueda de GIFs propios, decodificación en múltiples texturas y recepción pública y privada.
+- Cámara, zoom, vista previa, envío de captura real del renderizador y visor de la imagen recibida.
+- Modo privado enviado desde ChatScreen con Enter: texto, emoji, ítem, GIF y captura recibidos por el destinatario.
+- Tercer jugador: ausencia de mensajes y enlaces privados; denegación de una solicitud de captura privada con ID conocido y de un reporte no autorizado.
+- Subida de PNG por la red, aprobación de un OP, sincronización de textura y recarga automática de otro PNG añadido al directorio.
+- Reporte legítimo registrado, borrado por moderador e invalidación de las cachés de los tres jugadores.
+- Rechazo de imagen inválida e ID inexistente, sin desconectar al remitente; conservación de acceso del propietario a su captura privada.
+
+Las 45 comprobaciones por cargador suman 135 verificaciones de ejecución. Las pruebas JUnit suman otras 93 ejecuciones sin fallos. RUNTIME_RESULTS.json contiene los resultados y los mensajes de comprobación. runtime-screenshots.zip contiene las capturas de cada cargador.
+
+## Correcciones encontradas durante la validación
+
+Forge y NeoForge decoraban el chat público mediante sus eventos, pero estos no cubrían /msg, /tell y /w. Se añadió la decoración del contenido privado, preservando el mensaje firmado y limitando los avisos de menciones al destinatario. La prueba exige ahora recibir un glifo de emoji dentro del mensaje privado; antes de la corrección Forge mostraba :corazon: literalmente.
+
+La compilación nativa registra también la versión como entrada de processResources, evitando conservar una versión antigua dentro del JAR cuando cambia gradle.properties/build.gradle. Se verificaron los metadatos finales 1.1.1, Java 21, ausencia de entradas ZIP duplicadas y dependencia MixinExtras incluida en Forge.
+
+## Reproducción en Windows
+
+Requiere JDK 21, JDK 25 y Python 3. JDK 25 ejecuta Gradle/Loom; los juegos de prueba y el código generado usan Java 21. Sustituye las rutas de ejemplo por tus instalaciones.
 
 ```text
-./gradlew build
-./gradlew -p platforms/forge build
-./gradlew -p platforms/neoforge build
+python tools/runtime-prepare.py fabric --jdk21 "C:/Program Files/Eclipse Adoptium/jdk-21.0.12.8-hotspot" --jdk25 "C:/Program Files/Eclipse Adoptium/jdk-25.0.4.101-hotspot"
+python tools/runtime-tests.py fabric
 ```
 
-Los resultados JUnit quedan bajo `build/test-results/test` de cada proyecto. Las pruebas cubren imágenes y GIFs inválidos, límites de subidas, configuración, ensamblado de red, archivos de fuentes, permisos, capturas privadas, cachés e integridad de recursos. No sustituyen una prueba de instalación con jugadores.
+Repite ambos comandos con forge y neoforge. El preparador exporta los lanzamientos y usa javaw.exe, que en este equipo tiene la preferencia de gráfica de alto rendimiento ya configurada. Las pruebas se guardan en .verification/runtime/<cargador>; los servidores escuchan únicamente en 127.0.0.1, puertos 25631–25633, sin autenticación para estos perfiles locales. Cierra una sesión de prueba antes de iniciar la siguiente. Al repetirla, se conserva la configuración de la ejecución anterior en un directorio de respaldo dentro de la carpeta de pruebas.
 
-La prueba dedicada de cada cargador nativo se realizó en un directorio aislado, comprobando el mensaje de servidor listo, la carga de recursos y el guardado al parar. Los mundos del usuario no se usaron en estas pruebas. La prueba de Forge usa la unión de conjuntos de fuentes configurada en gradle.properties.
+Los JAR se compilan con ./gradlew build, ./gradlew -p platforms/forge build y ./gradlew -p platforms/neoforge build. El archivo -slim.jar de Forge no es el instalable; distribuye el JAR sin clasificador.
 
-## Límites de esta publicación
+## Alcance
 
-Esta es una beta. No se ha confirmado con los cambios actuales la representación gráfica, la comunicación entre jugadores ni la integración opcional con Chaos Ranks en cada cargador. Las tres ediciones necesitan servidor y clientes del mismo cargador; no se declara compatibilidad de red entre cargadores.
+La validación cubre los tres clientes con el mod y el servidor de su mismo cargador. No se probaron aquí servidores remotos con latencia, otros mods, ni la integración opcional con Chaos Ranks, KLIPY o Sightengine con cuentas externas. Estas integraciones mantienen sus requisitos de configuración. La moderación probada en esta sesión es la de reportes y borrado por OP.

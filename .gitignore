@@ -54,3 +54,9 @@ platforms/*/run/
 
 # Local release copies
 dist/
+
+.verification/
+
+# Python tooling caches
+__pycache__/
+*.pyc
