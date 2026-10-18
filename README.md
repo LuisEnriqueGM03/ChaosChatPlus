@@ -1,3 +1,7 @@
+> Rama forge · Minecraft 1.21.4 · Chaos ChatPlus 1.1.1. Compilación: `./gradlew -p platforms/forge build`.
+
+---
+
 # Chaos ChatPlus (Minecraft 1.21.4)
 
 Chat moderno para servidores: emojis, emojis propios, mostrar ítems,
